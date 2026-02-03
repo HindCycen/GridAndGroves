@@ -1,0 +1,25 @@
+root = true
+
+[*]
+charset = utf-8
+
+[*.cs]
+
+# 使用 K&R 风格大括号
+csharp_new_line_before_open_brace = none
+
+# 细化（可选）
+csharp_new_line_before_open_brace_types = none
+csharp_new_line_before_open_brace_methods = none
+csharp_new_line_before_open_brace_properties = none
+csharp_new_line_before_open_brace_accessors = none
+csharp_new_line_before_open_brace_anonymous_methods = none
+csharp_new_line_before_open_brace_control_blocks = none
+
+# 缩进
+indent_style = space
+indent_size = 4
+
+# if / for 等始终带大括号（强烈推荐）
+csharp_prefer_braces = true:warning
+csharp_space_after_cast = true

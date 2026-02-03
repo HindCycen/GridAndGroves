@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://dtghwa8muid46"]
+
+[ext_resource type="Script" uid="uid://bfj5hviilkkbb" path="res://script/core/actors/ActorBase.cs" id="1_hjw2g"]
+
+[node name="ActorBase" type="Node2D"]
+script = ExtResource("1_hjw2g")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Stats" type="Node2D" parent="."]
+
+[node name="HealthStat" type="Node" parent="Stats"]
+
+[node name="ShieldStat" type="Node" parent="Stats"]
+
+[node name="StatusController" type="Node" parent="Stats"]
+
+[node name="StatusBar" type="CanvasLayer" parent="."]

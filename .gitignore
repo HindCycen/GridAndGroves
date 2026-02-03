@@ -1,0 +1,128 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+.github/
+
+# Visual Studio
+.vs/
+*.userprefs
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Mono
+[Mm]onoDevelop/
+*.pidb
+*.userprefs
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.[Rr]e[Ss]harper.*
+
+# JetBrains Rider
+.idea/
+.lingma/
+
+# OS generated files
+ehthumbs.db
+Thumbs.db
+.DS_Store
+
+# Godot specific
+.godot/
+*.import
+*.reimport
+
+# Godot exported projects
+export_presets.cfg
+
+# Godot temporary files
+.autoload.gd
+.tmp/
+
+# Editor settings that are user specific
+.editor_settings-4.tres
+
+# Godot project files that shouldn't be version controlled
+*.scn
+*.old
+*.gdns
+*.gdnlib
+*.import
+*.metadata
+*.tmp
+
+# Unity specific
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Aa]ssets/AssetStoreTools*
+[Oo]ut/
+
+# Unity crash reports
+Crashes/
+
+# Unity logs
+*.log
+
+# Unity settings folders
+ProjectSettings/
+Packages/
+UserSettings/
+
+# Unity meta files
+*.meta
+
+# Unity serialization (if using text serialization)
+*.unity
+*.prefab
+*.mat
+*.asset
+*.anim
+*.controller
+*.mask
+*.physicsMaterial
+*.mat.meta
+*.unity.meta
+*.prefab.meta
+*.anim.meta
+*.controller.meta
+*.mask.meta
+*.physicsMaterial.meta
+
+# Unity cache
+/Library/Caches/*
+
+# Unity Asset Store tools
+Assets/AssetStoreTools*
+
+# Unity iOS build
+*[Bb]uild/
+
+# Unity WebGL build
+WebGL/
+
+# Unity Package Manager temp
+upm/
+
+# Unity crash reports
+Editor-prev.log
+Editor.log
+
+# Unity Player.log
+Player.log

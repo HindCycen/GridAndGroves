@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BlockDef" load_steps=4 format=3 uid="uid://v8e7agvlegla"]
+
+[ext_resource type="Resource" uid="uid://dyrwsnioegcnx" path="res://script/data/blockparts/ExampleBlockPart00.tres" id="1_inmg0"]
+[ext_resource type="Script" uid="uid://bvya8542g7of3" path="res://script/core/blocks/BlockDef.cs" id="1_opu5t"]
+[ext_resource type="Resource" uid="uid://c21xj46mmbrbp" path="res://script/data/blockparts/ExampleBlockPart01.tres" id="2_gvb15"]
+
+[resource]
+script = ExtResource("1_opu5t")
+PartDefinitions = Array[Object]([ExtResource("1_inmg0"), ExtResource("2_gvb15")])
+metadata/_custom_type_script = "uid://bvya8542g7of3"

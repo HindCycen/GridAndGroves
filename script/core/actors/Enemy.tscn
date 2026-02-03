@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://dv7qyml2vylq3"]
+
+[ext_resource type="PackedScene" uid="uid://dtghwa8muid46" path="res://script/core/actors/ActorBase.tscn" id="1_58qlk"]
+[ext_resource type="Script" uid="uid://cg1ib414sv852" path="res://script/core/actors/Enemy.cs" id="2_b5e26"]
+[ext_resource type="Script" uid="uid://de6w7kmntsc56" path="res://script/core/actors/BattleController.cs" id="3_75cpg"]
+
+[node name="Enemy" unique_id=1229503639 groups=["Actors", "Enemies"] instance=ExtResource("1_58qlk")]
+script = ExtResource("2_b5e26")
+Definition = null
+
+[node name="BattleController" type="Node" parent="." index="3" unique_id=962172948]
+script = ExtResource("3_75cpg")

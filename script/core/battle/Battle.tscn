@@ -1,0 +1,41 @@
+[gd_scene load_steps=9 format=3 uid="uid://bhobbalfopbtb"]
+
+[ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://script/core/battle/Battle.cs" id="1_6frf1"]
+[ext_resource type="PackedScene" uid="uid://b60dfxx05x70c" path="res://script/core/blocks/BlockFactory.tscn" id="1_vc0l3"]
+[ext_resource type="PackedScene" uid="uid://cl3qaa7v2firj" path="res://script/core/blocks/Block.tscn" id="2_ha3xv"]
+[ext_resource type="Resource" uid="uid://v8e7agvlegla" path="res://script/data/blockparts/ExampleBlock.tres" id="2_pm7ai"]
+[ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://script/core/battle/Bot.cs" id="3_880dk"]
+[ext_resource type="Resource" uid="uid://j7odevdlawe3" path="res://script/data/blockparts/ExampleMoveRight.tres" id="3_gs4yr"]
+[ext_resource type="Script" uid="uid://6sss02jpn8cx" path="res://script/core/battle/BattleContext.cs" id="7_dkibr"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_880dk"]
+radius = 1.0
+
+[node name="Battle" type="Node2D"]
+script = ExtResource("1_6frf1")
+_availableBlockDefs = Array[Object]([ExtResource("2_pm7ai"), ExtResource("3_gs4yr")])
+
+[node name="BlockFactory" parent="." instance=ExtResource("1_vc0l3")]
+_blockScene = ExtResource("2_ha3xv")
+
+[node name="Bot" type="Node2D" parent="." node_paths=PackedStringArray("_battleContext")]
+script = ExtResource("3_880dk")
+_battleContext = NodePath("../BattleContext")
+
+[node name="DetectionArea" type="Area2D" parent="Bot"]
+unique_name_in_owner = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bot/DetectionArea"]
+shape = SubResource("CircleShape2D_880dk")
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 1561.0
+offset_top = 225.0
+offset_right = 1835.0
+offset_bottom = 352.0
+
+[node name="BattleManager" type="Node2D" parent="."]
+
+[node name="BattleContext" type="Node" parent="." groups=["BattleContext"]]
+script = ExtResource("7_dkibr")

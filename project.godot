@@ -1,0 +1,47 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
+[application]
+
+config/name="Grid and Groves"
+run/main_scene="uid://dowu1ejcjyr7i"
+config/features=PackedStringArray("4.6", "C#", "Forward Plus")
+config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/window_width_override=960
+window/size/window_height_override=540
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+
+[dotnet]
+
+project/assembly_name="Grid and Groves"
+
+[editor]
+
+naming/default_signal_callback_name="_On{NodeName}{SignalName}"
+naming/default_signal_callback_to_self_name="_On{SignalName}"
+naming/scene_name_casing=1
+naming/script_name_casing=1
+
+[global_group]
+
+BattleContext=""
+Enemies="All enemies in one battle."
+Players="All players in this battle."
+Actors=""

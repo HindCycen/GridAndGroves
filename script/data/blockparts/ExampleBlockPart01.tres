@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://c21xj46mmbrbp"]
+
+[ext_resource type="Script" uid="uid://cvuhmr6a7300r" path="res://script/data/behaviors/ExamplePartBehavior.cs" id="1_rdgnq"]
+[ext_resource type="Texture2D" uid="uid://bhk7rnyxxf8kf" path="res://assets/pictures/blockpart_picture/green/Blank-G.png" id="2_ar8uq"]
+[ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://script/core/blocks/BlockPartDef.cs" id="3_sy51q"]
+
+[sub_resource type="Resource" id="Resource_rdgnq"]
+script = ExtResource("1_rdgnq")
+metadata/_custom_type_script = "uid://cvuhmr6a7300r"
+
+[resource]
+script = ExtResource("3_sy51q")
+PartId = "EgPart2"
+PartialPosition = Vector2(0, 1)
+SpriteTexture = ExtResource("2_ar8uq")
+Behaviors = Array[Resource]([SubResource("Resource_rdgnq")])
+MovingDirection = Vector2i(0, 1)
+metadata/_custom_type_script = "uid://cxi0d1tnlamis"
