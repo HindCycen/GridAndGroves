@@ -27,6 +27,7 @@ window/size/window_width_override=960
 window/size/window_height_override=540
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
+window/per_pixel_transparency/allowed=true
 
 [dotnet]
 
@@ -45,3 +46,7 @@ BattleContext=""
 Enemies="All enemies in one battle."
 Players="All players in this battle."
 Actors=""
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
