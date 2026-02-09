@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dv7qyml2vylq3"]
 
-[ext_resource type="PackedScene" uid="uid://dtghwa8muid46" path="res://script/core/actors/ActorBase.tscn" id="1_58qlk"]
+[ext_resource type="PackedScene" uid="uid://dtghwa8muid46" path="res://scenes/actors/ActorBase.tscn" id="1_58qlk"]
 [ext_resource type="Script" uid="uid://cg1ib414sv852" path="res://script/core/actors/Enemy.cs" id="2_b5e26"]
 [ext_resource type="Script" uid="uid://de6w7kmntsc56" path="res://script/core/actors/BattleController.cs" id="3_75cpg"]
 

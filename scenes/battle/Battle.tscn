@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://bhobbalfopbtb"]
+
+[ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://script/core/battle/Battle.cs" id="1_2ckr4"]
+[ext_resource type="Resource" uid="uid://dyrwsnioegcnx" path="res://resources/blockparts/ExampleBlockPart00.tres" id="2_q5nyf"]
+[ext_resource type="Resource" uid="uid://c21xj46mmbrbp" path="res://resources/blockparts/ExampleBlockPart01.tres" id="3_mgs6c"]
+[ext_resource type="Script" uid="uid://bvya8542g7of3" path="res://script/core/blocks/BlockDef.cs" id="4_pk84k"]
+[ext_resource type="Resource" uid="uid://0w3x4gxmnwia" path="res://resources/blockparts/ExampleMoveRight00.tres" id="5_3sky7"]
+[ext_resource type="PackedScene" uid="uid://b60dfxx05x70c" path="res://scenes/blocks/BlockFactory.tscn" id="6_7ob7o"]
+[ext_resource type="PackedScene" uid="uid://cl3qaa7v2firj" path="res://scenes/blocks/Block.tscn" id="7_6rl06"]
+[ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://script/core/battle/Bot.cs" id="8_pfxs1"]
+[ext_resource type="Script" uid="uid://6sss02jpn8cx" path="res://script/core/battle/BattleContext.cs" id="9_g3qtk"]
+
+[sub_resource type="Resource" id="Resource_lacit"]
+script = ExtResource("4_pk84k")
+PartDefinitions = Array[Object]([ExtResource("2_q5nyf"), ExtResource("3_mgs6c")])
+metadata/_custom_type_script = "uid://bvya8542g7of3"
+
+[sub_resource type="Resource" id="Resource_fbjyi"]
+script = ExtResource("4_pk84k")
+PartDefinitions = Array[Object]([ExtResource("5_3sky7")])
+metadata/_custom_type_script = "uid://bvya8542g7of3"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_880dk"]
+radius = 1.0
+
+[node name="Battle" type="Node2D" unique_id=738558309]
+script = ExtResource("1_2ckr4")
+_availableBlockDefs = Array[Object]([SubResource("Resource_lacit"), SubResource("Resource_fbjyi")])
+
+[node name="BlockFactory" parent="." unique_id=765646037 instance=ExtResource("6_7ob7o")]
+_blockScene = ExtResource("7_6rl06")
+
+[node name="Bot" type="Node2D" parent="." unique_id=1956716059 node_paths=PackedStringArray("_battleContext")]
+script = ExtResource("8_pfxs1")
+_battleContext = NodePath("../BattleContext")
+
+[node name="DetectionArea" type="Area2D" parent="Bot" unique_id=2001425089]
+unique_name_in_owner = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bot/DetectionArea" unique_id=1376579895]
+shape = SubResource("CircleShape2D_880dk")
+
+[node name="Button" type="Button" parent="." unique_id=1011671334]
+unique_name_in_owner = true
+offset_left = 1561.0
+offset_top = 225.0
+offset_right = 1835.0
+offset_bottom = 352.0
+
+[node name="BattleManager" type="Node2D" parent="." unique_id=49041767]
+
+[node name="BattleContext" type="Node" parent="." unique_id=833329648 groups=["BattleContext"]]
+script = ExtResource("9_g3qtk")
