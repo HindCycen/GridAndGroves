@@ -5,15 +5,24 @@ public partial class Bot : Node2D {
     private Area2D _detectionArea;
     private Vector2I _currentGridPos;
     private Vector2I _currentDirection = Vector2I.Down;
+    private AnimatedSprite2D _animatedSprite2D;
     [Export] private BattleContext _battleContext;
+    private bool _initialized = false;
 
     public override void _Ready() {
         _detectionArea = GetNode<Area2D>("%DetectionArea");
+        _animatedSprite2D = GetNode<AnimatedSprite2D>("%AnimatedSprite2D");
         _battleContext.SayBattleStarted();
+        Visible = false;
+        _detectionArea.Monitoring = false;
+        // 延迟初始化 GoToStarterPoint()，等待Global完全初始化
+        // 将在 _Process() 首帧时执行
 
         GetNode<Button>("%Button").Pressed += () => {
             _battleContext.SayTurnStarted();
             _detectionArea.Monitoring = true;
+            Visible = true;
+            _animatedSprite2D.Play("bot_animation");
             GetTree().CreateTimer(1.0f).Timeout += () => {
                 GoToNextGridPos(_currentDirection);
             };
@@ -30,6 +39,14 @@ public partial class Bot : Node2D {
         };
     }
 
+    public override void _Process(double delta) {
+        // 延迟初始化直到 Global 完全初始化
+        if (!_initialized && Global.GridPoints != null) {
+            _initialized = true;
+            GoToStarterPoint();
+        }
+    }
+
     private void GoToStarterPoint() {
         _detectionArea.Monitoring = false;
         GlobalPosition = new Vector2(
@@ -37,6 +54,8 @@ public partial class Bot : Node2D {
             Global.GetGridPos(new Vector2I(0, 0)).Y - Global.GridSize
             );
         _currentGridPos = new Vector2I(0, -1);
+        _animatedSprite2D.Stop();
+        Visible = false;
     }
 
     private void GoToNextGridPos() {

@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://cl3qaa7v2firj" path="res://scenes/blocks/Block.tscn" id="7_6rl06"]
 [ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://script/core/battle/Bot.cs" id="8_pfxs1"]
 [ext_resource type="Script" uid="uid://6sss02jpn8cx" path="res://script/core/battle/BattleContext.cs" id="9_g3qtk"]
+[ext_resource type="Texture2D" uid="uid://cf4v2iab8itpa" path="res://assets/pictures/bot_frames/BotFrames.png" id="9_q5nyf"]
 
 [sub_resource type="Resource" id="Resource_lacit"]
 script = ExtResource("4_pk84k")
@@ -22,6 +23,126 @@ metadata/_custom_type_script = "uid://bvya8542g7of3"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_880dk"]
 radius = 1.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mgs6c"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pk84k"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3sky7"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ob7o"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6rl06"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pfxs1"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g3qtk"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s833s"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(672, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nw8o3"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(768, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qa7bh"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(864, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4qehw"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(960, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_51nb0"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(1056, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d0mla"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(1152, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n8qh4"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(1248, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8hhqx"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(1344, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g052k"]
+atlas = ExtResource("9_q5nyf")
+region = Rect2(1440, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lo8qj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mgs6c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pk84k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3sky7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ob7o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6rl06")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pfxs1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g3qtk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s833s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nw8o3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qa7bh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4qehw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_51nb0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d0mla")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n8qh4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8hhqx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g052k")
+}],
+"loop": true,
+"name": &"bot_animation",
+"speed": 16.0
+}]
 
 [node name="Battle" type="Node2D" unique_id=738558309]
 script = ExtResource("1_2ckr4")
@@ -39,6 +160,14 @@ unique_name_in_owner = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Bot/DetectionArea" unique_id=1376579895]
 shape = SubResource("CircleShape2D_880dk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Bot" unique_id=1054380748]
+unique_name_in_owner = true
+z_index = 100
+sprite_frames = SubResource("SpriteFrames_lo8qj")
+animation = &"bot_animation"
+frame = 1
+frame_progress = 0.044673927
 
 [node name="Button" type="Button" parent="." unique_id=1011671334]
 unique_name_in_owner = true
