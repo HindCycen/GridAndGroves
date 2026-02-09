@@ -9,7 +9,6 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
-.github/
 
 # Visual Studio
 .vs/
