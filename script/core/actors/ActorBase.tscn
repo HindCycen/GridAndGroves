@@ -1,18 +1,22 @@
-[gd_scene load_steps=2 format=3 uid="uid://dtghwa8muid46"]
+[gd_scene format=3 uid="uid://dtghwa8muid46"]
 
 [ext_resource type="Script" uid="uid://bfj5hviilkkbb" path="res://script/core/actors/ActorBase.cs" id="1_hjw2g"]
+[ext_resource type="Script" uid="uid://4sxnxn5g12hn" path="res://script/core/actors/HealthStat.cs" id="2_uq86y"]
+[ext_resource type="Script" uid="uid://76lgcbb2l24" path="res://script/core/actors/ShieldStat.cs" id="3_nsqqd"]
 
-[node name="ActorBase" type="Node2D"]
+[node name="ActorBase" type="Node2D" unique_id=221609175]
 script = ExtResource("1_hjw2g")
 
-[node name="Visual" type="Node2D" parent="."]
+[node name="Visual" type="Node2D" parent="." unique_id=1182187038]
 
-[node name="Stats" type="Node2D" parent="."]
+[node name="Stats" type="Node2D" parent="." unique_id=1242805779]
 
-[node name="HealthStat" type="Node" parent="Stats"]
+[node name="HealthStat" type="Node" parent="Stats" unique_id=2087447153]
+script = ExtResource("2_uq86y")
 
-[node name="ShieldStat" type="Node" parent="Stats"]
+[node name="ShieldStat" type="Node" parent="Stats" unique_id=1582644311]
+script = ExtResource("3_nsqqd")
 
-[node name="StatusController" type="Node" parent="Stats"]
+[node name="StatusController" type="Node" parent="Stats" unique_id=1698685847]
 
-[node name="StatusBar" type="CanvasLayer" parent="."]
+[node name="StatusBar" type="CanvasLayer" parent="." unique_id=112707715]
