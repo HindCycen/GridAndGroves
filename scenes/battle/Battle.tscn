@@ -1,23 +1,69 @@
 [gd_scene format=3 uid="uid://bhobbalfopbtb"]
 
 [ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://script/core/battle/Battle.cs" id="1_2ckr4"]
-[ext_resource type="Resource" uid="uid://dyrwsnioegcnx" path="res://resources/blockparts/ExampleBlockPart00.tres" id="2_q5nyf"]
-[ext_resource type="Resource" uid="uid://c21xj46mmbrbp" path="res://resources/blockparts/ExampleBlockPart01.tres" id="3_mgs6c"]
+[ext_resource type="Script" uid="uid://cvuhmr6a7300r" path="res://resources/blockpart_behaviors/ExamplePartBehavior.cs" id="4_mgs6c"]
 [ext_resource type="Script" uid="uid://bvya8542g7of3" path="res://script/core/blocks/BlockDef.cs" id="4_pk84k"]
 [ext_resource type="Resource" uid="uid://0w3x4gxmnwia" path="res://resources/blockparts/ExampleMoveRight00.tres" id="5_3sky7"]
+[ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://script/core/blocks/BlockPartDef.cs" id="5_pk84k"]
 [ext_resource type="PackedScene" uid="uid://b60dfxx05x70c" path="res://scenes/blocks/BlockFactory.tscn" id="6_7ob7o"]
-[ext_resource type="PackedScene" uid="uid://cl3qaa7v2firj" path="res://scenes/blocks/Block.tscn" id="7_6rl06"]
+[ext_resource type="Script" uid="uid://c4708eafwtnsq" path="res://script/core/blocks/Block.cs" id="7_mgs6c"]
 [ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://script/core/battle/Bot.cs" id="8_pfxs1"]
 [ext_resource type="Script" uid="uid://6sss02jpn8cx" path="res://script/core/battle/BattleContext.cs" id="9_g3qtk"]
 [ext_resource type="Texture2D" uid="uid://cf4v2iab8itpa" path="res://assets/pictures/bot_frames/BotFrames.png" id="9_q5nyf"]
 [ext_resource type="Texture2D" uid="uid://dssiddkt2lcn0" path="res://assets/pictures/battle_background/UpperLayer.png" id="11_pk84k"]
 
-[sub_resource type="Resource" id="Resource_lacit"]
+[sub_resource type="PackedScene" id="PackedScene_pk84k"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [],
+"names": PackedStringArray("Block", "Node2D", "script"),
+"node_count": 1,
+"node_ids": PackedInt32Array(0),
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 1, 2, 0, 0),
+"variants": [ExtResource("7_mgs6c")],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_3sky7"]
+script = ExtResource("4_mgs6c")
+metadata/_custom_type_script = "uid://cvuhmr6a7300r"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_7ob7o"]
+load_path = "res://.godot/imported/Blank-G.png-0b027e1bc0dda71058c3606a74733819.ctex"
+
+[sub_resource type="Resource" id="Resource_6rl06"]
+script = ExtResource("5_pk84k")
+PartId = "EgPart"
+SpriteTexture = SubResource("CompressedTexture2D_7ob7o")
+Behaviors = Array[Resource]([SubResource("Resource_3sky7")])
+MovingDirection = Vector2i(0, 1)
+metadata/_custom_type_script = "uid://cxi0d1tnlamis"
+
+[sub_resource type="Resource" id="Resource_pfxs1"]
+script = ExtResource("4_mgs6c")
+metadata/_custom_type_script = "uid://cvuhmr6a7300r"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_g3qtk"]
+load_path = "res://.godot/imported/Blank-G.png-0b027e1bc0dda71058c3606a74733819.ctex"
+
+[sub_resource type="Resource" id="Resource_s833s"]
+script = ExtResource("5_pk84k")
+PartId = "EgPart2"
+PartialPosition = Vector2(0, 1)
+SpriteTexture = SubResource("CompressedTexture2D_g3qtk")
+Behaviors = Array[Resource]([SubResource("Resource_pfxs1")])
+MovingDirection = Vector2i(0, 1)
+metadata/_custom_type_script = "uid://cxi0d1tnlamis"
+
+[sub_resource type="Resource" id="Resource_nw8o3"]
 script = ExtResource("4_pk84k")
-PartDefinitions = Array[Object]([ExtResource("2_q5nyf"), ExtResource("3_mgs6c")])
+PartDefinitions = Array[Object]([SubResource("Resource_6rl06"), SubResource("Resource_s833s")])
 metadata/_custom_type_script = "uid://bvya8542g7of3"
 
-[sub_resource type="Resource" id="Resource_fbjyi"]
+[sub_resource type="Resource" id="Resource_qa7bh"]
 script = ExtResource("4_pk84k")
 PartDefinitions = Array[Object]([ExtResource("5_3sky7")])
 metadata/_custom_type_script = "uid://bvya8542g7of3"
@@ -145,13 +191,14 @@ animations = [{
 "speed": 16.0
 }]
 
-[node name="Battle" type="Node2D" unique_id=738558309]
+[node name="Battle" type="Node2D" unique_id=738558309 node_paths=PackedStringArray("_blockFactory")]
 z_index = 100
 script = ExtResource("1_2ckr4")
-_availableBlockDefs = Array[Object]([SubResource("Resource_lacit"), SubResource("Resource_fbjyi")])
+_blockFactory = NodePath("BlockFactory")
 
 [node name="BlockFactory" parent="." unique_id=765646037 instance=ExtResource("6_7ob7o")]
-_blockScene = ExtResource("7_6rl06")
+_blockScene = SubResource("PackedScene_pk84k")
+_availableBlockDefs = Array[Object]([SubResource("Resource_nw8o3"), SubResource("Resource_qa7bh")])
 
 [node name="Bot" type="Node2D" parent="." unique_id=1956716059 node_paths=PackedStringArray("_battleContext")]
 script = ExtResource("8_pfxs1")
@@ -179,8 +226,6 @@ offset_top = 905.0
 offset_right = 1887.0
 offset_bottom = 1032.0
 text = "Start Turn"
-
-[node name="BattleManager" type="Node2D" parent="." unique_id=49041767]
 
 [node name="BattleContext" type="Node" parent="." unique_id=833329648 groups=["BattleContext"]]
 script = ExtResource("9_g3qtk")

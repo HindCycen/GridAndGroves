@@ -3,6 +3,12 @@ using System;
 
 public partial class BlockFactory : Node2D {
     [Export] private PackedScene _blockScene;
+    [Export] public BlockDef[] _availableBlockDefs;
+    
+    public enum BlockNames {
+        ExampleBlock,
+        ExampleMovingRight,
+    }
 
     public Block CreateBlock(BlockDef definition, Vector2 globalPosition, Node parent) {
         if (_blockScene == null) {
