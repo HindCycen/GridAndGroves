@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://script/core/battle/Bot.cs" id="8_pfxs1"]
 [ext_resource type="Script" uid="uid://6sss02jpn8cx" path="res://script/core/battle/BattleContext.cs" id="9_g3qtk"]
 [ext_resource type="Texture2D" uid="uid://cf4v2iab8itpa" path="res://assets/pictures/bot_frames/BotFrames.png" id="9_q5nyf"]
+[ext_resource type="Texture2D" uid="uid://dssiddkt2lcn0" path="res://assets/pictures/battle_background/UpperLayer.png" id="11_pk84k"]
 
 [sub_resource type="Resource" id="Resource_lacit"]
 script = ExtResource("4_pk84k")
@@ -145,6 +146,7 @@ animations = [{
 }]
 
 [node name="Battle" type="Node2D" unique_id=738558309]
+z_index = 100
 script = ExtResource("1_2ckr4")
 _availableBlockDefs = Array[Object]([SubResource("Resource_lacit"), SubResource("Resource_fbjyi")])
 
@@ -164,6 +166,7 @@ shape = SubResource("CircleShape2D_880dk")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Bot" unique_id=1054380748]
 unique_name_in_owner = true
 z_index = 100
+position = Vector2(48, 48)
 sprite_frames = SubResource("SpriteFrames_lo8qj")
 animation = &"bot_animation"
 frame = 1
@@ -171,13 +174,20 @@ frame_progress = 0.044673927
 
 [node name="Button" type="Button" parent="." unique_id=1011671334]
 unique_name_in_owner = true
-offset_left = 1561.0
-offset_top = 225.0
-offset_right = 1835.0
-offset_bottom = 352.0
+offset_left = 1613.0
+offset_top = 905.0
+offset_right = 1887.0
+offset_bottom = 1032.0
 text = "Start Turn"
 
 [node name="BattleManager" type="Node2D" parent="." unique_id=49041767]
 
 [node name="BattleContext" type="Node" parent="." unique_id=833329648 groups=["BattleContext"]]
 script = ExtResource("9_g3qtk")
+
+[node name="BackgroundAnimator" type="Node2D" parent="." unique_id=333254833]
+
+[node name="UpperLayer" type="Sprite2D" parent="BackgroundAnimator" unique_id=993107428]
+z_index = -1
+texture = ExtResource("11_pk84k")
+offset = Vector2(480, 540)
