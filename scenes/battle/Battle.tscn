@@ -213,7 +213,6 @@ shape = SubResource("CircleShape2D_880dk")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Bot" unique_id=1054380748]
 unique_name_in_owner = true
 z_index = 100
-position = Vector2(48, 48)
 sprite_frames = SubResource("SpriteFrames_lo8qj")
 animation = &"bot_animation"
 frame = 1

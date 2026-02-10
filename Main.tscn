@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dowu1ejcjyr7i"]
 
 [ext_resource type="Script" uid="uid://cx03t1qwuidh7" path="res://Main.cs" id="1_glv2v"]
-[ext_resource type="Resource" uid="uid://v8e7agvlegla" path="res://resources/blockparts/ExampleBlock.tres" id="2_cm0pq"]
+[ext_resource type="Resource" uid="uid://v8e7agvlegla" path="res://resources/blockdefs/ExampleBlock.tres" id="2_cm0pq"]
 [ext_resource type="PackedScene" uid="uid://b60dfxx05x70c" path="res://scenes/blocks/BlockFactory.tscn" id="2_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://cl3qaa7v2firj" path="res://scenes/blocks/Block.tscn" id="3_r0du0"]
 
