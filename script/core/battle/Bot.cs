@@ -15,8 +15,8 @@ public partial class Bot : Node2D {
         _battleContext.SayBattleStarted();
         Visible = false;
         _detectionArea.Monitoring = false;
-        // 延迟初始化 GoToStarterPoint()，等待Global完全初始化
-        // 将在 _Process() 首帧时执行
+        // 没招了 这里Godot初始化节点的顺序不固定, Global在这里可能还不存在 傻逼Godot
+        // 所以延迟初始化 GoToStarterPoint(), _Process()第一帧再运行
 
         GetNode<Button>("%Button").Pressed += () => {
             _battleContext.SayTurnStarted();
@@ -40,7 +40,7 @@ public partial class Bot : Node2D {
     }
 
     public override void _Process(double delta) {
-        // 延迟初始化直到 Global 完全初始化
+        // 嗯对放到这里了
         if (!_initialized && Global.GridPoints != null) {
             _initialized = true;
             GoToStarterPoint();
