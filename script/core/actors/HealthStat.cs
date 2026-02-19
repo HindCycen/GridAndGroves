@@ -5,10 +5,17 @@ public partial class HealthStat : Node {
     private int _maxHP = 100;
     private int _hp = 100;
 
+    [Signal]
+    public delegate void HealthChangedEventHandler(int currentHP, int deltaHP, int maxHP);
+
     /// <summary> Current HP value </summary>
     public int HP {
         get => _hp;
-        set => _hp = Mathf.Clamp(value, 0, _maxHP);
+        set {
+            _hp = Mathf.Clamp(value, 0, _maxHP);
+            EmitSignalHealthChanged(HP, value - _hp, MaxHP);
+        }
+
     }
 
     /// <summary> Maximum HP value </summary>

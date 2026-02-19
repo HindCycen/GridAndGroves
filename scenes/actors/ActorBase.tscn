@@ -11,10 +11,10 @@ script = ExtResource("1_hjw2g")
 
 [node name="Stats" type="Node2D" parent="." unique_id=1242805779]
 
-[node name="HealthStat" type="Node" parent="Stats" unique_id=2087447153]
+[node name="HealthStat" type="Node" parent="Stats" unique_id=2087447153 groups=["HealthStat"]]
 script = ExtResource("2_uq86y")
 
-[node name="ShieldStat" type="Node" parent="Stats" unique_id=1582644311]
+[node name="ShieldStat" type="Node" parent="Stats" unique_id=1582644311 groups=["ShieldStat"]]
 script = ExtResource("3_nsqqd")
 
 [node name="StatusController" type="Node" parent="Stats" unique_id=1698685847]

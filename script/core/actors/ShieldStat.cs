@@ -4,10 +4,16 @@ using System;
 public partial class ShieldStat : Node {
     private int _shield = 0;
 
+    [Signal] public delegate void ShieldChangedEventHandler(int currentShield, int deltaShield);
+
     /// <summary> Current shield value </summary>
     public int Shield {
         get => _shield;
-        set => _shield = Mathf.Max(0, value);
+        set {
+            EmitSignalShieldChanged(Shield, value - _shield);
+            _shield = Mathf.Max(0, value);
+        }
+
     }
 
     /// <summary> Increase shield </summary>

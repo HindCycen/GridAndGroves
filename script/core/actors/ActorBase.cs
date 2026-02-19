@@ -42,10 +42,12 @@ public partial class ActorBase : Node2D {
         AddChild(_shieldStat);
 
         // Initialize health
+        _healthStat.HealthChanged += OnHealthChanged;
         _healthStat.Initialize(MaxHP);
         _healthStat.OnDie = Die;
 
         // Initialize shield
+        _shieldStat.ShieldChanged += OnShieldChanged;
         _shieldStat.ResetShield();
     }
 
@@ -70,5 +72,13 @@ public partial class ActorBase : Node2D {
     /// <summary> Called when actor dies </summary>
     protected virtual void Die(ActorBase actor) {
         GD.Print($"{Name} has died.");
+    }
+
+    protected virtual void OnHealthChanged(int currentHP, int changeAmount, int maxHP) {
+        // Override in derived classes for custom behavior on health change
+    }
+
+    protected virtual void OnShieldChanged(int currentShield, int changeAmount) {
+        // Override in derived classes for custom behavior on shield change
     }
 }
