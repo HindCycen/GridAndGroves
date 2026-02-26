@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://0w3x4gxmnwia"]
+[gd_resource type="Resource" format=3 uid="uid://0w3x4gxmnwia"]
 
 [ext_resource type="Script" uid="uid://tdr43fbm6use" path="res://resources/blockpart_behaviors/MoveRightBehavior.cs" id="1_2cu1m"]
 [ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://script/core/blocks/BlockPartDef.cs" id="1_kqin3"]
-[ext_resource type="Texture2D" uid="uid://g3h14e6y06yq" path="res://assets/pictures/blockpart_picture/green/Right-G.png" id="2_pc027"]
+[ext_resource type="Texture2D" uid="uid://c0seqw01i8tls" path="res://assets/pictures/blockpart_picture/green/Right-G.png" id="2_pc027"]
 
 [sub_resource type="Resource" id="Resource_r386g"]
 script = ExtResource("1_2cu1m")

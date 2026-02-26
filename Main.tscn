@@ -5,9 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://b60dfxx05x70c" path="res://scenes/blocks/BlockFactory.tscn" id="2_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://cl3qaa7v2firj" path="res://scenes/blocks/Block.tscn" id="3_r0du0"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=1506877496]
 script = ExtResource("1_glv2v")
 _availableBlockDefs = Array[Object]([ExtResource("2_cm0pq")])
 
-[node name="BlockFactory" parent="." instance=ExtResource("2_uu6xs")]
+[node name="BlockFactory" parent="." unique_id=571489479 instance=ExtResource("2_uu6xs")]
 _blockScene = ExtResource("3_r0du0")

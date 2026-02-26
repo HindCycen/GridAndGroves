@@ -9,8 +9,8 @@
 [ext_resource type="Script" uid="uid://c4708eafwtnsq" path="res://script/core/blocks/Block.cs" id="7_mgs6c"]
 [ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://script/core/battle/Bot.cs" id="8_pfxs1"]
 [ext_resource type="Script" uid="uid://6sss02jpn8cx" path="res://script/core/battle/BattleContext.cs" id="9_g3qtk"]
-[ext_resource type="Texture2D" uid="uid://cf4v2iab8itpa" path="res://assets/pictures/bot_frames/BotFrames.png" id="9_q5nyf"]
-[ext_resource type="Texture2D" uid="uid://dssiddkt2lcn0" path="res://assets/pictures/battle_background/UpperLayer.png" id="11_pk84k"]
+[ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://assets/pictures/bot_frames/BotFrames.png" id="9_q5nyf"]
+[ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://assets/pictures/battle_background/UpperLayer.png" id="11_pk84k"]
 
 [sub_resource type="PackedScene" id="PackedScene_pk84k"]
 _bundled = {
