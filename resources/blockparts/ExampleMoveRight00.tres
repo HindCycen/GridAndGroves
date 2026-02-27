@@ -1,4 +1,4 @@
-[gd_resource type="Resource" format=3 uid="uid://0w3x4gxmnwia"]
+[gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://0w3x4gxmnwia"]
 
 [ext_resource type="Script" uid="uid://tdr43fbm6use" path="res://resources/blockpart_behaviors/MoveRightBehavior.cs" id="1_2cu1m"]
 [ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://script/core/blocks/BlockPartDef.cs" id="1_kqin3"]

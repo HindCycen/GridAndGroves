@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://b60dfxx05x70c"]
-
-[ext_resource type="Script" uid="uid://jxb7ygdh6hld" path="res://script/core/battle/BlockFactory.cs" id="1_4qy4k"]
-
-[node name="BlockFactory" type="Node2D" unique_id=842446387]
-script = ExtResource("1_4qy4k")
