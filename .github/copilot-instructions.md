@@ -17,18 +17,23 @@ script/
 │   │   ├── BlockDef.cs  # Block definition (Resource container)
 │   │   ├── BlockPartDef.cs # BlockPart definition with behaviors
 │   │   ├── BlockPartBehavior.cs # Behavior interface for extensibility
-│   │   └── BlockFactory.cs # Creates blocks from definitions
-│   ├── actors/          # Combat system
+│   ├── actors/          # Combat entities and utilities
 │   │   ├── Actor.cs     # Combat entity (HP, Shield, damage/heal)
 │   │   ├── ActorBase.cs # Base class with MaxHP
+│   │   ├── Player.cs    # Player subclass of Actor
 │   │   ├── Enemy.cs     # Enemy combat unit
-│   │   └── EnemyDef.cs  # Enemy definition (Resource)
+│   │   ├── EnemyDef.cs  # Enemy definition (Resource)
+│   │   ├── EnemyTurnDef.cs # Resource describing enemy block pools/turns
+│   │   ├── BattleController.cs # Lightweight enemy turn helper (attached to Enemy)
+│   │   ├── HealthStat.cs # HP management component
+│   │   └── ShieldStat.cs # Shield/absorption component
 │   └── battle/          # Turn-based battle flow
-│       ├── Battle.cs    # Main battle scene
+│       ├── Battle.cs    # Main battle scene script
 │       ├── BattleContext.cs # Signal hub (turn coordination)
-│       └── Bot.cs       # AI controller
+│       └── Bot.cs       # AI controller for player/enemy
 ├── global/              # Global game state and utilities (under `script/global`)
 │   ├── Global.cs        # Base abstract class for static utilities
+│   ├── GlobalBlockInitializer.cs # Block registry and factory replacement
 │   ├── GlobalGridControlling.cs # Grid state management (7×5 indexed)
 │   ├── GlobalGridSizeConstants.cs # Pixel/grid constants
 │   ├── GlobalRandSetter.cs # Seeded RNG for reproducibility
@@ -47,9 +52,15 @@ scenes/                  # Packed scenes used by the game (actors, battle, block
    - `Global.InitGrids()` - Initializes grid points and states
 
 2. **Block Creation**:
-   - `BlockFactory.CreateBlock()` receives a `BlockDef` resource
-   - Creates `Block` instance and attaches `BlockPart` children per definition
-   - Parts positioned using `BlockPartDef.PartialPosition * GridSize`
+   - Definitions are registered via `Global.SubscribeBlockDef(blockDef)` (often
+     in a `Battle` or `Main` scene `_initializeBlocks()` method).
+   - Blocks are instantiated at runtime with
+     `Global.GetBlock("BlockName", position, parent)` which loads
+     `Block.tscn`, sets `Definition`, and adds it to the scene tree.
+   - The newly created block automatically builds its `BlockPart` children and
+     positions them using `BlockPartDef.PartialPosition * GridSize`.
+   - The legacy `BlockFactory` class was removed; the global registry replaces
+     its functionality.
 
 3. **Placement Workflow**:
    - User clicks BlockPart → emits `Pressed` signal to parent Block
@@ -63,11 +74,13 @@ scenes/                  # Packed scenes used by the game (actors, battle, block
 ## Critical Patterns
 
 ### Block Composition
+
 - **One Block = Multiple BlockParts**: A `Block` is a container; `BlockParts` are clickable/interactive units (see `Block.LoadParts()`)
 - **Position Calculation**: Part position = `PartDefinition.PartialPosition * GridSize` (additive to parent Block position)
 - **Signals Over Direct Calls**: BlockParts emit `Pressed`/`Released` signals; Block listens for state changes
 
 ### Grid System
+
 - **7×5 Grid** indexed by `[col, row]`: stored in `Global.GridPoints[col, row]` (7 columns, 5 rows)
 - **GridStates enum**: `Free` (available), `Unable` (locked row/col), `Occupied` (placed block)
 - **Row/Col Locking**: `UnlockedRows[5]` and `UnlockedCols[7]` control available placement areas via `InitUnlockedState()`
@@ -75,11 +88,13 @@ scenes/                  # Packed scenes used by the game (actors, battle, block
 - **Grid Bounds**: `GridLeftUp = (240, 480)px`, `GridRightDown = (912, 960)px` (pixel coordinates)
 
 ### RNG for Determinism
+
 - Five isolated RNG streams (map, monster, reward, chest, misc) seeded from single `_currentSeed`
 - All RNG methods use `RandiRange(0, scope-1)` pattern
 - Enables replay/testing with fixed seeds
 
 ### BlockPartBehavior Extension Pattern
+
 - Behaviors are polymorphic `Resource` instances attached to `BlockPartDef.Behaviors[]`
 - Executed via `BlockPart.Execute(Block owner)` which calls `behavior.Execute(Block, BlockPart)` for each behavior
 - New behaviors inherit from `BlockPartBehavior`, implement `Execute(Block owner, BlockPart part)` abstract method
@@ -94,20 +109,24 @@ scenes/                  # Packed scenes used by the game (actors, battle, block
 - **Resource Definitions**: Separate `*Def` classes inherit from Godot `Resource` for serialization
 
 ### Battle System & Signal Flow
+
 - `BattleContext.cs` emits signals: `BattleContextReady`, `BattleStarted`, `TurnStarted`, `TurnEnded`, `BattleEnded`, `TicTac`
-- `Battle.cs` or `Main.cs` instantiates blocks via `BlockFactory`
+- `Battle.cs` (or `Main.cs`) registers block definitions and spawns blocks
+  using `Global.GetBlock` rather than a `BlockFactory` node.
 - Blocks listen to `BattleContext` signals to coordinate lifecycle (subscribe in `_Ready`)
 - Turn lifecycle: `TurnStarted` → block execution phase → `TurnEnded` → cleanup
 
 ## Integration Points
 
 ### Godot Node Tree
-- `Battle` or `Main` scene contains `BlockFactory` as child node
-- `BlockFactory.CreateBlock()` instantiates `Block` scenes dynamically, positions them, adds to scene
+
+- `Battle` or `Main` scene is responsible for subscribing block definitions and
+  may call `Global.GetBlock(...)` to spawn them; there is no `BlockFactory` node
 - `BlockPart` instances auto-initialize `Area2D` + collision shape + sprite in `_Ready()`
 - `BattleContext` added to scene groups for signal discovery
 
 ### External Dependencies
+
 - **Godot 4.6**: C# bindings (export, signals, node hierarchy, partial classes)
 - **Godot.NET.Sdk 4.5.1**: .NET 8.0 (net9.0 on Android target)
 - No external NuGet packages beyond Godot SDK
@@ -115,19 +134,40 @@ scenes/                  # Packed scenes used by the game (actors, battle, block
 ## Development Workflow
 
 ### Common Tasks
-1. **Adding Block Types**: 
-   - Create `.tres` BlockDef resource in `resources/blockparts/`
-   - Create child `.tres` BlockPartDef resources with `SpriteTexture`, `PartialPosition`, optional `Behaviors[]`
-   - Reference in `Battle.cs` or `Main.cs` `_availableBlockDefs` export array
-   - Example: `ExampleBlock.tres` with `ExampleBlockPart00.tres`, `ExampleBlockPart01.tres`
-2. **Implementing Behaviors**: 
-   - Create class inheriting `BlockPartBehavior` in `resources/blockpart_behaviors/`
-   - Implement `Execute(Block owner, BlockPart part)` with behavior logic
-   - Assign to `BlockPartDef.Behaviors[]` array in editor
-3. **Testing Placement Logic**: Modify `CheckConditionP()`, `CheckConditionQ()`, or `CheckConditionR()` in `Block.cs`
-4. **Grid Tweaks**: Edit `GlobalGridSizeConstants.cs` (PxSize=120, GridSize=96, HalfGridSize=48)
+
+1. **Adding Block Types**:
+   - Create a `.tres` `BlockDef` resource in `resources/blockparts/`.
+   - Create associated `BlockPartDef` resources with `SpriteTexture`,
+     `PartialPosition`, optional `Behaviors[]` and other properties.
+   - Load and subscribe the definition during scene initialization with
+     `Global.SubscribeBlockDef(GD.Load<BlockDef>("res://resources/blockdefs/Your.tres"))`.
+   - Instantiate blocks at runtime via `Global.GetBlock("YourName", pos, this)`.
+   - The sample `Battle.cs` shows `ExampleBlock.tres` and
+     `ExampleMoveRight.tres` being registered and spawned.
+
+2. **Implementing Behaviors**:
+   - Add a new class inheriting `BlockPartBehavior` under
+     `resources/blockpart_behaviors/`.
+   - Override `Execute(Block owner, BlockPart part)` with your custom logic.
+   - Link the behavior asset to a `BlockPartDef.Behaviors[]` array in the editor.
+
+3. **Working with Actors and Stats**:
+   - Use `HealthStat` and `ShieldStat` nodes on `Actor` instances for
+     hitpoints and shield mechanics. Call `ApplyDamage`, `Heal`, etc.
+   - Enemy data is described by `EnemyDef` and `EnemyTurnDef` resources; load
+     them to configure enemy behavior loops.
+
+4. **Testing Placement Logic**:
+   - Modify `CheckConditionP()`, `CheckConditionQ()`, or `CheckConditionR()` in
+     `Block.cs` to tweak validity rules.
+
+5. **Grid Tweaks**:
+   - Adjust pixel constants in `GlobalGridSizeConstants.cs` (PxSize=120,
+     GridSize=96, HalfGridSize=48) or modify unlocked rows/columns via
+     `GlobalGridControlling` methods.
 
 ### Build/Run
+
 - Build as Godot C# project: `dotnet build` or F5 in Godot editor
 - Main scene: `uid://dowu1ejcjyr7i` (Main.tscn or Battle.tscn)
 - Window: 960×540 display, 1920×1080 internal viewport (2× scaling)
@@ -135,12 +175,17 @@ scenes/                  # Packed scenes used by the game (actors, battle, block
 
 ## Areas Under Development
 
-- Block behavior execution and resolution phase (turn order, damage application)
-- Roguelike progression: monster/reward systems referenced in RNG but UI/balance not implemented
+- Block behavior execution and resolution phase (turn order, damage application) continues
+  to be a focus; `ExecutingDamage*` behaviors are early examples.
+- Roguelike progression: monster/reward systems referenced in RNG but UI/balance
+  not implemented; enemy definitions (`EnemyDef` / `EnemyTurnDef`) are scaffolding.
 - Grid unlock progression mechanics (roguelike dungeon flow, dynamic row/col unlocking)
-- Enemy AI and turn-based combat resolution
-- Comprehensive behavior validation and chaining
+  remain a planned feature.
+- Enemy AI and turn-based combat resolution are primitive; `Bot.cs` and
+  `BattleController` exist but are minimal.
+- Comprehensive behavior validation and chaining (multiple effects per part) need
+  polish and testing.
 
 ---
 
-**Last Updated**: 2026-02-09 | **Godot Version**: 4.6 | **Runtime**: .NET 8.0+ | **Grid**: 7×5 cells
+**Last Updated**: 2026-02-27 | **Godot Version**: 4.6 | **Runtime**: .NET 8.0+ | **Grid**: 7×5 cells
