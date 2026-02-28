@@ -10,8 +10,8 @@ metadata/_custom_type_script = "uid://cvuhmr6a7300r"
 
 [resource]
 script = ExtResource("2_j8gbw")
-PartId = "EgPart"
-SpriteTexture = ExtResource("2_7bwt4")
 Behaviors = Array[Resource]([SubResource("Resource_j8gbw")])
 MovingDirection = Vector2i(0, 1)
+PartId = "EgPart"
+SpriteTexture = ExtResource("2_7bwt4")
 metadata/_custom_type_script = "uid://cxi0d1tnlamis"
