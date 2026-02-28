@@ -1,4 +1,4 @@
-using Godot;
+﻿using Godot;
 using System;
 using System.Collections.Generic;
 
@@ -11,10 +11,12 @@ public abstract partial class Global {
             GD.PrintErr("ParseError: One blockdef is null");
             return false;
         }
+
         if (BlockDefs.ContainsKey(blockDef.BlockName)) {
             GD.PrintErr($"ParseError: Blockdef with name {blockDef.BlockName} already exists");
             return false;
         }
+
         BlockDefs[blockDef.BlockName] = blockDef;
         return true;
     }
@@ -25,6 +27,7 @@ public abstract partial class Global {
             GD.PushError($"BlockFactory: No blockdef with name {blockName} found");
             return null;
         }
+
         var blockDef = BlockDefs[blockName];
         var block = GD.Load<PackedScene>("res://scenes/blocks/Block.tscn").Instantiate<Block>();
         block.Definition = blockDef;

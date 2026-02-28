@@ -1,4 +1,4 @@
-using Godot;
+﻿using Godot;
 using System;
 
 public partial class HealthStat : Node {
@@ -15,7 +15,6 @@ public partial class HealthStat : Node {
             _hp = Mathf.Clamp(value, 0, _maxHP);
             EmitSignalHealthChanged(HP, value - _hp, MaxHP);
         }
-
     }
 
     /// <summary> Maximum HP value </summary>

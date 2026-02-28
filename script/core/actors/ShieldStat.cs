@@ -1,10 +1,11 @@
-using Godot;
+﻿using Godot;
 using System;
 
 public partial class ShieldStat : Node {
     private int _shield = 0;
 
-    [Signal] public delegate void ShieldChangedEventHandler(int currentShield, int deltaShield);
+    [Signal]
+    public delegate void ShieldChangedEventHandler(int currentShield, int deltaShield);
 
     /// <summary> Current shield value </summary>
     public int Shield {
@@ -13,7 +14,6 @@ public partial class ShieldStat : Node {
             EmitSignalShieldChanged(Shield, value - _shield);
             _shield = Mathf.Max(0, value);
         }
-
     }
 
     /// <summary> Increase shield </summary>

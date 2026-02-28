@@ -1,4 +1,4 @@
-using Godot;
+﻿using Godot;
 using System;
 
 public abstract partial class Global {
@@ -10,7 +10,8 @@ public abstract partial class Global {
     public static GridState[,] GridStates;
 
     public static bool IsPointInGrid(Vector2 point) {
-        return point.X >= GridLeftUp.X && point.X <= GridRightDown.X && point.Y >= GridLeftUp.Y && point.Y <= GridRightDown.Y;
+        return point.X >= GridLeftUp.X && point.X <= GridRightDown.X && point.Y >= GridLeftUp.Y &&
+               point.Y <= GridRightDown.Y;
     }
 
     public static Vector2 FindNearestGridPoint(Vector2 targetPoint) {
@@ -41,7 +42,6 @@ public abstract partial class Global {
         if (row >= 0 && row < UnlockedRows.Length) {
             UnlockedRows[row] = true;
         }
-
     }
 
     public static void UnlockCol(int col) {
@@ -54,6 +54,7 @@ public abstract partial class Global {
         if (row >= 0 && row < UnlockedRows.Length) {
             return UnlockedRows[row];
         }
+
         return false;
     }
 
@@ -61,6 +62,7 @@ public abstract partial class Global {
         if (col >= 0 && col < UnlockedCols.Length) {
             return UnlockedCols[col];
         }
+
         return false;
     }
 
@@ -79,10 +81,12 @@ public abstract partial class Global {
         GridPoints = new Vector2[7, 5];
         GridStates = new GridState[7, 5];
 
-        for (int i = 0; i < 7; i++) {  // 7列
-            for (int j = 0; j < 5; j++) {  // 5行
+        for (int i = 0; i < 7; i++) {
+            // 7列
+            for (int j = 0; j < 5; j++) {
+                // 5行
                 GridPoints[i, j] = new Vector2(i * GridSize, j * GridSize) +
-                    new Vector2(2 * PxSize + HalfGridSize, 4 * PxSize + HalfGridSize);
+                                   new Vector2(2 * PxSize + HalfGridSize, 4 * PxSize + HalfGridSize);
                 GridStates[i, j] = (IsRowUnlocked(j) && IsColUnlocked(i)) ? GridState.Free : GridState.Unable;
             }
         }
@@ -92,31 +96,36 @@ public abstract partial class Global {
         for (int col = 0; col < 7; col++) {
             for (int row = 0; row < 5; row++) {
                 if (GridPoints[col, row].Equals(point)) {
-                    return new Vector2I(col, row);  // 返回 (col, row) 坐标
+                    return new Vector2I(col, row); // 返回 (col, row) 坐标
                 }
             }
         }
-        return new Vector2I(-1, -1);  // 没找到匹配的点
+
+        return new Vector2I(-1, -1); // 没找到匹配的点
     }
 
     public static Vector2 GetGridPos(Vector2I coords) {
         if (coords.X >= 0 && coords.X < 7 && coords.Y >= 0 && coords.Y < 5) {
             return GridPoints[coords.X, coords.Y];
         }
+
         GD.PrintErr("Invalid coordinates");
         return Vector2.Zero;
     }
 
     public static void SetGridState(int col, int row, GridState state) {
-        if (col >= 0 && col < 7 && row >= 0 && row < 5) {  // 检查坐标是否在有效范围内
+        if (col >= 0 && col < 7 && row >= 0 && row < 5) {
+            // 检查坐标是否在有效范围内
             GridStates[col, row] = state;
         }
     }
 
     public static GridState GetGridState(int col, int row) {
-        if (col >= 0 && col < 7 && row >= 0 && row < 5) {  // 检查坐标是否在有效范围内
+        if (col >= 0 && col < 7 && row >= 0 && row < 5) {
+            // 检查坐标是否在有效范围内
             return GridStates[col, row];
         }
-        return GridState.Unable;  // 坐标超出范围时返回默认状态
+
+        return GridState.Unable; // 坐标超出范围时返回默认状态
     }
 }

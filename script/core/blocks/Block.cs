@@ -22,6 +22,7 @@ public partial class Block : Node2D {
         else {
             GetTree().Root.Connect("BattleContextReady", new Callable(this, "OnBattleContextReady"));
         }
+
         OriginalPos = GlobalPosition;
         LoadParts();
     }
@@ -68,8 +69,10 @@ public partial class Block : Node2D {
                             GlobalPosition = Global.FindNearestGridPoint(GlobalPosition);
                             foreach (var part in _parts) {
                                 var nearestGridPoint = Global.FindNearestGridPoint(part.GlobalPosition);
-                                Global.SetGridState((int) nearestGridPoint.X, (int) nearestGridPoint.Y, Global.GridState.Occupied);
+                                Global.SetGridState((int) nearestGridPoint.X, (int) nearestGridPoint.Y,
+                                    Global.GridState.Occupied);
                             }
+
                             IsPlaced = true;
                         }
                         else {
@@ -86,11 +89,13 @@ public partial class Block : Node2D {
         if (IsPlaced) {
             return true;
         }
+
         foreach (var part in _parts) {
             if (!Global.IsPointInGrid(part.GlobalPosition)) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -98,11 +103,13 @@ public partial class Block : Node2D {
         if (IsPlaced) {
             return true;
         }
+
         foreach (var part in _parts) {
             var nearestGridPoint = Global.FindNearestGridPoint(part.GlobalPosition);
             if (!Global.IsPointInGrid(nearestGridPoint)) {
                 return false;
             }
+
             var gridIndex = Global.GetGridCoords(nearestGridPoint);
             if (gridIndex.X < 0 ||
                 gridIndex.Y < 0 ||
@@ -110,10 +117,12 @@ public partial class Block : Node2D {
                 gridIndex.Y >= Global.GridSize) {
                 return false;
             }
+
             if (Global.GridStates[gridIndex.X, gridIndex.Y] != Global.GridState.Free) {
                 return false;
             }
         }
+
         return true;
     }
 

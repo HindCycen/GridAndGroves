@@ -15,7 +15,7 @@ public partial class Battle : Node2D {
     private void AutoRegisterBlocks() {
         var types = Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t.GetCustomAttribute<BlockRegistererAttribute>() != null
-                && typeof(AbstractBlockRegisterer).IsAssignableFrom(t));
+                        && typeof(AbstractBlockRegisterer).IsAssignableFrom(t));
         foreach (var type in types) {
             if (Activator.CreateInstance(type) is AbstractBlockRegisterer registerer) {
                 registerer.Register();

@@ -1,4 +1,4 @@
-using Godot;
+﻿using Godot;
 using System;
 
 public abstract partial class Global {
@@ -36,18 +36,18 @@ public abstract partial class Global {
 
     public static void InitRng() {
         _mapRand = new RandomNumberGenerator();
-        _mapRand.Seed = (ulong)_currentSeed;
+        _mapRand.Seed = (ulong) _currentSeed;
 
         _monsterRand = new RandomNumberGenerator();
-        _monsterRand.Seed = (ulong)_currentSeed;
+        _monsterRand.Seed = (ulong) _currentSeed;
 
         _rewardRand = new RandomNumberGenerator();
-        _rewardRand.Seed = (ulong)_currentSeed;
+        _rewardRand.Seed = (ulong) _currentSeed;
 
         _chestRand = new RandomNumberGenerator();
-        _chestRand.Seed = (ulong)_currentSeed;
+        _chestRand.Seed = (ulong) _currentSeed;
 
         _miscRand = new RandomNumberGenerator();
-        _miscRand.Seed = (ulong)_currentSeed;
+        _miscRand.Seed = (ulong) _currentSeed;
     }
 }
