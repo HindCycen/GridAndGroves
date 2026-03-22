@@ -1,7 +1,11 @@
+#region
+
 using Godot;
-using System;
+
+#endregion
 
 [GlobalClass]
 public abstract partial class Global : RefCounted {
-    private Global() { }
+    private Global() {
+    }
 }

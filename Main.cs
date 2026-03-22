@@ -1,5 +1,8 @@
+#region
+
 using Godot;
-using System;
+
+#endregion
 
 public partial class Main : Node2D {
     [Export] private BlockDef[] _availableBlockDefs;

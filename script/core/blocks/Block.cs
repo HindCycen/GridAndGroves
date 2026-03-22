@@ -1,17 +1,20 @@
-using Godot;
-using System;
+#region
+
 using System.Collections.Generic;
 using System.Linq;
+using Godot;
+
+#endregion
 
 // ReSharper disable CheckNamespace
 public partial class Block : Node2D {
-    [Export] public BlockDef Definition;
-    private List<BlockPart> _parts = [];
     private BattleContext _battleContext;
+    private readonly List<BlockPart> _parts = [];
+    private bool _wasPlaced;
+    [Export] public BlockDef Definition;
+    public bool IsPlaced;
+    public bool IsPressed;
     public Vector2 OriginalPos;
-    public bool IsPressed = false;
-    public bool IsPlaced = false;
-    private bool _wasPlaced = false;
 
     public override void _Ready() {
         var battleContexts = GetTree().GetNodesInGroup("BattleContext");
@@ -22,6 +25,7 @@ public partial class Block : Node2D {
         else {
             GetTree().Root.Connect("BattleContextReady", new Callable(this, "OnBattleContextReady"));
         }
+
         OriginalPos = GlobalPosition;
         LoadParts();
     }
@@ -68,8 +72,10 @@ public partial class Block : Node2D {
                             GlobalPosition = Global.FindNearestGridPoint(GlobalPosition);
                             foreach (var part in _parts) {
                                 var nearestGridPoint = Global.FindNearestGridPoint(part.GlobalPosition);
-                                Global.SetGridState((int) nearestGridPoint.X, (int) nearestGridPoint.Y, Global.GridState.Occupied);
+                                Global.SetGridState((int) nearestGridPoint.X, (int) nearestGridPoint.Y,
+                                    Global.GridState.Occupied);
                             }
+
                             IsPlaced = true;
                         }
                         else {
@@ -86,11 +92,13 @@ public partial class Block : Node2D {
         if (IsPlaced) {
             return true;
         }
+
         foreach (var part in _parts) {
             if (!Global.IsPointInGrid(part.GlobalPosition)) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -98,11 +106,13 @@ public partial class Block : Node2D {
         if (IsPlaced) {
             return true;
         }
+
         foreach (var part in _parts) {
             var nearestGridPoint = Global.FindNearestGridPoint(part.GlobalPosition);
             if (!Global.IsPointInGrid(nearestGridPoint)) {
                 return false;
             }
+
             var gridIndex = Global.GetGridCoords(nearestGridPoint);
             if (gridIndex.X < 0 ||
                 gridIndex.Y < 0 ||
@@ -110,10 +120,12 @@ public partial class Block : Node2D {
                 gridIndex.Y >= Global.GridSize) {
                 return false;
             }
+
             if (Global.GridStates[gridIndex.X, gridIndex.Y] != Global.GridState.Free) {
                 return false;
             }
         }
+
         return true;
     }
 

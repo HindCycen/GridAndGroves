@@ -1,19 +1,20 @@
-using Godot;
-using System;
-using System.Runtime.Serialization;
+#region
 
+using Godot;
+
+#endregion
 
 public partial class BlockPart : Node2D {
-    [Export] public BlockPartDef PartDefinition { get; set; }
-    private Area2D _detectingArea = new();
-    private CollisionShape2D _detectingCollisionShape = new();
-    private Sprite2D _sprite2D = new();
-
     [Signal]
     public delegate void PressedEventHandler(Node n);
 
     [Signal]
     public delegate void ReleasedEventHandler(Node n);
+
+    private Area2D _detectingArea = new();
+    private CollisionShape2D _detectingCollisionShape = new();
+    private Sprite2D _sprite2D = new();
+    [Export] public BlockPartDef PartDefinition { get; set; }
 
     public override void _Ready() {
         var shape2D = new RectangleShape2D();

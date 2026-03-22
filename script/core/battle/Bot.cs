@@ -1,13 +1,16 @@
+#region
+
 using Godot;
-using System;
+
+#endregion
 
 public partial class Bot : Node2D {
-    private Area2D _detectionArea;
-    private Vector2I _currentGridPos;
-    private Vector2I _currentDirection = Vector2I.Down;
     private AnimatedSprite2D _animatedSprite2D;
     [Export] private BattleContext _battleContext;
-    private bool _initialized = false;
+    private Vector2I _currentDirection = Vector2I.Down;
+    private Vector2I _currentGridPos;
+    private Area2D _detectionArea;
+    private bool _initialized;
 
     public override void _Ready() {
         _detectionArea = GetNode<Area2D>("%DetectionArea");
@@ -23,9 +26,7 @@ public partial class Bot : Node2D {
             _detectionArea.Monitoring = true;
             Visible = true;
             _animatedSprite2D.Play("bot_animation");
-            GetTree().CreateTimer(1.0f).Timeout += () => {
-                GoToNextGridPos(_currentDirection);
-            };
+            GetTree().CreateTimer(1.0f).Timeout += () => { GoToNextGridPos(_currentDirection); };
         };
 
         _detectionArea.AreaEntered += area => {
@@ -52,7 +53,7 @@ public partial class Bot : Node2D {
         GlobalPosition = new Vector2(
             Global.GetGridPos(new Vector2I(0, 0)).X,
             Global.GetGridPos(new Vector2I(0, 0)).Y - Global.GridSize
-            );
+        );
         _currentGridPos = new Vector2I(0, -1);
         _animatedSprite2D.Stop();
         Visible = false;
@@ -60,17 +61,15 @@ public partial class Bot : Node2D {
 
     private void GoToNextGridPos() {
         _currentGridPos =
-            _currentGridPos.Y == 4 ?
-            (_currentGridPos.X < 6 ?
-                new Vector2I(_currentGridPos.X + 1, 0) :
-                new Vector2I(0, -1)) :
-            new Vector2I(_currentGridPos.X, _currentGridPos.Y + 1);
-        GlobalPosition = _currentGridPos.Equals(new Vector2I(0, -1)) ?
-            new Vector2(
+            _currentGridPos.Y == 4
+                ? _currentGridPos.X < 6 ? new Vector2I(_currentGridPos.X + 1, 0) : new Vector2I(0, -1)
+                : new Vector2I(_currentGridPos.X, _currentGridPos.Y + 1);
+        GlobalPosition = _currentGridPos.Equals(new Vector2I(0, -1))
+            ? new Vector2(
                 Global.GetGridPos(new Vector2I(0, 0)).X,
                 Global.GetGridPos(new Vector2I(0, 0)).Y - Global.GridSize
-            ) :
-            Global.GetGridPos(_currentGridPos);
+            )
+            : Global.GetGridPos(_currentGridPos);
     }
 
     private void GoToNextGridPos(Vector2I Direction) {
@@ -88,12 +87,14 @@ public partial class Bot : Node2D {
             else if (_currentGridPos.X < 0) {
                 _currentGridPos = new Vector2I(6, _currentGridPos.Y - 1);
             }
+
             if (_currentGridPos.Y > 4) {
                 _currentGridPos = new Vector2I(_currentGridPos.X + 1, 0);
             }
             else if (_currentGridPos.Y < 0) {
                 _currentGridPos = new Vector2I(_currentGridPos.X - 1, 4);
             }
+
             GlobalPosition = Global.GetGridPos(_currentGridPos);
             GetTree().CreateTimer(1.0f).Timeout += () => {
                 _battleContext.SayTicTac();

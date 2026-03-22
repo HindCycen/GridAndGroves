@@ -1,5 +1,8 @@
+#region
+
 using Godot;
-using System;
+
+#endregion
 
 [GlobalClass]
 public partial class MoveRightBehavior : BlockPartBehavior {

@@ -1,5 +1,8 @@
+#region
+
 using Godot;
-using System;
+
+#endregion
 
 [GlobalClass]
 public abstract partial class BlockPartBehavior : Resource {
