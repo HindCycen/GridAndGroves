@@ -69,13 +69,13 @@ public partial class Block : Node2D {
                     if (_parts.Contains(n)) {
                         IsPressed = false;
                         if (CheckConditionP() && CheckConditionQ() && CheckConditionR()) {
-                            GlobalPosition = Global.FindNearestGridPoint(GlobalPosition);
+                            GlobalPosition = Glob.FindNearestGridPoint(GlobalPosition);
                             foreach (var part in _parts) {
-                                var nearestGridPoint = Global.FindNearestGridPoint(part.GlobalPosition);
-                                Global.SetGridState((int) nearestGridPoint.X, (int) nearestGridPoint.Y,
-                                    Global.GridState.Occupied);
+                                var nearestGridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
+                                Glob.SetGridState((int) nearestGridPoint.X, (int) nearestGridPoint.Y,
+                                    Glob.GridState.Occupied);
                             }
-
+                    
                             IsPlaced = true;
                         }
                         else {
@@ -94,7 +94,7 @@ public partial class Block : Node2D {
         }
 
         foreach (var part in _parts) {
-            if (!Global.IsPointInGrid(part.GlobalPosition)) {
+            if (!Glob.IsPointInGrid(part.GlobalPosition)) {
                 return false;
             }
         }
@@ -108,20 +108,20 @@ public partial class Block : Node2D {
         }
 
         foreach (var part in _parts) {
-            var nearestGridPoint = Global.FindNearestGridPoint(part.GlobalPosition);
-            if (!Global.IsPointInGrid(nearestGridPoint)) {
+            var nearestGridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
+            if (!Glob.IsPointInGrid(nearestGridPoint)) {
                 return false;
             }
 
-            var gridIndex = Global.GetGridCoords(nearestGridPoint);
+            var gridIndex = Glob.GetGridCoords(nearestGridPoint);
             if (gridIndex.X < 0 ||
                 gridIndex.Y < 0 ||
-                gridIndex.X >= Global.GridSize ||
-                gridIndex.Y >= Global.GridSize) {
+                gridIndex.X >= Glob.GridSize ||
+                gridIndex.Y >= Glob.GridSize) {
                 return false;
             }
 
-            if (Global.GridStates[gridIndex.X, gridIndex.Y] != Global.GridState.Free) {
+            if (Glob.GridStates[gridIndex.X, gridIndex.Y] != Glob.GridState.Free) {
                 return false;
             }
         }
@@ -130,6 +130,6 @@ public partial class Block : Node2D {
     }
 
     private bool CheckConditionR() {
-        return Global.IsPointInGrid(GlobalPosition);
+        return Glob.IsPointInGrid(GlobalPosition);
     }
 }

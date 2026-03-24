@@ -4,7 +4,7 @@ using Godot;
 
 #endregion
 
-public abstract partial class Global {
+public partial class Glob {
     public static Vector2 GridLeftUp = new Vector2(2, 4) * PxSize;
     public static Vector2 GridRightDown = new Vector2((float) 7.6, 8) * PxSize;
     public static bool[] UnlockedRows = new bool[5];
@@ -19,7 +19,7 @@ public abstract partial class Global {
 
     public static Vector2 FindNearestGridPoint(Vector2 targetPoint) {
         if (GridPoints == null) {
-            GD.PrintErr("GridPoints未初始化");
+            GD.PrintErr("GridPoints 未初始化");
             return new Vector2I(-1, -1);
         }
 
@@ -80,14 +80,14 @@ public abstract partial class Global {
     }
 
     public static void InitOccupyState() {
-        // 初始化二维数组，7列5行
+        // 初始化二维数组，7 列 5 行
         GridPoints = new Vector2[7, 5];
         GridStates = new GridState[7, 5];
 
         for (var i = 0; i < 7; i++) {
-            // 7列
+            // 7 列
             for (var j = 0; j < 5; j++) {
-                // 5行
+                // 5 行
                 GridPoints[i, j] = new Vector2(i * GridSize, j * GridSize) +
                                    new Vector2(2 * PxSize + HalfGridSize, 4 * PxSize + HalfGridSize);
                 GridStates[i, j] = IsRowUnlocked(j) && IsColUnlocked(i) ? GridState.Free : GridState.Unable;

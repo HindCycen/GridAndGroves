@@ -5,7 +5,7 @@ using Godot;
 
 #endregion
 
-public abstract partial class Global {
+public partial class Glob {
     public static Dictionary<string, BlockDef> BlockDefs = [];
 
     public static bool SubscribeBlockDef(BlockDef blockDef) {

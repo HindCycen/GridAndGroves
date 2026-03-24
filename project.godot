@@ -15,6 +15,10 @@ run/main_scene="uid://dowu1ejcjyr7i"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Glob="*uid://bwxwqi5ryusvs"
+
 [display]
 
 window/size/viewport_width=1920

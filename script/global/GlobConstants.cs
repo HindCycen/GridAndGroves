@@ -1,4 +1,4 @@
-public abstract partial class Global {
+public partial class Glob {
     public enum GridState {
         Free,
         Unable,

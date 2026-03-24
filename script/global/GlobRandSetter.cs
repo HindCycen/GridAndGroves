@@ -4,7 +4,7 @@ using Godot;
 
 #endregion
 
-public abstract partial class Global {
+public partial class Glob {
     private static int _currentSeed;
 
     private static RandomNumberGenerator _mapRand;

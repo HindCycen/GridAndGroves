@@ -18,7 +18,7 @@ public partial class BlockPart : Node2D {
 
     public override void _Ready() {
         var shape2D = new RectangleShape2D();
-        shape2D.SetSize(new Vector2(Global.GridSize, Global.GridSize));
+        shape2D.SetSize(new Vector2(Glob.GridSize, Glob.GridSize));
         _detectingCollisionShape.Shape = shape2D;
         if (PartDefinition.SpriteTexture != null) {
             _sprite2D.SetTexture(PartDefinition.SpriteTexture);
@@ -40,7 +40,7 @@ public partial class BlockPart : Node2D {
             }
         };
 
-        Position = PartDefinition.PartialPosition * Global.GridSize;
+        Position = PartDefinition.PartialPosition * Glob.GridSize;
         SetProcessInput(true);
     }
 

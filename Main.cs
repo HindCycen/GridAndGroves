@@ -8,7 +8,6 @@ public partial class Main : Node2D {
     [Export] private BlockDef[] _availableBlockDefs;
 
     public override void _Ready() {
-        Global.InitRng();
-        Global.InitGrids();
+        // Glob 作为 Autoload 已经自动初始化了
     }
 }

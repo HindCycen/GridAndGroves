@@ -6,7 +6,7 @@ using System.Reflection;
 
 #endregion
 
-public partial class Global {
+public partial class Glob {
     public static void AutoRegisterBlocks() {
         var types = Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t.GetCustomAttribute<BlockRegistererAttribute>() != null
