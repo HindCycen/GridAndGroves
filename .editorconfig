@@ -16,5 +16,5 @@ indent_size = 4
 csharp_prefer_braces = true:warning
 csharp_space_after_cast = true
 
-[EmptyWithNamespace.cs]  # 匹配所有以 Template.cs 结尾的文件
+[EmptyWithNamespace.cs] # 匹配所有以 Template.cs 结尾的文件
 generated_code = true

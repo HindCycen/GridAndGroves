@@ -8,8 +8,8 @@ using Godot;
 
 // ReSharper disable CheckNamespace
 public partial class Block : Node2D {
-    private BattleContext _battleContext;
     private readonly List<BlockPart> _parts = [];
+    private BattleContext _battleContext;
     private bool _wasPlaced;
     [Export] public BlockDef Definition;
     public bool IsPlaced;

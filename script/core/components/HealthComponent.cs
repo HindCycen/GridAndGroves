@@ -1,5 +1,9 @@
+#region
+
 using System;
 using Godot;
+
+#endregion
 
 public partial class HealthComponent : Node {
     [Signal]

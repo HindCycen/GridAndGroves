@@ -4,4 +4,12 @@ public abstract partial class Global {
         Unable,
         Occupied
     }
+
+    public enum StatExecuteAt {
+        OnBattleStarted, 
+        OnTurnStarted,
+        OnTicTac,
+        OnTurnEnded,
+        OnBattleEnded
+    }
 }
