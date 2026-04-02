@@ -6,6 +6,10 @@
         <RootNamespace>GridandGroves</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
-      <Folder Include="script\core\actors\" />
+        <Folder Include="resources\stat_behaviors\"/>
+        <Folder Include="script\core\actors\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="script\core\stats\STAT_BEHAVIOR_SYSTEM.md"/>
     </ItemGroup>
 </Project>

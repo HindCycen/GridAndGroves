@@ -39,7 +39,6 @@ public partial class Block : Node2D {
     }
 
 
-
     public override void _Process(double delta) {
         if (IsPressed && !IsPlaced) {
             GlobalPosition = GetGlobalMousePosition();
@@ -65,7 +64,7 @@ public partial class Block : Node2D {
                                 Glob.SetGridState((int) nearestGridPoint.X, (int) nearestGridPoint.Y,
                                     Glob.GridState.Occupied);
                             }
-                    
+
                             IsPlaced = true;
                         }
                         else {

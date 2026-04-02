@@ -6,7 +6,7 @@ public partial class Glob {
     }
 
     public enum StatExecuteAt {
-        OnBattleStarted, 
+        OnBattleStarted,
         OnTurnStarted,
         OnTicTac,
         OnTurnEnded,

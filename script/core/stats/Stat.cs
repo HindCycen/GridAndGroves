@@ -1,7 +1,7 @@
 #region
 
-using Godot;
 using System;
+using Godot;
 
 #endregion
 
@@ -20,6 +20,7 @@ public partial class Stat : Node {
     public override void _Ready() {
         CurrentValue = 0;
         Definition.Behavior.SetBelongingStat(this);
+        AddToGroup("stats");
     }
 
     public void AddValue(int amount) {

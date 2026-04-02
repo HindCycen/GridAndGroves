@@ -39,7 +39,6 @@ public partial class Bot : Node2D {
     }
 
 
-
     private void GoToStarterPoint() {
         _detectionArea.Monitoring = false;
         GlobalPosition = new Vector2(
