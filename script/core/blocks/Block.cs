@@ -9,7 +9,6 @@ using Godot;
 // ReSharper disable CheckNamespace
 public partial class Block : Node2D {
     private readonly List<BlockPart> _parts = [];
-    private BattleContext _battleContext;
     private bool _wasPlaced;
     [Export] public BlockDef Definition;
     public bool IsPlaced;
@@ -17,25 +16,19 @@ public partial class Block : Node2D {
     public Vector2 OriginalPos;
 
     public override void _Ready() {
-        var battleContexts = GetTree().GetNodesInGroup("BattleContext");
-        if (battleContexts.Count > 0) {
-            _battleContext = battleContexts[0] as BattleContext;
-            SubscribeSignals(_battleContext);
-        }
-        else {
-            GetTree().Root.Connect("BattleContextReady", new Callable(this, "OnBattleContextReady"));
-        }
+        var battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
+        SubscribeSignals(battleTime);
 
         OriginalPos = GlobalPosition;
         LoadParts();
     }
 
-    private void SubscribeSignals(BattleContext battleContext) {
-        battleContext.TurnStarted += () => {
+    private void SubscribeSignals(BattleTime battleTime) {
+        battleTime.TurnStarted += () => {
             _wasPlaced = IsPlaced;
             IsPlaced = true;
         };
-        battleContext.TurnEnded += () => {
+        battleTime.TurnEnded += () => {
             if (_wasPlaced) {
                 QueueFree();
             }
@@ -45,10 +38,7 @@ public partial class Block : Node2D {
         };
     }
 
-    private void OnBattleContextReady() {
-        var battleContext = GetTree().GetNodesInGroup("BattleContext")[0] as BattleContext;
-        SubscribeSignals(battleContext);
-    }
+
 
     public override void _Process(double delta) {
         if (IsPressed && !IsPlaced) {

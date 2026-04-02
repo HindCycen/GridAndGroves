@@ -6,23 +6,21 @@ using Godot;
 
 public partial class Bot : Node2D {
     private AnimatedSprite2D _animatedSprite2D;
-    [Export] private BattleContext _battleContext;
+    private BattleTime _battleTime;
     private Vector2I _currentDirection = Vector2I.Down;
     private Vector2I _currentGridPos;
     private Area2D _detectionArea;
-    private bool _initialized;
 
     public override void _Ready() {
+        _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
         _detectionArea = GetNode<Area2D>("%DetectionArea");
         _animatedSprite2D = GetNode<AnimatedSprite2D>("%AnimatedSprite2D");
-        _battleContext.SayBattleStarted();
+        _battleTime.SayBattleStarted();
         Visible = false;
         _detectionArea.Monitoring = false;
-        // 没招了 这里 Godot 初始化节点的顺序不固定，Glob 在这里可能还不存在 傻逼 Godot
-        // 所以延迟初始化 GoToStarterPoint(), _Process()第一帧再运行
-
+        GoToStarterPoint();
         GetNode<Button>("%Button").Pressed += () => {
-            _battleContext.SayTurnStarted();
+            _battleTime.SayTurnStarted();
             _detectionArea.Monitoring = true;
             Visible = true;
             _animatedSprite2D.Play("bot_animation");
@@ -40,13 +38,7 @@ public partial class Bot : Node2D {
         };
     }
 
-    public override void _Process(double delta) {
-        // 嗯对放到这里了
-        if (!_initialized && Glob.GridPoints != null) {
-            _initialized = true;
-            GoToStarterPoint();
-        }
-    }
+
 
     private void GoToStarterPoint() {
         _detectionArea.Monitoring = false;
@@ -76,7 +68,7 @@ public partial class Bot : Node2D {
         _currentGridPos += Direction;
         // If out of bounds, go to starter point
         if (_currentGridPos.X + _currentGridPos.Y > 10 || _currentGridPos.X + _currentGridPos.Y < 0) {
-            _battleContext.SayTurnEnded();
+            _battleTime.SayTurnEnded();
             GoToStarterPoint();
         }
         else {
@@ -97,7 +89,7 @@ public partial class Bot : Node2D {
 
             GlobalPosition = Glob.GetGridPos(_currentGridPos);
             GetTree().CreateTimer(1.0f).Timeout += () => {
-                _battleContext.SayTicTac();
+                _battleTime.SayTicTac();
                 GoToNextGridPos(_currentDirection);
             };
         }

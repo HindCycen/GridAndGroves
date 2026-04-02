@@ -4,7 +4,7 @@ using Godot;
 
 #endregion
 
-public partial class BattleContext : Node {
+public partial class BattleTime : Node {
     [Signal]
     public delegate void BattleContextReadyEventHandler();
 

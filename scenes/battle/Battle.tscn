@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://script/core/battle/Battle.cs" id="1_2ckr4"]
 [ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://script/core/battle/Bot.cs" id="8_pfxs1"]
-[ext_resource type="Script" uid="uid://6sss02jpn8cx" path="res://script/core/battle/BattleContext.cs" id="9_g3qtk"]
 [ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://assets/pictures/bot_frames/BotFrames.png" id="9_q5nyf"]
 [ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://assets/pictures/battle_background/UpperLayer.png" id="11_pk84k"]
 
@@ -133,9 +132,8 @@ animations = [{
 z_index = 100
 script = ExtResource("1_2ckr4")
 
-[node name="Bot" type="Node2D" parent="." unique_id=1956716059 node_paths=PackedStringArray("_battleContext")]
+[node name="Bot" type="Node2D" parent="." unique_id=1956716059]
 script = ExtResource("8_pfxs1")
-_battleContext = NodePath("../BattleContext")
 
 [node name="DetectionArea" type="Area2D" parent="Bot" unique_id=2001425089]
 unique_name_in_owner = true
@@ -158,9 +156,6 @@ offset_top = 905.0
 offset_right = 1887.0
 offset_bottom = 1032.0
 text = "Start Turn"
-
-[node name="BattleContext" type="Node" parent="." unique_id=833329648 groups=["BattleContext"]]
-script = ExtResource("9_g3qtk")
 
 [node name="BackgroundAnimator" type="Node2D" parent="." unique_id=333254833]
 

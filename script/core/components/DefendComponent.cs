@@ -15,8 +15,8 @@ public partial class DefendComponent : Node {
 
     public override void _Ready() {
         CurrentDefend = 0;
-        var battleContext = GetTree().GetFirstNodeInGroup("BattleContext") as BattleContext;
-        battleContext!.TurnEnded += () => { CurrentDefend = 0; };
+        var battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
+        battleTime!.TurnEnded += () => { CurrentDefend = 0; };
     }
 
     public void AddDefend(int amount) {
