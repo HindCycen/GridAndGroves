@@ -31,7 +31,7 @@ public partial class Glob {
         }
 
         var blockDef = BlockDefs[blockName];
-        var block = GD.Load<PackedScene>("res://scenes/blocks/Block.tscn").Instantiate<Block>();
+        var block = GD.Load<PackedScene>("res://blocks/Block.tscn").Instantiate<Block>();
         block.Definition = blockDef;
         block.GlobalPosition = globalPos;
         parent.AddChild(block);

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dowu1ejcjyr7i"]
 
 [ext_resource type="Script" uid="uid://cx03t1qwuidh7" path="res://Main.cs" id="1_glv2v"]
-[ext_resource type="Resource" uid="uid://v8e7agvlegla" path="res://resources/blockdefs/ExampleBlock.tres" id="2_cm0pq"]
+[ext_resource type="Resource" uid="uid://v8e7agvlegla" path="res://blocks/blockdefs/ExampleBlock.tres" id="2_cm0pq"]
 
 [node name="Main" type="Node2D" unique_id=1506877496]
 script = ExtResource("1_glv2v")

@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bhobbalfopbtb"]
 
-[ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://script/battle/Battle.cs" id="1_2ckr4"]
-[ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://script/battle/Bot.cs" id="8_pfxs1"]
-[ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://assets/pictures/bot_frames/BotFrames.png" id="9_q5nyf"]
-[ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://assets/pictures/battle_background/UpperLayer.png" id="11_pk84k"]
+[ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://battle/Battle.cs" id="1_2ckr4"]
+[ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://battle/Bot.cs" id="8_pfxs1"]
+[ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://battle/bot_frames/BotFrames.png" id="9_q5nyf"]
+[ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://battle/battle_background/UpperLayer.png" id="11_pk84k"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_880dk"]
 radius = 1.0
