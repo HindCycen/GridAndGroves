@@ -12,4 +12,6 @@ public partial class Glob {
         OnTurnEnded,
         OnBattleEnded
     }
+
+    public bool IsDebug = true;
 }
