@@ -5,6 +5,7 @@ using Godot;
 
 #endregion
 
+[GlobalClass]
 public partial class HealthComponent : Node {
     [Signal]
     public delegate void DiedEventHandler();
@@ -50,6 +51,15 @@ public partial class HealthComponent : Node {
 
         MaxHealth = value;
         CurrentHealth = Math.Min(CurrentHealth, MaxHealth);
+        EmitSignal(SignalName.HealthChanged, CurrentHealth, MaxHealth);
+    }
+    
+    public void SetCurrentHealth(int value) {
+        if (value < 0) {
+            throw new ArgumentException("当前生命值不能为负数");
+        }
+
+        CurrentHealth = Math.Min(value, MaxHealth);
         EmitSignal(SignalName.HealthChanged, CurrentHealth, MaxHealth);
     }
 }

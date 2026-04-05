@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://cgprlfg6by4ur" path="res://scenes/components/StatsComponent.tscn" id="4_fls8u"]
 [ext_resource type="Script" uid="uid://cgl2ouwurotrc" path="res://scenes/components/HealthBar.cs" id="5_367sg"]
 [ext_resource type="Script" uid="uid://djs032g6d61j3" path="res://scenes/components/Health.cs" id="5_r86ya"]
+[ext_resource type="Script" uid="uid://stn6c18xh2ci" path="res://scenes/components/HealthBox.gd" id="7_pwo06"]
+[ext_resource type="Script" uid="uid://4k1vi3a1tad4" path="res://scenes/components/MaxHealthBox.gd" id="8_rbwao"]
+[ext_resource type="Script" uid="uid://c5j5frl77bxgv" path="res://scenes/components/BlockBox.gd" id="9_mdpym"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_p2qr1"]
 load_path = "res://.godot/imported/HealthBarBG.png-e9031af7b6efc18f19a3926f2b338faf.ctex"
@@ -65,3 +68,27 @@ HealthComponent = NodePath("../../../HealthComponent")
 unique_name_in_owner = true
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="TestThingsHere" type="Node" parent="." unique_id=1223946149]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TestThingsHere" unique_id=1153366632]
+offset_left = 391.0
+offset_right = 653.0
+offset_bottom = 66.0
+
+[node name="HealthBox" type="SpinBox" parent="TestThingsHere/VBoxContainer" unique_id=1562081598 node_paths=PackedStringArray("health_component")]
+layout_mode = 2
+rounded = true
+script = ExtResource("7_pwo06")
+health_component = NodePath("../../../HealthComponent")
+
+[node name="MaxHealthBox" type="SpinBox" parent="TestThingsHere/VBoxContainer" unique_id=1649791356 node_paths=PackedStringArray("health_component")]
+layout_mode = 2
+rounded = true
+script = ExtResource("8_rbwao")
+health_component = NodePath("../../../HealthComponent")
+
+[node name="BlockBox" type="SpinBox" parent="TestThingsHere/VBoxContainer" unique_id=1942343162]
+layout_mode = 2
+rounded = true
+script = ExtResource("9_mdpym")

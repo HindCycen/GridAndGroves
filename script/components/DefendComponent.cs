@@ -5,6 +5,7 @@ using Godot;
 
 #endregion
 
+[GlobalClass]
 public partial class DefendComponent : Node {
     [Signal]
     public delegate void DefendChangedEventHandler(int current, int max);
