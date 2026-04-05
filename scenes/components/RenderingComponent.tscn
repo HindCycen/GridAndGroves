@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://drnyqrdsdids0"]
+
+[ext_resource type="Script" uid="uid://b7cjkvj8jdhfg" path="res://script/components/RenderingComponent.cs" id="1_p2qr1"]
+[ext_resource type="PackedScene" uid="uid://df17ua5hxtgv4" path="res://scenes/components/DefendComponent.tscn" id="2_r86ya"]
+[ext_resource type="PackedScene" uid="uid://mldxemstlseu" path="res://scenes/components/HealthComponent.tscn" id="3_367sg"]
+[ext_resource type="PackedScene" uid="uid://cgprlfg6by4ur" path="res://scenes/components/StatsComponent.tscn" id="4_fls8u"]
+[ext_resource type="Script" uid="uid://cgl2ouwurotrc" path="res://scenes/components/HealthBar.cs" id="5_367sg"]
+[ext_resource type="Script" uid="uid://djs032g6d61j3" path="res://scenes/components/Health.cs" id="5_r86ya"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_p2qr1"]
+load_path = "res://.godot/imported/HealthBarBG.png-e9031af7b6efc18f19a3926f2b338faf.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_r86ya"]
+load_path = "res://.godot/imported/HealthBarOver.png-dbbdea7f09e6383eefe18fcc8725f8c7.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_367sg"]
+load_path = "res://.godot/imported/HealthBarMid.png-5e7389abd59dc310eaf0587b1746a39e.ctex"
+
+[node name="RenderingComponent" type="Node2D" unique_id=1479359479]
+script = ExtResource("1_p2qr1")
+
+[node name="DefendComponent" parent="." unique_id=892839064 instance=ExtResource("2_r86ya")]
+
+[node name="HealthComponent" parent="." unique_id=780490520 instance=ExtResource("3_367sg")]
+
+[node name="StatsComponent" parent="." unique_id=859760743 instance=ExtResource("4_fls8u")]
+
+[node name="RenderThingsHere" type="Node" parent="." unique_id=122902129]
+
+[node name="HealthBar" type="TextureProgressBar" parent="RenderThingsHere" unique_id=350712039 node_paths=PackedStringArray("_healthComponent")]
+unique_name_in_owner = true
+offset_right = 300.0
+offset_bottom = 30.0
+nine_patch_stretch = true
+stretch_margin_left = 9
+stretch_margin_top = 9
+stretch_margin_right = 9
+stretch_margin_bottom = 9
+texture_under = SubResource("CompressedTexture2D_p2qr1")
+texture_over = SubResource("CompressedTexture2D_r86ya")
+texture_progress = SubResource("CompressedTexture2D_367sg")
+script = ExtResource("5_367sg")
+_healthComponent = NodePath("../../HealthComponent")
+
+[node name="Health" type="Label" parent="RenderThingsHere/HealthBar" unique_id=2073368500 node_paths=PackedStringArray("HealthBar", "HealthComponent")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -26.5
+offset_top = -11.5
+offset_right = 26.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "50/100"
+script = ExtResource("5_r86ya")
+HealthBar = NodePath("..")
+HealthComponent = NodePath("../../../HealthComponent")
+
+[node name="StatsContainer" type="HBoxContainer" parent="RenderThingsHere" unique_id=750939676]
+unique_name_in_owner = true
+offset_right = 40.0
+offset_bottom = 40.0
