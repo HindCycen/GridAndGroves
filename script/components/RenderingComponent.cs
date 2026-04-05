@@ -1,5 +1,8 @@
+#region
+
 using Godot;
-using System;
+
+#endregion
 
 public partial class RenderingComponent : Node2D {
     [Export] public int BarLength;

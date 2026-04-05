@@ -1,5 +1,8 @@
+#region
+
 using Godot;
-using System;
+
+#endregion
 
 public partial class Health : Label {
     [Export] public TextureProgressBar HealthBar;

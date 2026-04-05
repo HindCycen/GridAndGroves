@@ -1,5 +1,8 @@
+#region
+
 using Godot;
-using System;
+
+#endregion
 
 public partial class HealthBar : TextureProgressBar {
     [Export] private HealthComponent _healthComponent;
