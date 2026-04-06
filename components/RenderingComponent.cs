@@ -6,7 +6,7 @@ using Godot;
 
 #endregion
 
-public partial class RenderingComponent : Node2D {
+public partial class RenderingComponent : Control {
     [Export] public int BarLength;
     [Export] public int StatIconPx;
 

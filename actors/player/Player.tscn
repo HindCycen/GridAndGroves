@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://bi2mcb6tkklke"]
+
+[ext_resource type="PackedScene" uid="uid://d0e7tmyanw3uq" path="res://actors/Actor.tscn" id="1_jx5ha"]
+[ext_resource type="Texture2D" uid="uid://d38wva3185m28" path="res://actors/player/Player-export.png" id="2_dthho"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jg3c0"]
+atlas = ExtResource("2_dthho")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flecp"]
+atlas = ExtResource("2_dthho")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c51xo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jg3c0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flecp")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Player" unique_id=1603292337 instance=ExtResource("1_jx5ha")]
+
+[node name="RenderingComponent" parent="." index="0" unique_id=1479359479]
+offset_left = -150.0
+offset_top = 112.0
+offset_right = -150.0
+offset_bottom = 112.0
+
+[node name="ActorSprite" parent="." index="1" unique_id=331811707]
+sprite_frames = SubResource("SpriteFrames_c51xo")

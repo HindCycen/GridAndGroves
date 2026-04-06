@@ -20,7 +20,9 @@ load_path = "res://.godot/imported/HealthBarOver.png-dbbdea7f09e6383eefe18fcc872
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_367sg"]
 load_path = "res://.godot/imported/HealthBarMid.png-5e7389abd59dc310eaf0587b1746a39e.ctex"
 
-[node name="RenderingComponent" type="Node2D" unique_id=1479359479]
+[node name="RenderingComponent" type="Control" unique_id=232026228]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_p2qr1")
 
 [node name="DefendComponent" parent="." unique_id=892839064 instance=ExtResource("2_r86ya")]
@@ -32,10 +34,12 @@ unique_name_in_owner = true
 [node name="StatsComponent" parent="." unique_id=859760743 instance=ExtResource("4_fls8u")]
 unique_name_in_owner = true
 
-[node name="RenderThingsHere" type="Node" parent="." unique_id=122902129]
+[node name="RenderThingsHere" type="Control" parent="." unique_id=1447931644]
+anchors_preset = 0
 
 [node name="HealthBar" type="TextureProgressBar" parent="RenderThingsHere" unique_id=350712039 node_paths=PackedStringArray("_healthComponent")]
 unique_name_in_owner = true
+layout_mode = 0
 offset_right = 300.0
 offset_bottom = 30.0
 nine_patch_stretch = true
@@ -70,6 +74,7 @@ HealthComponent = NodePath("../../../HealthComponent")
 
 [node name="StatsContainer" type="HBoxContainer" parent="RenderThingsHere" unique_id=750939676]
 unique_name_in_owner = true
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
