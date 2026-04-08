@@ -53,7 +53,7 @@ public partial class HealthComponent : Node {
         CurrentHealth = Math.Min(CurrentHealth, MaxHealth);
         EmitSignal(SignalName.HealthChanged, CurrentHealth, MaxHealth);
     }
-    
+
     public void SetCurrentHealth(int value) {
         if (value < 0) {
             throw new ArgumentException("当前生命值不能为负数");

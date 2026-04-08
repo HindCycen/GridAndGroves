@@ -12,6 +12,7 @@ public partial class Glob {
     private static RandomNumberGenerator _rewardRand;
     private static RandomNumberGenerator _chestRand;
     private static RandomNumberGenerator _miscRand;
+    private static RandomNumberGenerator _pileRand;
 
     public static int GetMapRand(int scope) {
         return _mapRand.RandiRange(0, scope - 1);
@@ -33,6 +34,10 @@ public partial class Glob {
         return _miscRand.RandiRange(0, scope - 1);
     }
 
+    public static int GetPileRand(int scope) {
+        return _pileRand.RandiRange(0, scope - 1);
+    }
+
     public static void InitSeed(int seed) {
         _currentSeed = seed == 0 ? GD.RandRange(1, 1_000_000_000) : seed;
     }
@@ -52,5 +57,8 @@ public partial class Glob {
 
         _miscRand = new RandomNumberGenerator();
         _miscRand.Seed = (ulong) _currentSeed;
+
+        _pileRand = new RandomNumberGenerator();
+        _pileRand.Seed = (ulong) _currentSeed;
     }
 }

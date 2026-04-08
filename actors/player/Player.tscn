@@ -2,6 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://d0e7tmyanw3uq" path="res://actors/Actor.tscn" id="1_jx5ha"]
 [ext_resource type="Texture2D" uid="uid://d38wva3185m28" path="res://actors/player/Player-export.png" id="2_dthho"]
+[ext_resource type="Script" uid="uid://d2wx706pfojy5" path="res://actors/player/ActorSprite.gd" id="3_flecp"]
+[ext_resource type="PackedScene" uid="uid://cyphyc8ryljwu" path="res://components/PileComponent.tscn" id="4_flecp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jg3c0"]
 atlas = ExtResource("2_dthho")
@@ -35,3 +37,9 @@ offset_bottom = 112.0
 
 [node name="ActorSprite" parent="." index="1" unique_id=331811707]
 sprite_frames = SubResource("SpriteFrames_c51xo")
+frame = 1
+frame_progress = 0.3045174
+script = ExtResource("3_flecp")
+
+[node name="PlayerPile" parent="." index="2" unique_id=1999516964 instance=ExtResource("4_flecp")]
+unique_name_in_owner = true

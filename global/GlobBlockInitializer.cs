@@ -31,10 +31,29 @@ public partial class Glob {
         }
 
         var blockDef = BlockDefs[blockName];
-        var block = GD.Load<PackedScene>("res://blocks/Block.tscn").Instantiate<Block>();
-        block.Definition = blockDef;
+        var block = CreateBlock(blockDef);
         block.GlobalPosition = globalPos;
         parent.AddChild(block);
         return block;
+    }
+
+    public static Block CreateBlock(BlockDef blockDef) {
+        if (blockDef == null) {
+            GD.PushError("BlockFactory: BlockDef is null");
+            return null;
+        }
+
+        var block = GD.Load<PackedScene>("res://blocks/Block.tscn").Instantiate<Block>();
+        block.Definition = blockDef;
+        return block;
+    }
+
+    public static Block CreateBlock(string blockName) {
+        if (!BlockDefs.ContainsKey(blockName)) {
+            GD.PushError($"BlockFactory: No blockdef with name {blockName} found");
+            return null;
+        }
+
+        return CreateBlock(BlockDefs[blockName]);
     }
 }

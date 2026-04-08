@@ -4,7 +4,7 @@ using Godot;
 
 #endregion
 
-public partial class Health : Label {
+public partial class HealthLabel : Label {
     [Export] public TextureProgressBar HealthBar;
     [Export] public HealthComponent HealthComponent;
 
