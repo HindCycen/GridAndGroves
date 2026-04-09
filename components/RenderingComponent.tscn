@@ -5,20 +5,14 @@
 [ext_resource type="PackedScene" uid="uid://mldxemstlseu" path="res://components/HealthComponent.tscn" id="3_367sg"]
 [ext_resource type="PackedScene" uid="uid://cgprlfg6by4ur" path="res://components/StatsComponent.tscn" id="4_fls8u"]
 [ext_resource type="Script" uid="uid://cgl2ouwurotrc" path="res://components/HealthBar.cs" id="5_367sg"]
-[ext_resource type="Script" uid="uid://djs032g6d61j3" path="res://components/Health.cs" id="5_r86ya"]
+[ext_resource type="Script" uid="uid://djs032g6d61j3" path="res://components/HealthLabel.cs" id="5_r86ya"]
+[ext_resource type="Texture2D" uid="uid://dq5r5ifygk5ws" path="res://components/healthbar/HealthBarBG.png" id="5_wsmi8"]
+[ext_resource type="Texture2D" uid="uid://eqkhrd4oerlc" path="res://components/healthbar/HealthBarOver.png" id="6_xp7we"]
 [ext_resource type="Script" uid="uid://dksu38tn0befd" path="res://components/TestThingsHere.gd" id="7_50g2q"]
 [ext_resource type="Script" uid="uid://stn6c18xh2ci" path="res://components/HealthBox.gd" id="7_pwo06"]
+[ext_resource type="Texture2D" uid="uid://dql7k8ugkqjdg" path="res://components/healthbar/HealthBarMid.png" id="7_xsshl"]
 [ext_resource type="Script" uid="uid://4k1vi3a1tad4" path="res://components/MaxHealthBox.gd" id="8_rbwao"]
 [ext_resource type="Script" uid="uid://c5j5frl77bxgv" path="res://components/BlockBox.gd" id="9_mdpym"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_p2qr1"]
-load_path = "res://.godot/imported/HealthBarBG.png-e9031af7b6efc18f19a3926f2b338faf.ctex"
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_r86ya"]
-load_path = "res://.godot/imported/HealthBarOver.png-dbbdea7f09e6383eefe18fcc8725f8c7.ctex"
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_367sg"]
-load_path = "res://.godot/imported/HealthBarMid.png-5e7389abd59dc310eaf0587b1746a39e.ctex"
 
 [node name="RenderingComponent" type="Control" unique_id=232026228]
 layout_mode = 3
@@ -47,9 +41,9 @@ stretch_margin_left = 9
 stretch_margin_top = 9
 stretch_margin_right = 9
 stretch_margin_bottom = 9
-texture_under = SubResource("CompressedTexture2D_p2qr1")
-texture_over = SubResource("CompressedTexture2D_r86ya")
-texture_progress = SubResource("CompressedTexture2D_367sg")
+texture_under = ExtResource("5_wsmi8")
+texture_over = ExtResource("6_xp7we")
+texture_progress = ExtResource("7_xsshl")
 script = ExtResource("5_367sg")
 _healthComponent = NodePath("../../HealthComponent")
 
