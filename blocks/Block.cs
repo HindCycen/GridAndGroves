@@ -9,7 +9,6 @@ using Godot;
 // ReSharper disable CheckNamespace
 public partial class Block : Node2D {
     private readonly List<BlockPart> _parts = [];
-    private bool _wasPlaced;
     [Export] public BlockDef Definition;
 
     [Signal]
@@ -19,23 +18,11 @@ public partial class Block : Node2D {
     public bool IsPressed;
     public Vector2 OriginalPos;
 
-    public override void _Ready() {
-        var battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
-        SubscribeSignals(battleTime);
+    public BlockPart[] GetParts() => _parts.ToArray();
 
+    public override void _Ready() {
         OriginalPos = GlobalPosition;
         LoadParts();
-    }
-
-    private void SubscribeSignals(BattleTime battleTime) {
-        battleTime.TurnStarted += () => {
-            _wasPlaced = IsPlaced;
-            IsPlaced = true;
-        };
-        battleTime.TurnEnded += () => {
-            IsPlaced = false;
-            _wasPlaced = false;
-        };
     }
 
 
@@ -65,10 +52,13 @@ public partial class Block : Node2D {
                 IsPressed = false;
                 if (CheckConditionP() && CheckConditionQ() && CheckConditionR()) {
                     GlobalPosition = Glob.FindNearestGridPoint(GlobalPosition);
-                    foreach (var nearestGridPoint in _parts.Select(blockPart =>
-                                 Glob.FindNearestGridPoint(blockPart.GlobalPosition))) {
-                        Glob.SetGridState((int) nearestGridPoint.X, (int) nearestGridPoint.Y,
-                            Glob.GridState.Occupied);
+                    foreach (var part in _parts) {
+                        var gridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
+                        var gridIndex = Glob.GetGridCoords(gridPoint);
+                        if (gridIndex.X >= 0 && gridIndex.Y >= 0) {
+                            Glob.SetGridState(gridIndex.X, gridIndex.Y,
+                                Glob.GridState.Occupied);
+                        }
                     }
 
                     IsPlaced = true;
@@ -101,10 +91,8 @@ public partial class Block : Node2D {
             }
 
             var gridIndex = Glob.GetGridCoords(nearestGridPoint);
-            if (gridIndex.X < 0 ||
-                gridIndex.Y < 0 ||
-                gridIndex.X >= Glob.GridSize ||
-                gridIndex.Y >= Glob.GridSize) {
+            if (gridIndex.X < 0 || gridIndex.X > 6 ||
+                gridIndex.Y < 0 || gridIndex.Y > 4) {
                 return false;
             }
 

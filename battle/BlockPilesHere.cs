@@ -1,7 +1,8 @@
 #region
 
-using Godot;
 using System.Collections.Generic;
+using System.Linq;
+using Godot;
 
 #endregion
 
@@ -12,25 +13,94 @@ public partial class BlockPilesHere : Node2D {
     [Export] public PileComponent ShowingPile;
     [Export] public PileComponent PlacedPile;
 
-    private const float ShowingPileBaseX = 1008f;
-    private const float ShowingPileBaseY = 480f;
+    private const float ShowingPileBaseX = 0f;
+    private const float ShowingPileBaseY = 0f;
     private readonly List<Vector2I> _occupiedPositions = [];
-    private BattleTime _battleTime;
 
     public override void _Ready() {
-        _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
+        // DrawPile 的初始化由 Battle.cs 在 InitializePlayerDeck 后调用
+        ShowingPile.ChildEnteredTree += OnShowingPileChildAdded;
+    }
+
+    /// <summary>
+    /// 从玩家牌堆初始化抽牌堆（由 Battle.cs 在合适的时机调用）
+    /// </summary>
+    public void InitializeDrawPile() {
         foreach (var b in Player.GetNode<PileComponent>("%PlayerPile").Pile) {
             DrawPile.AddBlock(Glob.CreateBlock(b.Definition));
         }
+        GD.Print($"抽牌堆初始化完成，共 {DrawPile.Count} 张牌");
+    }
 
-        ShowingPile.ChildEnteredTree += OnShowingPileChildAdded;
-        _battleTime.TurnEnded += DiscardBlocks;
+    /// <summary>
+    /// 从抽牌堆中抽取 count 张牌到展示区
+    /// </summary>
+    public void DrawCards(int count) {
+        for (var i = 0; i < count; i++) {
+            if (DrawPile.Count == 0) {
+                // 如果抽牌堆空了，从弃牌堆洗牌回来
+                ReshuffleDiscardToDraw();
+                if (DrawPile.Count == 0) break;
+            }
+            ShowOneBlock();
+        }
+    }
+
+    /// <summary>
+    /// 清空当前回合的展示区和已放置区，将方块移入弃牌堆
+    /// </summary>
+    public void ClearRound() {
+        // 清空展示区
+        var showingBlocks = ShowingPile.Pile.ToList();
+        foreach (var block in showingBlocks) {
+            if (IsInstanceValid(block) && block.GetParent() == ShowingPile) {
+                ShowingPile.RemoveChild(block);
+            }
+            ShowingPile.RemoveBlock(block);
+            if (!block.IsPlaced) {
+                block.QueueFree();
+            }
+        }
+
+        // 清空已放置区（方块还在场景中的网格上），移入弃牌堆
+        var placedBlocks = PlacedPile.Pile.ToList();
+        foreach (var block in placedBlocks) {
+            PlacedPile.RemoveBlock(block);
+            // 释放占用的网格
+            foreach (var part in block.GetParts()) {
+                var gridPos = Glob.FindNearestGridPoint(part.GlobalPosition);
+                var coords = Glob.GetGridCoords(gridPos);
+                if (coords.X >= 0 && coords.Y >= 0) {
+                    Glob.SetGridState(coords.X, coords.Y, Glob.GridState.Free);
+                }
+            }
+            // 从场景树移除，移入弃牌堆（后续可洗回抽牌堆）
+            if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
+                block.GetParent().RemoveChild(block);
+            }
+            DiscardedPile.AddBlock(block);
+        }
+
+        // 清空占用位置记录
+        _occupiedPositions.Clear();
+    }
+
+    private void ReshuffleDiscardToDraw() {
+        GD.Print("抽牌堆空了，洗回弃牌堆！");
+        var discarded = DiscardedPile.Pile.ToList();
+        foreach (var block in discarded) {
+            DiscardedPile.RemoveBlock(block);
+            DrawPile.AddBlock(block);
+        }
     }
 
     private void OnShowingPileChildAdded(Node node) {
         if (node is not Block block) {
             return;
         }
+
+        // 重置放置状态，确保从弃牌堆洗回的方块可以重新拖动和放置
+        block.IsPlaced = false;
 
         block.Placed += OnBlockPlaced;
         var position = FindAvailablePosition(block);
@@ -88,33 +158,37 @@ public partial class BlockPilesHere : Node2D {
         }
     }
 
-    // 从DrawPile中随机取出一个Block放入ShowingPile中
-    // 请确保DrawPle中有东西
-    private (int, int) ShowOneBlock() {
+    /// <summary>
+    /// 从抽牌堆中随机取出一张牌放入展示区
+    /// </summary>
+    private void ShowOneBlock() {
+        if (DrawPile.Count == 0) return;
+
         var b = DrawPile.GetRandomBlockReference();
         ShowingPile.AddBlock(b);
         DrawPile.RemoveBlock(b);
         ShowingPile.AddChild(b);
-        return (DrawPile.Count, ShowingPile.Count);
     }
 
     private void OnBlockPlaced(Block block) {
         block.Placed -= OnBlockPlaced;
-        if (GetChildren().Contains(block)) {
-            RemoveChild(block);
+
+        // 保存全局位置，重定父级后恢复
+        var globalPos = block.GlobalPosition;
+
+        if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
+            block.GetParent().RemoveChild(block);
+        }
+        AddChild(block);
+        block.GlobalPosition = globalPos;
+
+        // 从展示区移除
+        if (ShowingPile.Pile.Contains(block)) {
+            ShowingPile.RemoveBlock(block);
         }
         PlacedPile.AddBlock(block);
-    }
 
-    private void DiscardBlocks() {
-        foreach (var n in GetTree().GetNodesInGroup("Blocks")) {
-            if (n is not Block b || b.GetParent() is not PileComponent pc) {
-                continue;
-            }
-
-            pc.RemoveChild(b);
-            pc.RemoveBlock(b);
-            DiscardedPile.AddBlock(b);
-        }
+        // 放一补一：放置后自动从抽牌堆补一张到展示区
+        DrawCards(1);
     }
 }

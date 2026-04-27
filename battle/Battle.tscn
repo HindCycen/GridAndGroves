@@ -8,9 +8,10 @@
 [ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://battle/Bot.cs" id="8_pfxs1"]
 [ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://battle/bot_frames/BotFrames.png" id="9_q5nyf"]
 [ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://battle/battle_background/UpperLayer.png" id="11_pk84k"]
+[ext_resource type="PackedScene" uid="uid://dh4hjkd8jqy1l" path="res://actors/enemy/Enemy.tscn" id="12_fn3my"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_880dk"]
-radius = 1.0
+radius = 48.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mgs6c"]
 atlas = ExtResource("9_q5nyf")
@@ -160,6 +161,9 @@ offset_top = 905.0
 offset_right = 1887.0
 offset_bottom = 1032.0
 text = "Start Turn"
+
+[node name="Enemy" parent="." unique_id=1956716062 instance=ExtResource("12_fn3my")]
+position = Vector2(1500, 200)
 
 [node name="BackgroundAnimator" type="Node2D" parent="." unique_id=333254833]
 

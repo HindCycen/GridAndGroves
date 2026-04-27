@@ -1,16 +1,22 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://0w3x4gxmnwia"]
 
 [ext_resource type="Script" uid="uid://tdr43fbm6use" path="res://blocks/blockpart_behaviors/MoveRightBehavior.cs" id="1_2cu1m"]
-[ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="1_kqin3"]
+[ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="1_kq3in"]
 [ext_resource type="Texture2D" uid="uid://c0seqw01i8tls" path="res://blocks/blockpart_picture/green/Right-G.png" id="2_pc027"]
+[ext_resource type="Script" path="res://blocks/blockpart_behaviors/DamageEnemyBehavior.cs" id="3_dmgbh"]
 
 [sub_resource type="Resource" id="Resource_r386g"]
 script = ExtResource("1_2cu1m")
 metadata/_custom_type_script = "uid://tdr43fbm6use"
 
+[sub_resource type="Resource" id="Resource_dmgbh2"]
+script = ExtResource("3_dmgbh")
+metadata/_custom_type_script = "res://blocks/blockpart_behaviors/DamageEnemyBehavior.cs"
+
 [resource]
-script = ExtResource("1_kqin3")
+script = ExtResource("1_kq3in")
 SpriteTexture = ExtResource("2_pc027")
-Behaviors = Array[Object]([SubResource("Resource_r386g")])
+Behaviors = Array[Object]([SubResource("Resource_r386g"), SubResource("Resource_dmgbh2")])
+Damage = 5
 MovingDirection = Vector2i(1, 0)
 metadata/_custom_type_script = "uid://cxi0d1tnlamis"

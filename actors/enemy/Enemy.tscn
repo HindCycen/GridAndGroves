@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dh4hjkd8jqy1l"]
+
+[ext_resource type="PackedScene" uid="uid://d0e7tmyanw3uq" path="res://actors/Actor.tscn" id="1_jx5ha"]
+[ext_resource type="Script" path="res://actors/enemy/Enemy.cs" id="2_enemy"]
+[ext_resource type="PackedScene" uid="uid://cyphyc8ryljwu" path="res://components/PileComponent.tscn" id="3_pile"]
+
+[node name="Enemy" instance=ExtResource("1_jx5ha")]
+script = ExtResource("2_enemy")
+
+[node name="RenderingComponent" parent="." index="0"]
+offset_left = -150.0
+offset_top = 112.0
+offset_right = -150.0
+offset_bottom = 112.0
+
+[node name="ActorSprite" parent="." index="1"]
+
+[node name="EnemyPile" parent="." index="2" instance=ExtResource("3_pile")]
+unique_name_in_owner = true
