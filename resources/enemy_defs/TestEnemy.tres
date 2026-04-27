@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" format=3]
+
+[ext_resource type="Script" path="res://resources/EnemyDefinition.cs" id="1_define"]
+[ext_resource type="Resource" path="res://resources/enemy_intents/PlaceAttackAtCenter.tres" id="2_intent1"]
+[ext_resource type="Resource" path="res://resources/enemy_intents/PlaceAttackRight.tres" id="3_intent2"]
+
+[resource]
+script = ExtResource("1_define")
+EnemyName = "TestEnemy"
+MaxHealth = 30
+AttackDamage = 5
+IntentCycle = Array[Object]([ExtResource("2_intent1"), ExtResource("3_intent2")])
+metadata/_custom_type_script = "res://resources/EnemyDefinition.cs"

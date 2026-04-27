@@ -47,9 +47,9 @@ public partial class BlockPilesHere : Node2D {
     }
 
     /// <summary>
-    /// 清空当前回合的展示区和已放置区，将方块移入弃牌堆
+    /// 清空当前回合玩家的展示区和已放置区，将玩家方块移入弃牌堆
     /// </summary>
-    public void ClearRound() {
+    public void ClearPlayerRound() {
         // 清空展示区
         var showingBlocks = ShowingPile.Pile.ToList();
         foreach (var block in showingBlocks) {
@@ -62,11 +62,10 @@ public partial class BlockPilesHere : Node2D {
             }
         }
 
-        // 清空已放置区（方块还在场景中的网格上），移入弃牌堆
-        var placedBlocks = PlacedPile.Pile.ToList();
+        // 清空已放置区中属于玩家的方块
+        var placedBlocks = PlacedPile.Pile.Where(b => b.Faction == Block.BlockFaction.Player).ToList();
         foreach (var block in placedBlocks) {
             PlacedPile.RemoveBlock(block);
-            // 释放占用的网格
             foreach (var part in block.GetParts()) {
                 var gridPos = Glob.FindNearestGridPoint(part.GlobalPosition);
                 var coords = Glob.GetGridCoords(gridPos);
@@ -74,7 +73,6 @@ public partial class BlockPilesHere : Node2D {
                     Glob.SetGridState(coords.X, coords.Y, Glob.GridState.Free);
                 }
             }
-            // 从场景树移除，移入弃牌堆（后续可洗回抽牌堆）
             if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
                 block.GetParent().RemoveChild(block);
             }

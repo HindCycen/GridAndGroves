@@ -1,5 +1,6 @@
 #region
 
+using System.Linq;
 using Godot;
 
 #endregion
@@ -61,8 +62,10 @@ public partial class Bot : Node2D {
         // 在占据新格子前，检测目标格是否已被方块占据
         var targetHasBlock = Glob.GetGridState(newPos.X, newPos.Y) == Glob.GridState.Occupied;
 
-        // 释放当前格子
-        Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Free);
+        // 释放当前格子（但保留敌方方块占用的格子）
+        if (!HasEnemyBlockAt(_currentGridPos)) {
+            Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Free);
+        }
 
         _currentGridPos = newPos;
         GlobalPosition = Glob.GetGridPos(_currentGridPos);
@@ -107,14 +110,26 @@ public partial class Bot : Node2D {
             Glob.GetGridPos(new Vector2I(0, 0)).Y - Glob.GridSize
         );
 
-        // 释放之前占据的网格
+        // 释放之前占据的网格（但保留敌方方块的占用）
         if (_currentGridPos.X >= 0 && _currentGridPos.X <= 6 &&
             _currentGridPos.Y >= 0 && _currentGridPos.Y <= 4) {
-            Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Free);
+            if (!HasEnemyBlockAt(_currentGridPos)) {
+                Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Free);
+            }
         }
 
         _currentGridPos = new Vector2I(0, -1);
         _animatedSprite2D.Stop();
         Visible = false;
+    }
+
+    private bool HasEnemyBlockAt(Vector2I gridPos) {
+        return _blockPilesHere.PlacedPile.Pile.Any(block => {
+            if (block.Faction != Block.BlockFaction.Enemy) return false;
+            return block.GetParts().Any(part => {
+                var coords = Glob.GetGridCoords(Glob.FindNearestGridPoint(part.GlobalPosition));
+                return coords == gridPos;
+            });
+        });
     }
 }

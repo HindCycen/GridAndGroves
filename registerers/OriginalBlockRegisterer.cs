@@ -10,5 +10,6 @@ public class OriginalBlockRegisterer : AbstractBlockRegisterer {
         Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/ExampleBlock.tres"));
         Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/ExampleMoveRight.tres"));
         Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/DamageBlock.tres"));
+        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/EnemyAttackBlock.tres"));
     }
 }

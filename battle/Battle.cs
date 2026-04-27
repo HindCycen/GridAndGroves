@@ -12,6 +12,8 @@ public partial class Battle : Node2D {
     private BattleTime _battleTime;
     private int _roundNumber;
     private Enemy[] _enemies;
+    private HealthComponent _playerHealth;
+    private bool _isGameOver;
 
     public override void _Ready() {
         _blockPilesHere = GetNode<BlockPilesHere>("BlockPilesHere");
@@ -19,6 +21,10 @@ public partial class Battle : Node2D {
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
         _endTurnButton = GetNode<Button>("%Button");
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
+        _playerHealth = GetNode<Player>("Player").GetNode<HealthComponent>("RenderingComponent/HealthComponent");
+        _isGameOver = false;
+
+        _playerHealth.Died += OnPlayerDied;
 
         GD.Print($"检测到 {_enemies.Length} 个敌人");
 
@@ -34,6 +40,14 @@ public partial class Battle : Node2D {
 
         // 初始化抽牌堆（将玩家牌组的副本移入）
         _blockPilesHere.InitializeDrawPile();
+
+        // 初始化敌人 AI
+        foreach (var enemy in _enemies) {
+            enemy.SetupAI(_blockPilesHere);
+        }
+
+        // 创建牌堆查看按钮
+        SetupPileViewerButtons();
 
         // 开始游戏
         _roundNumber = 0;
@@ -61,14 +75,18 @@ public partial class Battle : Node2D {
     }
 
     /// <summary>
-    /// 玩家回合：抽牌，等待放置方块
+    /// 回合开始：敌方 AI 放置方块 → 清理玩家旧牌 → 抽牌
     /// </summary>
     private void StartPlayerTurn() {
         _roundNumber++;
-        GD.Print($"\n=== 第 {_roundNumber} 回合 - 玩家回合 ===");
+        GD.Print($"\n=== 第 {_roundNumber} 回合 ===");
 
-        // 清空上一回合的牌面
-        _blockPilesHere.ClearRound();
+        // 敌方 AI：清理旧方块 → 按意图放置新方块
+        MakeEnemiesClearOldBlocks();
+        MakeEnemiesExecuteTurn();
+
+        // 清空玩家上一回合的牌面
+        _blockPilesHere.ClearPlayerRound();
 
         // 发射回合开始信号（触发 Stat 效果等）
         _battleTime.SayTurnStarted();
@@ -82,7 +100,7 @@ public partial class Battle : Node2D {
     }
 
     /// <summary>
-    /// 玩家点击"结束回合" → 开始 Bot 巡逻执行阶段
+    /// 玩家点击"结束回合" → Bot 巡逻执行
     /// </summary>
     private void OnEndTurnPressed() {
         _endTurnButton.Disabled = true;
@@ -93,10 +111,16 @@ public partial class Battle : Node2D {
     }
 
     /// <summary>
-    /// Bot 执行结束 → 检查所有敌人是否死亡 → 开始下一玩家回合
+    /// Bot 执行结束 → 敌人攻击玩家 → 检查胜负 → 开始下一玩家回合
     /// </summary>
     private void OnBotTurnEnded() {
         GD.Print("Bot 执行结束");
+
+        // 活着的敌人攻击玩家
+        MakeEnemiesAttackPlayer();
+
+        // 如果玩家在敌人攻击后死亡，游戏结束
+        if (_isGameOver) return;
 
         // 检查所有敌人是否被击败
         if (AreAllEnemiesDead()) {
@@ -132,5 +156,131 @@ public partial class Battle : Node2D {
         _endTurnButton.Text = "Victory!";
         _endTurnButton.Disabled = true;
         _battleTime.SayBattleEnded();
+    }
+
+    private void OnPlayerDied() {
+        _isGameOver = true;
+        OnDefeat();
+    }
+
+    private void OnDefeat() {
+        GD.Print("\n=== 败北！玩家已被击败！===");
+        _endTurnButton.Text = "Defeat...";
+        _endTurnButton.Disabled = true;
+        _battleTime.SayBattleEnded();
+    }
+
+    /// <summary>
+    /// 所有存活敌人清理上一回合放置的方块
+    /// </summary>
+    private void MakeEnemiesClearOldBlocks() {
+        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
+        GD.Print($"清理 {_enemies.Length} 个敌人的旧方块");
+        foreach (var enemy in _enemies) {
+            var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
+            if (hc == null || hc.IsDead) continue;
+
+            enemy.ClearBlocks();
+        }
+    }
+
+    /// <summary>
+    /// 所有存活敌人执行 AI 回合（按意图放置方块）
+    /// </summary>
+    private void MakeEnemiesExecuteTurn() {
+        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
+        GD.Print($"执行 {_enemies.Length} 个敌人的 AI 意图");
+        foreach (var enemy in _enemies) {
+            var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
+            if (hc == null || hc.IsDead) continue;
+
+            enemy.ExecuteTurn();
+        }
+    }
+
+    /// <summary>
+    /// 所有存活敌人对玩家发动攻击
+    /// </summary>
+    private void MakeEnemiesAttackPlayer() {
+        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
+        foreach (var enemy in _enemies) {
+            var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
+            if (hc == null || hc.IsDead) continue;
+
+            var damage = enemy.AttackDamage;
+            GD.Print($"敌人 {enemy.Name} 对玩家造成 {damage} 点伤害");
+            _playerHealth.TakeDamage(damage);
+        }
+    }
+
+    private void SetupPileViewerButtons() {
+        var drawBtn = new Button();
+        drawBtn.Text = "抽牌堆";
+        drawBtn.SetPosition(new Vector2I(20, 1030));
+        drawBtn.SetSize(new Vector2I(120, 40));
+        drawBtn.Pressed += () => ShowPileViewer("抽牌堆", _blockPilesHere.DrawPile);
+        AddChild(drawBtn);
+
+        var discardBtn = new Button();
+        discardBtn.Text = "弃牌堆";
+        discardBtn.SetPosition(new Vector2I(1780, 1030));
+        discardBtn.SetSize(new Vector2I(120, 40));
+        discardBtn.Pressed += () => ShowPileViewer("弃牌堆", _blockPilesHere.DiscardedPile);
+        AddChild(discardBtn);
+    }
+
+    private void ShowPileViewer(string title, PileComponent pile) {
+        var overlay = new ColorRect();
+        overlay.Color = new Color(0, 0, 0, 0.6f);
+        overlay.SetSize(new Vector2I(1920, 1080));
+        overlay.SetPosition(Vector2I.Zero);
+        overlay.MouseFilter = Control.MouseFilterEnum.Stop;
+        AddChild(overlay);
+
+        var panel = new Panel();
+        panel.SetSize(new Vector2I(700, 800));
+        panel.SetPosition(new Vector2I(610, 140));
+        overlay.AddChild(panel);
+
+        var titleLabel = new Label();
+        titleLabel.Text = title;
+        titleLabel.SetPosition(new Vector2I(20, 10));
+        titleLabel.AddThemeFontSizeOverride("font_size", 24);
+        panel.AddChild(titleLabel);
+
+        var closeBtn = new Button();
+        closeBtn.Text = "关闭";
+        closeBtn.SetPosition(new Vector2I(640, 10));
+        closeBtn.SetSize(new Vector2I(50, 30));
+        closeBtn.Pressed += overlay.QueueFree;
+        panel.AddChild(closeBtn);
+
+        var scroll = new ScrollContainer();
+        scroll.SetPosition(new Vector2I(20, 50));
+        scroll.SetSize(new Vector2I(660, 740));
+        panel.AddChild(scroll);
+
+        var vbox = new VBoxContainer();
+        scroll.AddChild(vbox);
+
+        if (pile.Count == 0) {
+            var empty = new Label();
+            empty.Text = "（空）";
+            empty.CustomMinimumSize = new Vector2I(0, 30);
+            vbox.AddChild(empty);
+        }
+        else {
+            foreach (var block in pile.Pile) {
+                var card = new Panel();
+                card.CustomMinimumSize = new Vector2I(640, 36);
+
+                var nameLabel = new Label();
+                nameLabel.Text = $"  {block.Definition.BlockName}    (Faction: {block.Faction})";
+                nameLabel.SetPosition(new Vector2I(10, 8));
+                card.AddChild(nameLabel);
+
+                vbox.AddChild(card);
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://battle/bot_frames/BotFrames.png" id="9_q5nyf"]
 [ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://battle/battle_background/UpperLayer.png" id="11_pk84k"]
 [ext_resource type="PackedScene" uid="uid://dh4hjkd8jqy1l" path="res://actors/enemy/Enemy.tscn" id="12_fn3my"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/TestEnemy.tres" id="13_enemydef"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_880dk"]
 radius = 48.0
@@ -164,6 +165,7 @@ text = "Start Turn"
 
 [node name="Enemy" parent="." unique_id=1956716062 instance=ExtResource("12_fn3my")]
 position = Vector2(1500, 200)
+Definition = ExtResource("13_enemydef")
 
 [node name="BackgroundAnimator" type="Node2D" parent="." unique_id=333254833]
 
