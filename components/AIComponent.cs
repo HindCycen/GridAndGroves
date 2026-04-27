@@ -7,10 +7,10 @@ using Godot;
 
 [GlobalClass]
 public partial class AIComponent : Node {
-    private int _cycleIndex;
-    private int _repeatCount;
-    private Node2D _owner;
     private BlockPilesHere _blockPilesHere;
+    private int _cycleIndex;
+    private Node2D _owner;
+    private int _repeatCount;
 
     public override void _Ready() {
         _owner = GetParent<Node2D>();
@@ -26,14 +26,17 @@ public partial class AIComponent : Node {
     }
 
     public IntentDefinition GetCurrentIntent(EnemyDefinition definition) {
-        if (definition?.IntentCycle == null || definition.IntentCycle.Length == 0)
+        if (definition?.IntentCycle == null || definition.IntentCycle.Length == 0) {
             return null;
+        }
+
         return definition.IntentCycle[_cycleIndex];
     }
 
     public void AdvanceTurn(EnemyDefinition definition) {
-        if (definition?.IntentCycle == null || definition.IntentCycle.Length == 0)
+        if (definition?.IntentCycle == null || definition.IntentCycle.Length == 0) {
             return;
+        }
 
         var intent = definition.IntentCycle[_cycleIndex];
         _repeatCount++;
@@ -45,12 +48,14 @@ public partial class AIComponent : Node {
 
     public void ExecuteIntent(EnemyDefinition definition) {
         var intent = GetCurrentIntent(definition);
-        if (intent?.BlockPlacements == null || _blockPilesHere == null)
+        if (intent?.BlockPlacements == null || _blockPilesHere == null) {
             return;
+        }
 
         foreach (var placement in intent.BlockPlacements) {
-            if (placement.Block == null)
+            if (placement.Block == null) {
                 continue;
+            }
 
             var pos = placement.GridPosition;
             if (placement.RandomOffsetRange > 0) {
@@ -62,8 +67,9 @@ public partial class AIComponent : Node {
             }
 
             var block = Glob.CreateBlock(placement.Block);
-            if (block == null)
+            if (block == null) {
                 continue;
+            }
 
             block.Faction = Block.BlockFaction.Enemy;
             _blockPilesHere.AddChild(block);
@@ -75,7 +81,9 @@ public partial class AIComponent : Node {
     }
 
     public void ClearExistingBlocks() {
-        if (_blockPilesHere == null) return;
+        if (_blockPilesHere == null) {
+            return;
+        }
 
         var oldBlocks = _blockPilesHere.PlacedPile.Pile
             .Where(b => b.Faction == Block.BlockFaction.Enemy).ToList();
@@ -89,9 +97,11 @@ public partial class AIComponent : Node {
                     Glob.SetGridState(coords.X, coords.Y, Glob.GridState.Free);
                 }
             }
+
             if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
                 block.GetParent().RemoveChild(block);
             }
+
             block.QueueFree();
         }
     }

@@ -6,14 +6,14 @@ using Godot;
 #endregion
 
 public partial class Battle : Node2D {
+    private BattleTime _battleTime;
     private BlockPilesHere _blockPilesHere;
     private Bot _bot;
     private Button _endTurnButton;
-    private BattleTime _battleTime;
-    private int _roundNumber;
     private Enemy[] _enemies;
-    private HealthComponent _playerHealth;
     private bool _isGameOver;
+    private HealthComponent _playerHealth;
+    private int _roundNumber;
 
     public override void _Ready() {
         _blockPilesHere = GetNode<BlockPilesHere>("BlockPilesHere");
@@ -55,7 +55,7 @@ public partial class Battle : Node2D {
     }
 
     /// <summary>
-    /// 初始化玩家起始牌组
+    ///     初始化玩家起始牌组
     /// </summary>
     private void InitializePlayerDeck() {
         var playerPile = GetNode<PileComponent>("Player/PlayerPile");
@@ -64,9 +64,11 @@ public partial class Battle : Node2D {
         for (var i = 0; i < 3; i++) {
             playerPile.AddBlock(Glob.CreateBlock("DamageBlock"));
         }
+
         for (var i = 0; i < 2; i++) {
             playerPile.AddBlock(Glob.CreateBlock("ExampleMoveRight"));
         }
+
         for (var i = 0; i < 2; i++) {
             playerPile.AddBlock(Glob.CreateBlock("ExampleBlock"));
         }
@@ -75,7 +77,7 @@ public partial class Battle : Node2D {
     }
 
     /// <summary>
-    /// 回合开始：敌方 AI 放置方块 → 清理玩家旧牌 → 抽牌
+    ///     回合开始：敌方 AI 放置方块 → 清理玩家旧牌 → 抽牌
     /// </summary>
     private void StartPlayerTurn() {
         _roundNumber++;
@@ -100,7 +102,7 @@ public partial class Battle : Node2D {
     }
 
     /// <summary>
-    /// 玩家点击"结束回合" → Bot 巡逻执行
+    ///     玩家点击"结束回合" → Bot 巡逻执行
     /// </summary>
     private void OnEndTurnPressed() {
         _endTurnButton.Disabled = true;
@@ -111,7 +113,7 @@ public partial class Battle : Node2D {
     }
 
     /// <summary>
-    /// Bot 执行结束 → 敌人攻击玩家 → 检查胜负 → 开始下一玩家回合
+    ///     Bot 执行结束 → 敌人攻击玩家 → 检查胜负 → 开始下一玩家回合
     /// </summary>
     private void OnBotTurnEnded() {
         GD.Print("Bot 执行结束");
@@ -120,7 +122,9 @@ public partial class Battle : Node2D {
         MakeEnemiesAttackPlayer();
 
         // 如果玩家在敌人攻击后死亡，游戏结束
-        if (_isGameOver) return;
+        if (_isGameOver) {
+            return;
+        }
 
         // 检查所有敌人是否被击败
         if (AreAllEnemiesDead()) {
@@ -171,41 +175,47 @@ public partial class Battle : Node2D {
     }
 
     /// <summary>
-    /// 所有存活敌人清理上一回合放置的方块
+    ///     所有存活敌人清理上一回合放置的方块
     /// </summary>
     private void MakeEnemiesClearOldBlocks() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         GD.Print($"清理 {_enemies.Length} 个敌人的旧方块");
         foreach (var enemy in _enemies) {
             var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            if (hc == null || hc.IsDead) continue;
+            if (hc == null || hc.IsDead) {
+                continue;
+            }
 
             enemy.ClearBlocks();
         }
     }
 
     /// <summary>
-    /// 所有存活敌人执行 AI 回合（按意图放置方块）
+    ///     所有存活敌人执行 AI 回合（按意图放置方块）
     /// </summary>
     private void MakeEnemiesExecuteTurn() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         GD.Print($"执行 {_enemies.Length} 个敌人的 AI 意图");
         foreach (var enemy in _enemies) {
             var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            if (hc == null || hc.IsDead) continue;
+            if (hc == null || hc.IsDead) {
+                continue;
+            }
 
             enemy.ExecuteTurn();
         }
     }
 
     /// <summary>
-    /// 所有存活敌人对玩家发动攻击
+    ///     所有存活敌人对玩家发动攻击
     /// </summary>
     private void MakeEnemiesAttackPlayer() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         foreach (var enemy in _enemies) {
             var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            if (hc == null || hc.IsDead) continue;
+            if (hc == null || hc.IsDead) {
+                continue;
+            }
 
             var damage = enemy.AttackDamage;
             GD.Print($"敌人 {enemy.Name} 对玩家造成 {damage} 点伤害");

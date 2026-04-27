@@ -8,9 +8,9 @@ using Godot;
 public partial class Bot : Node2D {
     private AnimatedSprite2D _animatedSprite2D;
     private BattleTime _battleTime;
+    private BlockPilesHere _blockPilesHere;
     private Vector2I _currentDirection = Vector2I.Down;
     private Vector2I _currentGridPos;
-    private BlockPilesHere _blockPilesHere;
 
     public override void _Ready() {
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
@@ -37,8 +37,8 @@ public partial class Bot : Node2D {
     }
 
     /// <summary>
-    /// Bot 移动到下一个格子。通过网格状态检测方块（无需物理碰撞）。
-    /// 默认方向为 Down（蛇形巡逻），遇到方块改变方向后沿新方向移动直到边界。
+    ///     Bot 移动到下一个格子。通过网格状态检测方块（无需物理碰撞）。
+    ///     默认方向为 Down（蛇形巡逻），遇到方块改变方向后沿新方向移动直到边界。
     /// </summary>
     private void MoveToNextCell() {
         var newPos = _currentGridPos + _currentDirection;
@@ -48,6 +48,7 @@ public partial class Bot : Node2D {
             if (newPos.Y > 4) {
                 newPos = new Vector2I(_currentGridPos.X + 1, 0);
             }
+
             if (newPos.X > 6) {
                 EndTurn();
                 return;
@@ -82,7 +83,7 @@ public partial class Bot : Node2D {
     }
 
     /// <summary>
-    /// 在指定网格坐标查找方块并执行其行为
+    ///     在指定网格坐标查找方块并执行其行为
     /// </summary>
     private void TryExecuteBlockAt(Vector2I gridPos) {
         foreach (var block in _blockPilesHere.PlacedPile.Pile) {
@@ -125,7 +126,10 @@ public partial class Bot : Node2D {
 
     private bool HasEnemyBlockAt(Vector2I gridPos) {
         return _blockPilesHere.PlacedPile.Pile.Any(block => {
-            if (block.Faction != Block.BlockFaction.Enemy) return false;
+            if (block.Faction != Block.BlockFaction.Enemy) {
+                return false;
+            }
+
             return block.GetParts().Any(part => {
                 var coords = Glob.GetGridCoords(Glob.FindNearestGridPoint(part.GlobalPosition));
                 return coords == gridPos;

@@ -8,20 +8,25 @@ using Godot;
 
 // ReSharper disable CheckNamespace
 public partial class Block : Node2D {
-    public enum BlockFaction { Player, Enemy }
+    [Signal]
+    public delegate void PlacedEventHandler(Block block);
+
+    public enum BlockFaction {
+        Player,
+        Enemy
+    }
 
     private readonly List<BlockPart> _parts = [];
     [Export] public BlockDef Definition;
     public BlockFaction Faction = BlockFaction.Player;
 
-    [Signal]
-    public delegate void PlacedEventHandler(Block block);
-
     public bool IsPlaced;
     public bool IsPressed;
     public Vector2 OriginalPos;
 
-    public BlockPart[] GetParts() => _parts.ToArray();
+    public BlockPart[] GetParts() {
+        return _parts.ToArray();
+    }
 
     public override void _Ready() {
         OriginalPos = GlobalPosition;
@@ -112,8 +117,9 @@ public partial class Block : Node2D {
     }
 
     public void PlaceAtGrid(Vector2I coords) {
-        if (coords.X < 0 || coords.X >= 7 || coords.Y < 0 || coords.Y >= 5)
+        if (coords.X < 0 || coords.X >= 7 || coords.Y < 0 || coords.Y >= 5) {
             return;
+        }
 
         var centerPos = Glob.GetGridPos(coords);
         GlobalPosition = centerPos;

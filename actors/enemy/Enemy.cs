@@ -5,10 +5,9 @@ using Godot;
 #endregion
 
 public partial class Enemy : Node2D {
+    private AIComponent _aiComponent;
     [Export] public int AttackDamage { get; set; } = 10;
     [Export] public EnemyDefinition Definition { get; set; }
-
-    private AIComponent _aiComponent;
 
     public override void _Ready() {
         AddToGroup("Enemies");
@@ -20,6 +19,7 @@ public partial class Enemy : Node2D {
             _aiComponent = new AIComponent();
             AddChild(_aiComponent);
         }
+
         _aiComponent.Setup(blockPilesHere);
     }
 
