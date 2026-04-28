@@ -16,6 +16,8 @@ public partial class Block : Node2D {
         Enemy
     }
 
+    public static bool InputLocked;
+
     private readonly List<BlockPart> _parts = [];
     [Export] public BlockDef Definition;
     public BlockFaction Faction = BlockFaction.Player;
@@ -35,7 +37,7 @@ public partial class Block : Node2D {
 
 
     public override void _Process(double delta) {
-        if (IsPressed && !IsPlaced) {
+        if (IsPressed && !InputLocked && Faction == BlockFaction.Player) {
             GlobalPosition = GetGlobalMousePosition();
         }
     }
@@ -51,9 +53,18 @@ public partial class Block : Node2D {
                 continue;
             }
 
-            part.Pressed += n => { IsPressed = _parts.Contains(n); };
+            part.Pressed += n => {
+                if (!_parts.Contains(n) || InputLocked || Faction != BlockFaction.Player) {
+                    return;
+                }
+
+                IsPressed = true;
+                if (IsPlaced) {
+                    LiftFromGrid();
+                }
+            };
             part.Released += n => {
-                if (!_parts.Contains(n)) {
+                if (!_parts.Contains(n) || InputLocked || Faction != BlockFaction.Player) {
                     return;
                 }
 
@@ -69,6 +80,7 @@ public partial class Block : Node2D {
                         }
                     }
 
+                    OriginalPos = GlobalPosition;
                     IsPlaced = true;
                     EmitSignalPlaced(this);
                 }
@@ -79,20 +91,23 @@ public partial class Block : Node2D {
         }
     }
 
-
-    private bool CheckConditionP() {
-        if (IsPlaced) {
-            return true;
+    private void LiftFromGrid() {
+        foreach (var part in _parts) {
+            var gridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
+            var gridIndex = Glob.GetGridCoords(gridPoint);
+            if (gridIndex.X >= 0 && gridIndex.Y >= 0) {
+                Glob.SetGridState(gridIndex.X, gridIndex.Y, Glob.GridState.Free);
+            }
         }
 
+        IsPlaced = false;
+    }
+
+    private bool CheckConditionP() {
         return _parts.All(part => Glob.IsPointInGrid(part.GlobalPosition));
     }
 
     private bool CheckConditionQ() {
-        if (IsPlaced) {
-            return true;
-        }
-
         foreach (var nearestGridPoint in _parts.Select(part => Glob.FindNearestGridPoint(part.GlobalPosition))) {
             if (!Glob.IsPointInGrid(nearestGridPoint)) {
                 return false;
@@ -132,6 +147,7 @@ public partial class Block : Node2D {
             }
         }
 
+        OriginalPos = GlobalPosition;
         IsPlaced = true;
         EmitSignalPlaced(this);
     }

@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://c2otrfx5b8hbk"]
 
-[ext_resource type="Texture2D" uid="uid://ernt7yx2pi0t" path="res://blocks/blockpart_picture/green/Blank-G.png" id="1_5hnh4"]
+[ext_resource type="Texture2D" uid="uid://bjpem86fh4nse" path="res://blocks/blockpart_picture/green/Attack-G.png" id="2_ijprj"]
 [ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="2_kqin3"]
-[ext_resource type="Script" path="res://blocks/blockpart_behaviors/DamageEnemyBehavior.cs" id="3_dmgbh"]
+[ext_resource type="Script" uid="uid://dqohndmx7jknh" path="res://blocks/blockpart_behaviors/DamageEnemyBehavior.cs" id="3_dmgbh"]
 
 [sub_resource type="Resource" id="Resource_dmgbh"]
 script = ExtResource("3_dmgbh")
@@ -11,8 +11,8 @@ metadata/_custom_type_script = "res://blocks/blockpart_behaviors/DamageEnemyBeha
 [resource]
 script = ExtResource("2_kqin3")
 Behaviors = Array[Object]([SubResource("Resource_dmgbh")])
-SpriteTexture = ExtResource("1_5hnh4")
 Damage = 10
 MovingDirection = Vector2i(0, 1)
 PartId = "DamagePart"
+SpriteTexture = ExtResource("2_ijprj")
 metadata/_custom_type_script = "uid://cxi0d1tnlamis"

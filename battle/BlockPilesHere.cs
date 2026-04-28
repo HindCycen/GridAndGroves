@@ -54,22 +54,25 @@ public partial class BlockPilesHere : Node2D {
     ///     清空当前回合玩家的展示区和已放置区，将玩家方块移入弃牌堆
     /// </summary>
     public void ClearPlayerRound() {
-        // 清空展示区
+        // 清空展示区 — 未放置的方块移入弃牌堆而非销毁
         var showingBlocks = ShowingPile.Pile.ToList();
         foreach (var block in showingBlocks) {
+            block.Placed -= OnBlockPlaced;
+
             if (IsInstanceValid(block) && block.GetParent() == ShowingPile) {
                 ShowingPile.RemoveChild(block);
             }
 
             ShowingPile.RemoveBlock(block);
             if (!block.IsPlaced) {
-                block.QueueFree();
+                DiscardedPile.AddBlock(block);
             }
         }
 
         // 清空已放置区中属于玩家的方块
         var placedBlocks = PlacedPile.Pile.Where(b => b.Faction == Block.BlockFaction.Player).ToList();
         foreach (var block in placedBlocks) {
+            block.Placed -= OnBlockPlaced;
             PlacedPile.RemoveBlock(block);
             foreach (var part in block.GetParts()) {
                 var gridPos = Glob.FindNearestGridPoint(part.GlobalPosition);
@@ -107,9 +110,11 @@ public partial class BlockPilesHere : Node2D {
         // 重置放置状态，确保从弃牌堆洗回的方块可以重新拖动和放置
         block.IsPlaced = false;
 
+        block.Placed -= OnBlockPlaced;
         block.Placed += OnBlockPlaced;
         var position = FindAvailablePosition(block);
         block.Position = position;
+        block.OriginalPos = position;
     }
 
     private Vector2 FindAvailablePosition(Block block) {
@@ -178,26 +183,25 @@ public partial class BlockPilesHere : Node2D {
     }
 
     private void OnBlockPlaced(Block block) {
-        block.Placed -= OnBlockPlaced;
+        var isNewPlacement = ShowingPile.Pile.Contains(block);
 
-        // 保存全局位置，重定父级后恢复
-        var globalPos = block.GlobalPosition;
+        if (isNewPlacement) {
+            // 首次放置：从展示区移至已放置区，补一张牌
+            var globalPos = block.GlobalPosition;
 
-        if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
-            block.GetParent().RemoveChild(block);
-        }
+            if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
+                block.GetParent().RemoveChild(block);
+            }
 
-        AddChild(block);
-        block.GlobalPosition = globalPos;
+            AddChild(block);
+            block.GlobalPosition = globalPos;
 
-        // 从展示区移除
-        if (ShowingPile.Pile.Contains(block)) {
             ShowingPile.RemoveBlock(block);
+            PlacedPile.AddBlock(block);
+
+            // 放一补一
+            DrawCards(1);
         }
-
-        PlacedPile.AddBlock(block);
-
-        // 放一补一：放置后自动从抽牌堆补一张到展示区
-        DrawCards(1);
+        // 重新放置（从棋盘抬起后再次放下）：已在 PlacedPile，无需额外操作
     }
 }

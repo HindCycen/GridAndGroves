@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="IntentDefinition" format=3]
+[gd_resource type="Resource" script_class="IntentDefinition" format=3 uid="uid://ci6xa7usa7q7v"]
 
 [ext_resource type="Resource" path="res://blocks/blockdefs/EnemyAttackBlock.tres" id="1_blockdef"]
-[ext_resource type="Script" path="res://resources/IntentDefinition.cs" id="2_intent"]
-[ext_resource type="Script" path="res://resources/BlockPlacementDef.cs" id="3_placement"]
+[ext_resource type="Script" uid="uid://cu1dihme6g7bj" path="res://resources/IntentDefinition.cs" id="2_intent"]
+[ext_resource type="Script" uid="uid://c6d5cxxoh1nkb" path="res://resources/BlockPlacementDef.cs" id="3_placement"]
 
 [sub_resource type="Resource" id="Place_1"]
 script = ExtResource("3_placement")
@@ -18,7 +18,6 @@ metadata/_custom_type_script = "res://resources/BlockPlacementDef.cs"
 
 [resource]
 script = ExtResource("2_intent")
-IntentName = "PlaceAttackRight"
-RepeatCount = 1
 BlockPlacements = Array[Object]([SubResource("Place_1"), SubResource("Place_2")])
+IntentName = "PlaceAttackRight"
 metadata/_custom_type_script = "res://resources/IntentDefinition.cs"

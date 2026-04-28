@@ -179,13 +179,13 @@ unique_name_in_owner = true
 position = Vector2(300, 200)
 script = ExtResource("6_r8nfv")
 
-[node name="BlockPilesHere" type="Node2D" parent="." unique_id=327451874 node_paths=PackedStringArray("DiscardedPile", "DrawPile", "Player", "ShowingPile", "PlacedPile")]
+[node name="BlockPilesHere" type="Node2D" parent="." unique_id=327451874 node_paths=PackedStringArray("DiscardedPile", "DrawPile", "PlacedPile", "Player", "ShowingPile")]
 script = ExtResource("6_wuq8c")
 DiscardedPile = NodePath("DiscardedPileComponent")
 DrawPile = NodePath("DrawPileComponent")
+PlacedPile = NodePath("PlacedPileComponent")
 Player = NodePath("../Player")
 ShowingPile = NodePath("ShowingPileComponent")
-PlacedPile = NodePath("PlacedPileComponent")
 
 [node name="DrawPileComponent" parent="BlockPilesHere" unique_id=1999516964 instance=ExtResource("6_dgjnm")]
 unique_name_in_owner = true

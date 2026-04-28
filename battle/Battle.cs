@@ -83,6 +83,9 @@ public partial class Battle : Node2D {
         _roundNumber++;
         GD.Print($"\n=== 第 {_roundNumber} 回合 ===");
 
+        // 解锁方块交互（玩家回合可以拖动）
+        Block.InputLocked = false;
+
         // 敌方 AI：清理旧方块 → 按意图放置新方块
         MakeEnemiesClearOldBlocks();
         MakeEnemiesExecuteTurn();
@@ -109,6 +112,8 @@ public partial class Battle : Node2D {
         _endTurnButton.Text = "Bot's Turn...";
         GD.Print("\n=== Bot 执行阶段 ===");
 
+        // 锁定方块交互（Bot 巡逻期间不能拖动）
+        Block.InputLocked = true;
         _bot.StartPatrol();
     }
 

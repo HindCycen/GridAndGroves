@@ -1,5 +1,6 @@
 #region
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Godot;
@@ -7,11 +8,39 @@ using Godot;
 #endregion
 
 public partial class RenderingComponent : Control {
+    private readonly Dictionary<string, StatIcon> _statIcons = new();
+    private HBoxContainer _statsContainer;
     [Export] public int BarLength;
-    [Export] public int StatIconPx;
+    [Export] public int StatIconPx = 36;
+
+    public StatsComponent StatsComponent { get; private set; }
 
     public override void _Ready() {
-        // What to do here? 
+        StatsComponent = GetNode<StatsComponent>("%StatsComponent");
+        _statsContainer = GetNode<HBoxContainer>("%StatsContainer");
+
+        StatsComponent.StatusAdded += OnStatusAdded;
+        StatsComponent.StatusRemoved += OnStatusRemoved;
+    }
+
+    private void OnStatusAdded(string name, int current, int max) {
+        var stat = StatsComponent.GetStatus(name);
+        if (stat == null) {
+            return;
+        }
+
+        var icon = new StatIcon();
+        icon.Setup(stat, StatIconPx);
+        _statIcons[name] = icon;
+        _statsContainer.AddChild(icon);
+    }
+
+    private void OnStatusRemoved(string name) {
+        if (_statIcons.TryGetValue(name, out var icon)) {
+            icon.Detach();
+            _statIcons.Remove(name);
+            icon.QueueFree();
+        }
     }
 
     public int GetHealth() {
@@ -27,8 +56,6 @@ public partial class RenderingComponent : Control {
     }
 
     public Stat[] GetStat() {
-        var sc = GetNode("%StatsComponent") as StatsComponent;
-        Debug.Assert(sc != null, nameof(sc) + " != null");
-        return sc.GetAllStatuses().ToArray();
+        return StatsComponent.GetAllStatuses().ToArray();
     }
 }
