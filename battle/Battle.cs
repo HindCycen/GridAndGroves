@@ -46,6 +46,9 @@ public partial class Battle : Node2D {
             enemy.SetupAI(_blockPilesHere);
         }
 
+        // 渲染不可用网格
+        RenderUnableGridCells();
+
         // 创建牌堆查看按钮
         SetupPileViewerButtons();
 
@@ -295,6 +298,27 @@ public partial class Battle : Node2D {
                 card.AddChild(nameLabel);
 
                 vbox.AddChild(card);
+            }
+        }
+    }
+
+    private void RenderUnableGridCells() {
+        var texture = GD.Load<Texture2D>("res://battle/battle_background/UnableGrid.png");
+        var texSize = texture.GetSize();
+        var scale = new Vector2(Glob.GridSize / texSize.X, Glob.GridSize / texSize.Y);
+        var bgNode = GetNode<Node2D>("BackgroundAnimator");
+
+        for (var col = 0; col < 7; col++) {
+            for (var row = 0; row < 5; row++) {
+                if (Glob.GetGridState(col, row) != Glob.GridState.Unable)
+                    continue;
+
+                var sprite = new Sprite2D();
+                sprite.Texture = texture;
+                sprite.Scale = scale;
+                sprite.ZIndex = 0;
+                sprite.GlobalPosition = Glob.GetGridPos(new Vector2I(col, row));
+                bgNode.AddChild(sprite);
             }
         }
     }

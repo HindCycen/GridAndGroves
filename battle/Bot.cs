@@ -63,8 +63,9 @@ public partial class Bot : Node2D {
         // 在占据新格子前，检测目标格是否已被方块占据
         var targetHasBlock = Glob.GetGridState(newPos.X, newPos.Y) == Glob.GridState.Occupied;
 
-        // 释放当前格子（但保留敌方方块占用的格子）
-        if (!HasEnemyBlockAt(_currentGridPos)) {
+        // 释放当前格子（但保留敌方方块和不可用格子的占用）
+        if (!HasEnemyBlockAt(_currentGridPos) &&
+            Glob.GetGridState(_currentGridPos.X, _currentGridPos.Y) != Glob.GridState.Unable) {
             Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Free);
         }
 
@@ -111,10 +112,11 @@ public partial class Bot : Node2D {
             Glob.GetGridPos(new Vector2I(0, 0)).Y - Glob.GridSize
         );
 
-        // 释放之前占据的网格（但保留敌方方块的占用）
+        // 释放之前占据的网格（但保留敌方方块和不可用格子的占用）
         if (_currentGridPos.X >= 0 && _currentGridPos.X <= 6 &&
             _currentGridPos.Y >= 0 && _currentGridPos.Y <= 4) {
-            if (!HasEnemyBlockAt(_currentGridPos)) {
+            if (!HasEnemyBlockAt(_currentGridPos) &&
+                Glob.GetGridState(_currentGridPos.X, _currentGridPos.Y) != Glob.GridState.Unable) {
                 Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Free);
             }
         }

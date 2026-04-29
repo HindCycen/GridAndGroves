@@ -66,6 +66,9 @@ public partial class AIComponent : Node {
                 pos.Y = Mathf.Clamp(pos.Y, 0, 4);
             }
 
+            pos = FindFreeCellNear(pos);
+            if (pos.X < 0) continue;
+
             var block = Glob.CreateBlock(placement.Block);
             if (block == null) {
                 continue;
@@ -104,5 +107,24 @@ public partial class AIComponent : Node {
 
             block.QueueFree();
         }
+    }
+
+    private static readonly Vector2I[] _searchOffsets = [
+        Vector2I.Zero,
+        new Vector2I(1, 0), new Vector2I(-1, 0), new Vector2I(0, 1), new Vector2I(0, -1),
+        new Vector2I(1, 1), new Vector2I(-1, 1), new Vector2I(1, -1), new Vector2I(-1, -1),
+        new Vector2I(2, 0), new Vector2I(-2, 0), new Vector2I(0, 2), new Vector2I(0, -2),
+    ];
+
+    private static Vector2I FindFreeCellNear(Vector2I center) {
+        foreach (var offset in _searchOffsets) {
+            var candidate = center + offset;
+            if (candidate.X < 0 || candidate.X >= 7 || candidate.Y < 0 || candidate.Y >= 5)
+                continue;
+            if (Glob.GetGridState(candidate.X, candidate.Y) != Glob.GridState.Free)
+                continue;
+            return candidate;
+        }
+        return new Vector2I(-1, -1);
     }
 }
