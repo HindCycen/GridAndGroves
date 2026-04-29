@@ -14,5 +14,6 @@ Behaviors = Array[Object]([SubResource("Resource_dmgbh")])
 Damage = 10
 MovingDirection = Vector2i(0, 1)
 PartId = "DamagePart"
+Description = "Deal %D% damage to the enemy."
 SpriteTexture = ExtResource("2_ijprj")
 metadata/_custom_type_script = "uid://cxi0d1tnlamis"

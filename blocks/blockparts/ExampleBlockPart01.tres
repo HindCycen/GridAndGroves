@@ -14,5 +14,6 @@ Behaviors = Array[Resource]([SubResource("Resource_rdgnq")])
 MovingDirection = Vector2i(0, 1)
 PartialPosition = Vector2(0, 1)
 PartId = "EgPart2"
+Description = "Nothing."
 SpriteTexture = ExtResource("2_ar8uq")
 metadata/_custom_type_script = "uid://cxi0d1tnlamis"
