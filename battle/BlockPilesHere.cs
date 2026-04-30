@@ -11,7 +11,6 @@ public partial class BlockPilesHere : Node2D {
     private const float ShowingPileBaseX = 0f;
     private const float ShowingPileBaseY = 0f;
     private const int MaxShowingPileColumns = 4;
-    private readonly List<Vector2I> _occupiedPositions = [];
     private readonly Dictionary<Block, Vector2> _blockLayoutPositions = [];
     [Export] public PileComponent DiscardedPile;
     [Export] public PileComponent DrawPile;
@@ -94,7 +93,6 @@ public partial class BlockPilesHere : Node2D {
         }
 
         // 清空占用位置记录
-        _occupiedPositions.Clear();
         _blockLayoutPositions.Clear();
     }
 
@@ -130,13 +128,42 @@ public partial class BlockPilesHere : Node2D {
         var gridCols = (int) Math.Ceiling(Math.Sqrt(partCount));
         var gridRows = (int) Math.Ceiling((double) partCount / gridCols);
 
+        // 动态构建当前手牌中所有 Block 占用的格子集合
+        var occupied = new HashSet<Vector2I>();
+        foreach (var kv in _blockLayoutPositions) {
+            if (kv.Key == block) continue;
+            var otherPartCount = kv.Key.Definition.PartDefinitions.Length;
+            var otherCols = (int) Math.Ceiling(Math.Sqrt(otherPartCount));
+            var otherRows = (int) Math.Ceiling((double) otherPartCount / otherCols);
+
+            for (var r = 0; r < otherRows; r++) {
+                for (var c = 0; c < otherCols; c++) {
+                    var p = new Vector2I(
+                        (int) ((kv.Value.X + c * Glob.GridSize - ShowingPileBaseX) / Glob.GridSize),
+                        (int) ((kv.Value.Y + r * Glob.GridSize - ShowingPileBaseY) / Glob.GridSize)
+                    );
+                    occupied.Add(p);
+                }
+            }
+        }
+
         for (var row = 0; row < 100; row++) {
             for (var col = 0; col < MaxShowingPileColumns; col++) {
                 var basePos = new Vector2(ShowingPileBaseX + col * Glob.GridSize * gridCols,
                     ShowingPileBaseY + row * Glob.GridSize * gridRows);
 
-                if (IsPositionAvailable(basePos, gridCols, gridRows)) {
-                    MarkPositionOccupied(basePos, gridCols, gridRows);
+                var isFree = true;
+                for (var r = 0; r < gridRows && isFree; r++) {
+                    for (var c = 0; c < gridCols && isFree; c++) {
+                        var p = new Vector2I(
+                            (int) ((basePos.X + c * Glob.GridSize - ShowingPileBaseX) / Glob.GridSize),
+                            (int) ((basePos.Y + r * Glob.GridSize - ShowingPileBaseY) / Glob.GridSize)
+                        );
+                        if (occupied.Contains(p)) isFree = false;
+                    }
+                }
+
+                if (isFree) {
                     return basePos;
                 }
             }
@@ -144,49 +171,6 @@ public partial class BlockPilesHere : Node2D {
 
         GD.PrintErr("No available position found for block");
         return new Vector2(ShowingPileBaseX, ShowingPileBaseY);
-    }
-
-    private bool IsPositionAvailable(Vector2 basePos, int cols, int rows) {
-        for (var row = 0; row < rows; row++) {
-            for (var col = 0; col < cols; col++) {
-                var pos = new Vector2I(
-                    (int) ((basePos.X + col * Glob.GridSize - ShowingPileBaseX) / Glob.GridSize),
-                    (int) ((basePos.Y + row * Glob.GridSize - ShowingPileBaseY) / Glob.GridSize)
-                );
-
-                if (_occupiedPositions.Contains(pos)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private void MarkPositionOccupied(Vector2 basePos, int cols, int rows) {
-        for (var row = 0; row < rows; row++) {
-            for (var col = 0; col < cols; col++) {
-                var pos = new Vector2I(
-                    (int) ((basePos.X + col * Glob.GridSize - ShowingPileBaseX) / Glob.GridSize),
-                    (int) ((basePos.Y + row * Glob.GridSize - ShowingPileBaseY) / Glob.GridSize)
-                );
-
-                _occupiedPositions.Add(pos);
-            }
-        }
-    }
-
-    private void FreeBlockPositions(Vector2 basePos, int cols, int rows) {
-        for (var row = 0; row < rows; row++) {
-            for (var col = 0; col < cols; col++) {
-                var pos = new Vector2I(
-                    (int) ((basePos.X + col * Glob.GridSize - ShowingPileBaseX) / Glob.GridSize),
-                    (int) ((basePos.Y + row * Glob.GridSize - ShowingPileBaseY) / Glob.GridSize)
-                );
-
-                _occupiedPositions.Remove(pos);
-            }
-        }
     }
 
     /// <summary>
@@ -222,13 +206,7 @@ public partial class BlockPilesHere : Node2D {
             // 首次放置：从展示区移至已放置区，补一张牌
             var globalPos = block.GlobalPosition;
 
-            // 使用之前存储的布局坐标释放占位（block.Position 在拖拽过程中已被改变）
-            if (_blockLayoutPositions.Remove(block, out var layoutPos)) {
-                var partCount = block.Definition.PartDefinitions.Length;
-                var gridCols = (int) Math.Ceiling(Math.Sqrt(partCount));
-                var gridRows = (int) Math.Ceiling((double) partCount / gridCols);
-                FreeBlockPositions(layoutPos, gridCols, gridRows);
-            }
+            _blockLayoutPositions.Remove(block);
 
             if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
                 block.GetParent().RemoveChild(block);

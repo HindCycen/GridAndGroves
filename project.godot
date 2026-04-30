@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Glob="*uid://bwxwqi5ryusvs"
 BattleTime="*uid://cyhxum0hb57ra"
+SaveLoad="*res://global/SaveLoad.cs"
 
 [display]
 
