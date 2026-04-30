@@ -24,7 +24,7 @@ public partial class SaveLoad : Node {
 
     public void Load(string path = DefaultSavePath) {
         if (!ResourceLoader.Exists(path)) {
-            GD.PrintErr($"SaveLoad: 存档文件不存在 ({path})");
+            GD.Print($"SaveLoad: 存档文件不存在 ({path})，使用默认初始数据");
             return;
         }
 
@@ -112,7 +112,7 @@ public partial class SaveLoad : Node {
 
         // 牌组
         var pile = player.GetNode<PileComponent>("%PlayerPile");
-        if (pile != null) {
+        if (pile != null && Data.PlayerDeckBlockNames != null) {
             var existing = pile.Pile.ToList();
             foreach (var block in existing) {
                 pile.RemoveBlock(block);
@@ -129,9 +129,10 @@ public partial class SaveLoad : Node {
 
         // 状态栏
         var rend = player.GetNode<RenderingComponent>("RenderingComponent");
-        if (rend?.StatsComponent != null) {
+        if (rend?.StatsComponent != null && Data.PlayerStatNames != null && Data.PlayerStatValues != null) {
             var statsComp = rend.StatsComponent;
-            for (var i = 0; i < Data.PlayerStatNames.Length && i < Data.PlayerStatValues.Length; i++) {
+            var count = Mathf.Min(Data.PlayerStatNames.Length, Data.PlayerStatValues.Length);
+            for (var i = 0; i < count; i++) {
                 var stat = statsComp.GetStatus(Data.PlayerStatNames[i]);
                 stat?.SetValue(Data.PlayerStatValues[i]);
             }

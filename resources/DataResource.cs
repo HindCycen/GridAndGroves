@@ -10,10 +10,10 @@ public partial class DataResource : Resource {
     [Export] public int PlayerCurrentHealth;
     [Export] public int PlayerMaxHealth;
 
-    [Export] public string[] PlayerDeckBlockNames;
+    [Export] public string[] PlayerDeckBlockNames = [];
 
-    [Export] public string[] PlayerStatNames;
-    [Export] public int[] PlayerStatValues;
+    [Export] public string[] PlayerStatNames = [];
+    [Export] public int[] PlayerStatValues = [];
 
     // ── Random State ──
     [Export] public int Seed;

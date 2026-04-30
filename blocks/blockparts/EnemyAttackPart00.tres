@@ -10,10 +10,10 @@ metadata/_custom_type_script = "res://blocks/blockpart_behaviors/DamagePlayerBeh
 
 [resource]
 script = ExtResource("2_partdef")
-Behaviors = Array[Object]([SubResource("Resource_dmgp")])
 BaseDamage = 5
+Behaviors = Array[Object]([SubResource("Resource_dmgp")])
+Description = "Deal %D% damage to the player."
 MovingDirection = Vector2i(0, 1)
 PartId = "EnemyAttackPart"
-Description = "Deal %D% damage to the player."
 SpriteTexture = ExtResource("2_pfq4b")
 metadata/_custom_type_script = "uid://cxi0d1tnlamis"

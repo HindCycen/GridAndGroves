@@ -14,11 +14,13 @@ public partial class Battle : Node2D {
     private bool _isGameOver;
     private HealthComponent _playerHealth;
     private int _roundNumber;
+    private SaveLoad _saveLoad;
 
     public override void _Ready() {
         _blockPilesHere = GetNode<BlockPilesHere>("BlockPilesHere");
         _bot = GetNode<Bot>("Bot");
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
+        _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
         _endTurnButton = GetNode<Button>("%Button");
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         _playerHealth = GetNode<Player>("Player").GetNode<HealthComponent>("RenderingComponent/HealthComponent");
@@ -35,8 +37,11 @@ public partial class Battle : Node2D {
         // Bot 回合结束时触发
         _battleTime.TurnEnded += OnBotTurnEnded;
 
-        // 初始化玩家牌组（放入初始卡片）
+        // 初始化玩家牌组（放入初始卡片，作为存档不存在时的默认数据）
         InitializePlayerDeck();
+
+        // 尝试加载存档（若存在则覆盖默认初始数据）
+        _saveLoad.Load();
 
         // 初始化抽牌堆（将玩家牌组的副本移入）
         _blockPilesHere.InitializeDrawPile();
@@ -168,6 +173,7 @@ public partial class Battle : Node2D {
         _endTurnButton.Text = "Victory!";
         _endTurnButton.Disabled = true;
         _battleTime.SayBattleEnded();
+        _saveLoad.Save();
     }
 
     private void OnPlayerDied() {

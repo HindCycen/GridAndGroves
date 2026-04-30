@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bhobbalfopbtb"]
 
 [ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://battle/Battle.cs" id="1_2ckr4"]
+[ext_resource type="PackedScene" path="res://Room.tscn" id="2_room"]
 [ext_resource type="PackedScene" uid="uid://bi2mcb6tkklke" path="res://actors/player/Player.tscn" id="5_v3re7"]
 [ext_resource type="PackedScene" uid="uid://cyphyc8ryljwu" path="res://components/PileComponent.tscn" id="6_dgjnm"]
 [ext_resource type="Script" uid="uid://nenaxcfp7joo" path="res://actors/player/Player.cs" id="6_r8nfv"]
@@ -134,20 +135,20 @@ animations = [{
 "speed": 16.0
 }]
 
-[node name="Battle" type="Node2D" unique_id=738558309]
+[node name="Battle" unique_id=2081650975 instance=ExtResource("2_room")]
 z_index = 100
 script = ExtResource("1_2ckr4")
 
-[node name="Bot" type="Node2D" parent="." unique_id=1956716059]
+[node name="Bot" type="Node2D" parent="." index="0" unique_id=1956716059]
 script = ExtResource("8_pfxs1")
 
-[node name="DetectionArea" type="Area2D" parent="Bot" unique_id=2001425089]
+[node name="DetectionArea" type="Area2D" parent="Bot" index="0" unique_id=2001425089]
 unique_name_in_owner = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Bot/DetectionArea" unique_id=1376579895]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bot/DetectionArea" index="0" unique_id=1376579895]
 shape = SubResource("CircleShape2D_880dk")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Bot" unique_id=1054380748]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Bot" index="1" unique_id=1054380748]
 unique_name_in_owner = true
 z_index = 100
 sprite_frames = SubResource("SpriteFrames_lo8qj")
@@ -155,7 +156,7 @@ animation = &"bot_animation"
 frame = 1
 frame_progress = 0.044673927
 
-[node name="Button" type="Button" parent="." unique_id=1011671334]
+[node name="Button" type="Button" parent="." index="1" unique_id=1011671334]
 unique_name_in_owner = true
 offset_left = 1613.0
 offset_top = 905.0
@@ -163,23 +164,23 @@ offset_right = 1887.0
 offset_bottom = 1032.0
 text = "Start Turn"
 
-[node name="Enemy" parent="." unique_id=1956716062 instance=ExtResource("12_fn3my")]
+[node name="Enemy" parent="." index="2" unique_id=1956716062 instance=ExtResource("12_fn3my")]
 position = Vector2(1500, 200)
 Definition = ExtResource("13_enemydef")
 
-[node name="BackgroundAnimator" type="Node2D" parent="." unique_id=333254833]
+[node name="BackgroundAnimator" type="Node2D" parent="." index="3" unique_id=333254833]
 
-[node name="UpperLayer" type="Sprite2D" parent="BackgroundAnimator" unique_id=993107428]
+[node name="UpperLayer" type="Sprite2D" parent="BackgroundAnimator" index="0" unique_id=993107428]
 z_index = -1
 texture = ExtResource("11_pk84k")
 offset = Vector2(480, 540)
 
-[node name="Player" parent="." unique_id=1603292337 instance=ExtResource("5_v3re7")]
+[node name="Player" parent="." index="4" unique_id=1603292337 instance=ExtResource("5_v3re7")]
 unique_name_in_owner = true
 position = Vector2(300, 200)
 script = ExtResource("6_r8nfv")
 
-[node name="BlockPilesHere" type="Node2D" parent="." unique_id=327451874 node_paths=PackedStringArray("DiscardedPile", "DrawPile", "PlacedPile", "Player", "ShowingPile")]
+[node name="BlockPilesHere" type="Node2D" parent="." index="5" unique_id=327451874 node_paths=PackedStringArray("DiscardedPile", "DrawPile", "PlacedPile", "Player", "ShowingPile")]
 script = ExtResource("6_wuq8c")
 DiscardedPile = NodePath("DiscardedPileComponent")
 DrawPile = NodePath("DrawPileComponent")
@@ -187,15 +188,15 @@ PlacedPile = NodePath("PlacedPileComponent")
 Player = NodePath("../Player")
 ShowingPile = NodePath("ShowingPileComponent")
 
-[node name="DrawPileComponent" parent="BlockPilesHere" unique_id=1999516964 instance=ExtResource("6_dgjnm")]
+[node name="DrawPileComponent" parent="BlockPilesHere" index="0" unique_id=1999516964 instance=ExtResource("6_dgjnm")]
 unique_name_in_owner = true
 
-[node name="ShowingPileComponent" parent="BlockPilesHere" unique_id=120971053 instance=ExtResource("6_dgjnm")]
+[node name="ShowingPileComponent" parent="BlockPilesHere" index="1" unique_id=120971053 instance=ExtResource("6_dgjnm")]
 unique_name_in_owner = true
 position = Vector2(1008, 480)
 
-[node name="DiscardedPileComponent" parent="BlockPilesHere" unique_id=1249427001 instance=ExtResource("6_dgjnm")]
+[node name="DiscardedPileComponent" parent="BlockPilesHere" index="2" unique_id=1249427001 instance=ExtResource("6_dgjnm")]
 unique_name_in_owner = true
 
-[node name="PlacedPileComponent" parent="BlockPilesHere" unique_id=1641088121 instance=ExtResource("6_dgjnm")]
+[node name="PlacedPileComponent" parent="BlockPilesHere" index="3" unique_id=1641088121 instance=ExtResource("6_dgjnm")]
 unique_name_in_owner = true
