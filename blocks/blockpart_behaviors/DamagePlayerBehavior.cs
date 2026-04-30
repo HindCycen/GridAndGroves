@@ -7,7 +7,7 @@ using Godot;
 [GlobalClass]
 public partial class DamagePlayerBehavior : BlockPartBehavior {
     public override void Execute(Block block, BlockPart part) {
-        var damage = part.PartDefinition.Damage;
+        var damage = part.Damage;
         if (damage <= 0) {
             return;
         }

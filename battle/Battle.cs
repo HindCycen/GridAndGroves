@@ -310,8 +310,9 @@ public partial class Battle : Node2D {
 
         for (var col = 0; col < 7; col++) {
             for (var row = 0; row < 5; row++) {
-                if (Glob.GetGridState(col, row) != Glob.GridState.Unable)
+                if (Glob.GetGridState(col, row) != Glob.GridState.Unable) {
                     continue;
+                }
 
                 var sprite = new Sprite2D();
                 sprite.Texture = texture;

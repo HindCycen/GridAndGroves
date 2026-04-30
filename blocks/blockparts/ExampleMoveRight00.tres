@@ -16,8 +16,8 @@ metadata/_custom_type_script = "res://blocks/blockpart_behaviors/DamageEnemyBeha
 [resource]
 script = ExtResource("1_kq3in")
 Behaviors = Array[Object]([SubResource("Resource_r386g"), SubResource("Resource_dmgbh2")])
-Damage = 5
+BaseDamage = 5
 MovingDirection = Vector2i(1, 0)
-Description = "Make [Y]{Bot} move [G]{Right} before meeting other blockparts. Then deal %D% damage."
+Description = "Make [Y]{Bot} move [G]{Right} before meeting other blockparts. Meanwhile deal %D% damage."
 SpriteTexture = ExtResource("2_pc027")
 metadata/_custom_type_script = "uid://cxi0d1tnlamis"

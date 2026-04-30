@@ -7,6 +7,13 @@ using Godot;
 
 [GlobalClass]
 public partial class AIComponent : Node {
+    private static readonly Vector2I[] _searchOffsets = [
+        Vector2I.Zero,
+        new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
+        new(1, 1), new(-1, 1), new(1, -1), new(-1, -1),
+        new(2, 0), new(-2, 0), new(0, 2), new(0, -2)
+    ];
+
     private BlockPilesHere _blockPilesHere;
     private int _cycleIndex;
     private Node2D _owner;
@@ -67,7 +74,9 @@ public partial class AIComponent : Node {
             }
 
             pos = FindFreeCellNear(pos);
-            if (pos.X < 0) continue;
+            if (pos.X < 0) {
+                continue;
+            }
 
             var block = Glob.CreateBlock(placement.Block);
             if (block == null) {
@@ -109,22 +118,20 @@ public partial class AIComponent : Node {
         }
     }
 
-    private static readonly Vector2I[] _searchOffsets = [
-        Vector2I.Zero,
-        new Vector2I(1, 0), new Vector2I(-1, 0), new Vector2I(0, 1), new Vector2I(0, -1),
-        new Vector2I(1, 1), new Vector2I(-1, 1), new Vector2I(1, -1), new Vector2I(-1, -1),
-        new Vector2I(2, 0), new Vector2I(-2, 0), new Vector2I(0, 2), new Vector2I(0, -2),
-    ];
-
     private static Vector2I FindFreeCellNear(Vector2I center) {
         foreach (var offset in _searchOffsets) {
             var candidate = center + offset;
-            if (candidate.X < 0 || candidate.X >= 7 || candidate.Y < 0 || candidate.Y >= 5)
+            if (candidate.X < 0 || candidate.X >= 7 || candidate.Y < 0 || candidate.Y >= 5) {
                 continue;
-            if (Glob.GetGridState(candidate.X, candidate.Y) != Glob.GridState.Free)
+            }
+
+            if (Glob.GetGridState(candidate.X, candidate.Y) != Glob.GridState.Free) {
                 continue;
+            }
+
             return candidate;
         }
+
         return new Vector2I(-1, -1);
     }
 }

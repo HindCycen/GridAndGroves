@@ -6,13 +6,13 @@ using Godot;
 
 [GlobalClass]
 public partial class BlockPartDef : Resource {
+    [Export] public int BaseDamage;
+    [Export] public int BaseDefend;
+    [Export] public int BaseMagicNum;
     [Export] public BlockPartBehavior[] Behaviors;
-    [Export] public int Block;
-    [Export] public int Damage;
-    [Export] public int MagicNum;
+    [Export] public string Description;
     [Export] public Vector2I MovingDirection;
     [Export] public Vector2 PartialPosition;
     [Export] public string PartId;
-    [Export] public string Description;
     [Export] public Texture2D SpriteTexture;
 }

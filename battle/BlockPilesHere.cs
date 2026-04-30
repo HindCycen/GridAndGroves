@@ -10,7 +10,9 @@ using Godot;
 public partial class BlockPilesHere : Node2D {
     private const float ShowingPileBaseX = 0f;
     private const float ShowingPileBaseY = 0f;
+    private const int MaxShowingPileColumns = 4;
     private readonly List<Vector2I> _occupiedPositions = [];
+    private readonly Dictionary<Block, Vector2> _blockLayoutPositions = [];
     [Export] public PileComponent DiscardedPile;
     [Export] public PileComponent DrawPile;
     [Export] public PileComponent PlacedPile;
@@ -58,6 +60,7 @@ public partial class BlockPilesHere : Node2D {
         var showingBlocks = ShowingPile.Pile.ToList();
         foreach (var block in showingBlocks) {
             block.Placed -= OnBlockPlaced;
+            block.LeftGrid -= OnBlockLeftGrid;
 
             if (IsInstanceValid(block) && block.GetParent() == ShowingPile) {
                 ShowingPile.RemoveChild(block);
@@ -73,6 +76,7 @@ public partial class BlockPilesHere : Node2D {
         var placedBlocks = PlacedPile.Pile.Where(b => b.Faction == Block.BlockFaction.Player).ToList();
         foreach (var block in placedBlocks) {
             block.Placed -= OnBlockPlaced;
+            block.LeftGrid -= OnBlockLeftGrid;
             PlacedPile.RemoveBlock(block);
             foreach (var part in block.GetParts()) {
                 var gridPos = Glob.FindNearestGridPoint(part.GlobalPosition);
@@ -91,6 +95,7 @@ public partial class BlockPilesHere : Node2D {
 
         // 清空占用位置记录
         _occupiedPositions.Clear();
+        _blockLayoutPositions.Clear();
     }
 
     private void ReshuffleDiscardToDraw() {
@@ -112,9 +117,12 @@ public partial class BlockPilesHere : Node2D {
 
         block.Placed -= OnBlockPlaced;
         block.Placed += OnBlockPlaced;
+        block.LeftGrid -= OnBlockLeftGrid;
+        block.LeftGrid += OnBlockLeftGrid;
         var position = FindAvailablePosition(block);
+        _blockLayoutPositions[block] = position;
         block.Position = position;
-        block.OriginalPos = position;
+        block.OriginalPos = block.GlobalPosition;
     }
 
     private Vector2 FindAvailablePosition(Block block) {
@@ -123,7 +131,7 @@ public partial class BlockPilesHere : Node2D {
         var gridRows = (int) Math.Ceiling((double) partCount / gridCols);
 
         for (var row = 0; row < 100; row++) {
-            for (var col = 0; col < 100; col++) {
+            for (var col = 0; col < MaxShowingPileColumns; col++) {
                 var basePos = new Vector2(ShowingPileBaseX + col * Glob.GridSize * gridCols,
                     ShowingPileBaseY + row * Glob.GridSize * gridRows);
 
@@ -168,6 +176,19 @@ public partial class BlockPilesHere : Node2D {
         }
     }
 
+    private void FreeBlockPositions(Vector2 basePos, int cols, int rows) {
+        for (var row = 0; row < rows; row++) {
+            for (var col = 0; col < cols; col++) {
+                var pos = new Vector2I(
+                    (int) ((basePos.X + col * Glob.GridSize - ShowingPileBaseX) / Glob.GridSize),
+                    (int) ((basePos.Y + row * Glob.GridSize - ShowingPileBaseY) / Glob.GridSize)
+                );
+
+                _occupiedPositions.Remove(pos);
+            }
+        }
+    }
+
     /// <summary>
     ///     从抽牌堆中随机取出一张牌放入展示区
     /// </summary>
@@ -182,12 +203,32 @@ public partial class BlockPilesHere : Node2D {
         ShowingPile.AddChild(b);
     }
 
+    private void OnBlockLeftGrid(Block block) {
+        block.IsPlaced = false;
+        PlacedPile.RemoveBlock(block);
+
+        if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
+            block.GetParent().RemoveChild(block);
+        }
+
+        ShowingPile.AddBlock(block);
+        ShowingPile.AddChild(block);
+    }
+
     private void OnBlockPlaced(Block block) {
         var isNewPlacement = ShowingPile.Pile.Contains(block);
 
         if (isNewPlacement) {
             // 首次放置：从展示区移至已放置区，补一张牌
             var globalPos = block.GlobalPosition;
+
+            // 使用之前存储的布局坐标释放占位（block.Position 在拖拽过程中已被改变）
+            if (_blockLayoutPositions.Remove(block, out var layoutPos)) {
+                var partCount = block.Definition.PartDefinitions.Length;
+                var gridCols = (int) Math.Ceiling(Math.Sqrt(partCount));
+                var gridRows = (int) Math.Ceiling((double) partCount / gridCols);
+                FreeBlockPositions(layoutPos, gridCols, gridRows);
+            }
 
             if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
                 block.GetParent().RemoveChild(block);

@@ -11,6 +11,9 @@ public partial class Block : Node2D {
     [Signal]
     public delegate void PlacedEventHandler(Block block);
 
+    [Signal]
+    public delegate void LeftGridEventHandler(Block block);
+
     public enum BlockFaction {
         Player,
         Enemy
@@ -25,6 +28,7 @@ public partial class Block : Node2D {
     public bool IsPlaced;
     public bool IsPressed;
     public Vector2 OriginalPos;
+    private bool _wasOnGrid;
 
     public BlockPart[] GetParts() {
         return _parts.ToArray();
@@ -60,6 +64,7 @@ public partial class Block : Node2D {
 
                 IsPressed = true;
                 if (IsPlaced) {
+                    _wasOnGrid = true;
                     LiftFromGrid();
                 }
             };
@@ -80,9 +85,14 @@ public partial class Block : Node2D {
                         }
                     }
 
+                    _wasOnGrid = false;
                     OriginalPos = GlobalPosition;
                     IsPlaced = true;
                     EmitSignalPlaced(this);
+                }
+                else if (_wasOnGrid) {
+                    _wasOnGrid = false;
+                    EmitSignalLeftGrid(this);
                 }
                 else {
                     GlobalPosition = OriginalPos;

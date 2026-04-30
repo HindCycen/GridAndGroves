@@ -1,6 +1,6 @@
 #region
 
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using Godot;
 
 #endregion
@@ -15,8 +15,12 @@ public partial class BlockPart : Node2D {
     private Area2D _detectingArea = new();
     private CollisionShape2D _detectingCollisionShape = new();
     private Sprite2D _sprite2D = new();
-    private Node _tooltip;
+    private TooltipComponent _tooltipComponent;
     [Export] public BlockPartDef PartDefinition { get; set; }
+
+    public int Damage { get; set; }
+    public int Defend { get; set; }
+    public int MagicNum { get; set; }
 
     public override void _Ready() {
         var shape2D = new RectangleShape2D();
@@ -31,98 +35,62 @@ public partial class BlockPart : Node2D {
         AddChild(_detectingArea);
 
         _detectingArea.InputEvent += (_, @event, _) => {
-            if (@event is InputEventMouseButton mouseButton &&
-                mouseButton.ButtonIndex == MouseButton.Left) {
-                if (mouseButton.Pressed) {
-                    EmitSignalPressed(this);
-                }
-                else {
-                    EmitSignalReleased(this);
-                }
+            if (@event is not InputEventMouseButton { ButtonIndex: MouseButton.Left } mouseButton) {
+                return;
+            }
+
+            if (mouseButton.Pressed) {
+                EmitSignalPressed(this);
+            }
+            else {
+                EmitSignalReleased(this);
             }
         };
 
         _detectingArea.MouseEntered += OnMouseEntered;
         _detectingArea.MouseExited += OnMouseExited;
 
+        _tooltipComponent = new TooltipComponent();
+        AddChild(_tooltipComponent);
+
+        Damage = PartDefinition.BaseDamage;
+        Defend = PartDefinition.BaseDefend;
+        MagicNum = PartDefinition.BaseMagicNum;
+
         Position = PartDefinition.PartialPosition * Glob.GridSize;
         SetProcessInput(true);
     }
 
-    public override void _ExitTree() {
-        HideTooltip();
-    }
-
     private void OnMouseEntered() {
-        if (GetParent() is Block block && block.Definition != null && !block.IsPressed) {
-            ShowTooltip(block);
+        if (GetParent() is not Block block || block.Definition == null || block.IsPressed) {
+            return;
         }
+
+        var text = block.Definition.BlockName;
+        if (!string.IsNullOrEmpty(block.Definition.Description)) {
+            text += "\n" + block.Definition.Description;
+        }
+
+        if (!string.IsNullOrEmpty(PartDefinition.Description)) {
+            text += "\n" + PartDefinition.Description;
+        }
+
+        if (string.IsNullOrEmpty(text)) {
+            return;
+        }
+
+        var placeholders = new Dictionary<string, string> {
+            { "B", Defend.ToString() },
+            { "D", Damage.ToString() },
+            { "M", MagicNum.ToString() }
+        };
+
+        text = _tooltipComponent.ProcessText(text, placeholders);
+        _tooltipComponent.Show(GlobalPosition, text);
     }
 
     private void OnMouseExited() {
-        HideTooltip();
-    }
-
-    private void ShowTooltip(Block block) {
-        var text = block.Definition.BlockName;
-        if (!string.IsNullOrEmpty(block.Definition.Description))
-            text += "\n" + block.Definition.Description;
-        if (!string.IsNullOrEmpty(PartDefinition.Description))
-            text += "\n" + PartDefinition.Description;
-
-        if (string.IsNullOrEmpty(text)) return;
-
-        text = ProcessText(text);
-
-        var label = new RichTextLabel();
-        label.BbcodeEnabled = true;
-        label.MouseFilter = Control.MouseFilterEnum.Ignore;
-        label.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        label.Size = new Vector2(260, 200);
-
-        var panel = new Panel();
-        panel.MouseFilter = Control.MouseFilterEnum.Ignore;
-        panel.Size = new Vector2(284, 216);
-        panel.AddChild(label);
-
-        var layer = new CanvasLayer();
-        layer.Layer = 128;
-        GetViewport().AddChild(layer);
-        layer.AddChild(panel);
-        _tooltip = layer;
-
-        Callable.From(() => {
-            if (_tooltip != layer) return;
-            label.Position = new Vector2(12, 8);
-            label.Text = text;
-            panel.Position = GlobalPosition + new Vector2(Glob.GridSize * 0.5f, -panel.Size.Y - 5);
-        }).CallDeferred();
-    }
-
-    private void HideTooltip() {
-        if (_tooltip != null) {
-            _tooltip.QueueFree();
-            _tooltip = null;
-        }
-    }
-
-    private string ProcessText(string text) {
-        text = text.Replace("%B%", PartDefinition.Block.ToString())
-                   .Replace("%D%", PartDefinition.Damage.ToString())
-                   .Replace("%M%", PartDefinition.MagicNum.ToString());
-
-        text = Regex.Replace(text, @"\[([RGBY])\]\{([^}]*)\}", m => {
-            var color = m.Groups[1].Value switch {
-                "R" => "red",
-                "G" => "green",
-                "B" => "blue",
-                "Y" => "yellow",
-                _ => "white"
-            };
-            return $"[color={color}]{m.Groups[2].Value}[/color]";
-        });
-
-        return text;
+        _tooltipComponent.Hide();
     }
 
     public Vector2I Execute(Block owner) {

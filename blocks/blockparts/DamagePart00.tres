@@ -11,7 +11,7 @@ metadata/_custom_type_script = "res://blocks/blockpart_behaviors/DamageEnemyBeha
 [resource]
 script = ExtResource("2_kqin3")
 Behaviors = Array[Object]([SubResource("Resource_dmgbh")])
-Damage = 10
+BaseDamage = 10
 MovingDirection = Vector2i(0, 1)
 PartId = "DamagePart"
 Description = "Deal %D% damage to the enemy."
