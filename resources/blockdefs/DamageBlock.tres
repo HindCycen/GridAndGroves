@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BlockDef" format=3 uid="uid://clg3a5n5dqqfj"]
 
-[ext_resource type="Resource" uid="uid://c2otrfx5b8hbk" path="res://blocks/blockparts/DamagePart00.tres" id="1_143g6"]
+[ext_resource type="Resource" uid="uid://c2otrfx5b8hbk" path="res://resources/blockparts/DamagePart00.tres" id="1_143g6"]
 [ext_resource type="Script" uid="uid://bvya8542g7of3" path="res://blocks/BlockDef.cs" id="2_opu5t"]
 
 [resource]

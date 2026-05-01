@@ -17,6 +17,7 @@ public partial class Enemy : Node2D {
             var healthComponent = GetNode<HealthComponent>("RenderingComponent/HealthComponent");
             if (healthComponent != null) {
                 healthComponent.SetMaxHealth(Definition.MaxHealth);
+                healthComponent.Died += OnDie;
             }
 
             if (Definition.Image != null) {
@@ -58,5 +59,13 @@ public partial class Enemy : Node2D {
 
     public void ClearBlocks() {
         _aiComponent?.ClearExistingBlocks();
+    }
+
+    public void OnDie() {
+        ClearBlocks();
+        if (IsInstanceValid(this) && GetParent() != null) {
+            GetParent().RemoveChild(this);
+        }
+        QueueFree();
     }
 }

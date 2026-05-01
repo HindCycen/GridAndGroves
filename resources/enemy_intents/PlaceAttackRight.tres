@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="IntentDefinition" format=3 uid="uid://ci6xa7usa7q7v"]
 
-[ext_resource type="Resource" path="res://blocks/blockdefs/EnemyAttackBlock.tres" id="1_blockdef"]
+[ext_resource type="Resource" path="res://resources/blockdefs/EnemyAttackBlock.tres" id="1_blockdef"]
 [ext_resource type="Script" uid="uid://cu1dihme6g7bj" path="res://resources/IntentDefinition.cs" id="2_intent"]
 [ext_resource type="Script" uid="uid://c6d5cxxoh1nkb" path="res://resources/BlockPlacementDef.cs" id="3_placement"]
 

@@ -5,7 +5,7 @@ using Godot;
 
 #endregion
 
-public partial class Battle : Node2D {
+public partial class Battle : Room {
     private BattleTime _battleTime;
     private BlockPilesHere _blockPilesHere;
     private Bot _bot;
@@ -18,6 +18,7 @@ public partial class Battle : Node2D {
     private SaveLoad _saveLoad;
 
     public override void _Ready() {
+        base._Ready();
         _blockPilesHere = GetNode<BlockPilesHere>("BlockPilesHere");
         _bot = GetNode<Bot>("Bot");
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
@@ -47,9 +48,6 @@ public partial class Battle : Node2D {
         // Bot 回合结束时触发
         _battleTime.TurnEnded += OnBotTurnEnded;
 
-        // 尝试加载存档（若存在则覆盖默认初始数据）
-        _saveLoad.Load();
-
         // 初始化玩家牌组（放入初始卡片，作为存档不存在时的默认数据）
         InitializePlayerDeck();
 
@@ -59,6 +57,10 @@ public partial class Battle : Node2D {
         // 初始化敌人 AI
         foreach (var enemy in _enemies) {
             enemy.SetupAI(_blockPilesHere);
+            var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
+            if (hc != null) {
+                hc.Died += OnEnemyDied;
+            }
         }
 
         // 渲染不可用网格
@@ -81,7 +83,6 @@ public partial class Battle : Node2D {
         // 仅在存档不存在时填入默认卡组（存档已存在时卡组由 SaveLoad 恢复）
         if (playerPile.Count > 0) {
             GD.Print("存档已存在，保留存档中的卡组");
-            EnsureGrowingInDeck(playerPile);
             GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
             return;
         }
@@ -102,16 +103,6 @@ public partial class Battle : Node2D {
         playerPile.AddBlock(Glob.CreateBlock("Growing"));
 
         GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
-    }
-
-    private void EnsureGrowingInDeck(PileComponent pile) {
-        if (!pile.Pile.Any(b => b.Definition?.BlockName == "Growing")) {
-            var growing = Glob.CreateBlock("Growing");
-            if (growing != null) {
-                pile.AddBlock(growing);
-                GD.Print("EnsureGrowingInDeck: 补充 Growing 方块");
-            }
-        }
     }
 
     /// <summary>
@@ -203,7 +194,14 @@ public partial class Battle : Node2D {
         _endTurnButton.Text = "Victory!";
         _endTurnButton.Disabled = true;
         _battleTime.SayBattleEnded();
-        _saveLoad.Save();
+    }
+
+    private void OnEnemyDied() {
+        if (_isGameOver) return;
+        if (AreAllEnemiesDead()) {
+            _bot.StopPatrol();
+            OnVictory();
+        }
     }
 
     private void OnPlayerDied() {

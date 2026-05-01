@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://c2otrfx5b8hbk"]
 
-[ext_resource type="Texture2D" uid="uid://bjpem86fh4nse" path="res://blocks/blockpart_picture/green/Attack-G.png" id="2_ijprj"]
+[ext_resource type="Texture2D" uid="uid://bjpem86fh4nse" path="res://resources/blockpart_picture/green/Attack-G.png" id="2_ijprj"]
 [ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="2_kqin3"]
-[ext_resource type="Script" uid="uid://dqohndmx7jknh" path="res://blocks/blockpart_behaviors/DamageEnemyBehavior.cs" id="3_dmgbh"]
+[ext_resource type="Script" uid="uid://dqohndmx7jknh" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.cs" id="3_dmgbh"]
 
 [sub_resource type="Resource" id="Resource_dmgbh"]
 script = ExtResource("3_dmgbh")
-metadata/_custom_type_script = "res://blocks/blockpart_behaviors/DamageEnemyBehavior.cs"
+metadata/_custom_type_script = "res://resources/blockpart_behaviors/DamageEnemyBehavior.cs"
 
 [resource]
 script = ExtResource("2_kqin3")

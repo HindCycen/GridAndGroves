@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://c21xj46mmbrbp"]
 
-[ext_resource type="Script" uid="uid://cvuhmr6a7300r" path="res://blocks/blockpart_behaviors/ExamplePartBehavior.cs" id="1_x1c1k"]
-[ext_resource type="Texture2D" uid="uid://ernt7yx2pi0t" path="res://blocks/blockpart_picture/green/Blank-G.png" id="2_ar8uq"]
+[ext_resource type="Script" uid="uid://cvuhmr6a7300r" path="res://resources/blockpart_behaviors/ExamplePartBehavior.cs" id="1_x1c1k"]
+[ext_resource type="Texture2D" uid="uid://ernt7yx2pi0t" path="res://resources/blockpart_picture/green/Blank-G.png" id="2_ar8uq"]
 [ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="3_sy51q"]
 
 [sub_resource type="Resource" id="Resource_rdgnq"]

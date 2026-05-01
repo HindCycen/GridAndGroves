@@ -7,10 +7,10 @@ using Godot;
 [BlockRegisterer]
 public class OriginalBlockRegisterer : AbstractBlockRegisterer {
     public override void Register() {
-        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/ExampleBlock.tres"));
-        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/ExampleMoveRight.tres"));
-        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/DamageBlock.tres"));
-        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/EnemyAttackBlock.tres"));
-        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://blocks/blockdefs/GrowingBlock.tres"));
+        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://resources/blockdefs/ExampleBlock.tres"));
+        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://resources/blockdefs/ExampleMoveRight.tres"));
+        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://resources/blockdefs/DamageBlock.tres"));
+        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://resources/blockdefs/EnemyAttackBlock.tres"));
+        Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://resources/blockdefs/GrowingBlock.tres"));
     }
 }

@@ -11,6 +11,7 @@ public partial class Bot : Node2D {
     private BlockPilesHere _blockPilesHere;
     private Vector2I _currentDirection = Vector2I.Down;
     private Vector2I _currentGridPos;
+    private bool _stopped;
 
     public override void _Ready() {
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
@@ -29,8 +30,18 @@ public partial class Bot : Node2D {
         ScheduleNextStep();
     }
 
+    public void StopPatrol() {
+        _stopped = true;
+        GoToStarterPoint();
+    }
+
+    public void ResetStopped() {
+        _stopped = false;
+    }
+
     private void ScheduleNextStep() {
         GetTree().CreateTimer(1.0f).Timeout += () => {
+            if (_stopped) return;
             _battleTime.SayTicTac();
             MoveToNextCell();
         };
