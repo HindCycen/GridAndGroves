@@ -12,6 +12,33 @@ public partial class Enemy : Node2D {
     public override void _Ready() {
         AddToGroup("Enemies");
         _aiComponent = GetNodeOrNull<AIComponent>("AIComponent");
+
+        if (Definition != null) {
+            var healthComponent = GetNode<HealthComponent>("RenderingComponent/HealthComponent");
+            if (healthComponent != null) {
+                healthComponent.SetMaxHealth(Definition.MaxHealth);
+            }
+
+            if (Definition.Image != null) {
+                var sprite = GetNode<AnimatedSprite2D>("ActorSprite");
+                var frames = new SpriteFrames();
+                frames.AddFrame("default", Definition.Image);
+                sprite.SpriteFrames = frames;
+                sprite.Play("default");
+            }
+
+            if (Definition.InitialStats != null) {
+                var renderingComponent = GetNode<RenderingComponent>("RenderingComponent");
+                var statsComponent = renderingComponent.StatsComponent;
+                foreach (var statDef in Definition.InitialStats) {
+                    if (statDef != null) {
+                        var stat = new Stat { Definition = statDef };
+                        statsComponent.AddStatus(stat);
+                        stat.AddValue(statDef.MaxValue);
+                    }
+                }
+            }
+        }
     }
 
     public void SetupAI(BlockPilesHere blockPilesHere) {

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bhobbalfopbtb"]
 
 [ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://battle/Battle.cs" id="1_2ckr4"]
-[ext_resource type="PackedScene" path="res://Room.tscn" id="2_room"]
+[ext_resource type="PackedScene" path="res://room/Room.tscn" id="2_room"]
 [ext_resource type="PackedScene" uid="uid://bi2mcb6tkklke" path="res://actors/player/Player.tscn" id="5_v3re7"]
 [ext_resource type="PackedScene" uid="uid://cyphyc8ryljwu" path="res://components/PileComponent.tscn" id="6_dgjnm"]
 [ext_resource type="Script" uid="uid://nenaxcfp7joo" path="res://actors/player/Player.cs" id="6_r8nfv"]
@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://battle/bot_frames/BotFrames.png" id="9_q5nyf"]
 [ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://battle/battle_background/UpperLayer.png" id="11_pk84k"]
 [ext_resource type="PackedScene" uid="uid://dh4hjkd8jqy1l" path="res://actors/enemy/Enemy.tscn" id="12_fn3my"]
-[ext_resource type="Resource" path="res://resources/enemy_defs/TestEnemy.tres" id="13_enemydef"]
+[ext_resource type="Resource" uid="uid://3wrfrk1m835i" path="res://resources/enemy_defs/Gonh.tres" id="13_enemydef"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_880dk"]
 radius = 48.0

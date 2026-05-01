@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="BlockPartDef" format=3]
+
+[ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="1_partdef"]
+[ext_resource type="Texture2D" uid="uid://bqdepalvuk8er" path="res://blocks/blockpart_picture/grey/PlainGreyBlock.png" id="2_texture"]
+[ext_resource type="Script" path="res://blocks/blockpart_behaviors/GiveGrowingStatBehavior.cs" id="3_growingbh"]
+
+[sub_resource type="Resource" id="Resource_growingbh"]
+script = ExtResource("3_growingbh")
+
+[resource]
+script = ExtResource("1_partdef")
+BaseDamage = 0
+BaseDefend = 0
+BaseMagicNum = 0
+Behaviors = Array[Object]([SubResource("Resource_growingbh")])
+Description = "Give yourself a [G]{Growing}[/G] status: heal 12 HP when battle ends."
+MovingDirection = Vector2i(0, 1)
+PartId = "GrowingPart"
+SpriteTexture = ExtResource("2_texture")

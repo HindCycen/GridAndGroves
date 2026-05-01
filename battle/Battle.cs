@@ -11,6 +11,7 @@ public partial class Battle : Node2D {
     private Bot _bot;
     private Button _endTurnButton;
     private Enemy[] _enemies;
+    [Export] public EnemyChartDef EnemyChart;
     private bool _isGameOver;
     private HealthComponent _playerHealth;
     private int _roundNumber;
@@ -22,6 +23,11 @@ public partial class Battle : Node2D {
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
         _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
         _endTurnButton = GetNode<Button>("%Button");
+
+        if (EnemyChart?.EnemyDefs != null) {
+            SpawnEnemiesFromChart();
+        }
+
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         _playerHealth = GetNode<Player>("Player").GetNode<HealthComponent>("RenderingComponent/HealthComponent");
         _isGameOver = false;
@@ -29,6 +35,10 @@ public partial class Battle : Node2D {
         _playerHealth.Died += OnPlayerDied;
 
         GD.Print($"检测到 {_enemies.Length} 个敌人");
+        if (_enemies.Length == 0) {
+            GD.PrintErr("没有敌人！请配置 EnemyChart 或在场景中放置 Enemy 节点。");
+            return;
+        }
 
         // 配置"结束回合"按钮
         _endTurnButton.Text = "End Turn";
@@ -37,11 +47,11 @@ public partial class Battle : Node2D {
         // Bot 回合结束时触发
         _battleTime.TurnEnded += OnBotTurnEnded;
 
-        // 初始化玩家牌组（放入初始卡片，作为存档不存在时的默认数据）
-        InitializePlayerDeck();
-
         // 尝试加载存档（若存在则覆盖默认初始数据）
         _saveLoad.Load();
+
+        // 初始化玩家牌组（放入初始卡片，作为存档不存在时的默认数据）
+        InitializePlayerDeck();
 
         // 初始化抽牌堆（将玩家牌组的副本移入）
         _blockPilesHere.InitializeDrawPile();
@@ -68,6 +78,14 @@ public partial class Battle : Node2D {
     private void InitializePlayerDeck() {
         var playerPile = GetNode<PileComponent>("Player/PlayerPile");
 
+        // 仅在存档不存在时填入默认卡组（存档已存在时卡组由 SaveLoad 恢复）
+        if (playerPile.Count > 0) {
+            GD.Print("存档已存在，保留存档中的卡组");
+            EnsureGrowingInDeck(playerPile);
+            GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
+            return;
+        }
+
         // 示例方块：用于检验抽牌、放置等功能
         for (var i = 0; i < 3; i++) {
             playerPile.AddBlock(Glob.CreateBlock("DamageBlock"));
@@ -81,7 +99,19 @@ public partial class Battle : Node2D {
             playerPile.AddBlock(Glob.CreateBlock("ExampleBlock"));
         }
 
+        playerPile.AddBlock(Glob.CreateBlock("Growing"));
+
         GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
+    }
+
+    private void EnsureGrowingInDeck(PileComponent pile) {
+        if (!pile.Pile.Any(b => b.Definition?.BlockName == "Growing")) {
+            var growing = Glob.CreateBlock("Growing");
+            if (growing != null) {
+                pile.AddBlock(growing);
+                GD.Print("EnsureGrowingInDeck: 补充 Growing 方块");
+            }
+        }
     }
 
     /// <summary>
@@ -234,6 +264,30 @@ public partial class Battle : Node2D {
             var damage = enemy.AttackDamage;
             GD.Print($"敌人 {enemy.Name} 对玩家造成 {damage} 点伤害");
             _playerHealth.TakeDamage(damage);
+        }
+    }
+
+    private void SpawnEnemiesFromChart() {
+        var existingEnemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToList();
+        foreach (var enemy in existingEnemies) {
+            if (IsInstanceValid(enemy)) {
+                RemoveChild(enemy);
+                enemy.QueueFree();
+            }
+        }
+
+        var index = 0;
+        foreach (var enemyDef in EnemyChart.EnemyDefs) {
+            if (enemyDef == null) continue;
+            var enemyScene = GD.Load<PackedScene>("res://actors/enemy/Enemy.tscn");
+            var enemy = enemyScene.Instantiate<Enemy>();
+            enemy.Definition = enemyDef;
+            var x = 1300 + index * 200;
+            var y = 150 + (index % 2) * 200;
+            enemy.Position = new Vector2(x, y);
+            AddChild(enemy);
+            GD.Print($"SpawnEnemiesFromChart: 生成敌人 {enemyDef.EnemyName} 在 ({x}, {y})");
+            index++;
         }
     }
 

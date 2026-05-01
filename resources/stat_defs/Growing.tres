@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="StatDef" format=3 uid="uid://vyimlhvi7dcy"]
+
+[ext_resource type="Script" uid="uid://cjpjnajk6cf03" path="res://stats/StatDef.cs" id="1_statdef"]
+[ext_resource type="Script" uid="uid://csd6g2f3430tq" path="res://resources/stat_behaviors/GrowingStatBehavior.cs" id="2_growing"]
+[ext_resource type="Texture2D" uid="uid://c530m4uquvsb6" path="res://resources/stat_images/Growing.png" id="3_icon"]
+
+[sub_resource type="Resource" id="Resource_growing"]
+script = ExtResource("2_growing")
+
+[resource]
+script = ExtResource("1_statdef")
+Behavior = SubResource("Resource_growing")
+Description = "战斗结束时回复 %N% 点生命"
+Icon = ExtResource("3_icon")
+MaxValue = 12
+StatName = "Growing"

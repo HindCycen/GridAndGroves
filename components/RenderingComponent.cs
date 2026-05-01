@@ -11,7 +11,7 @@ public partial class RenderingComponent : Control {
     private readonly Dictionary<string, StatIcon> _statIcons = new();
     private HBoxContainer _statsContainer;
     [Export] public int BarLength;
-    [Export] public int StatIconPx = 36;
+    [Export] public int StatIconPx = 45;
 
     public StatsComponent StatsComponent { get; private set; }
 

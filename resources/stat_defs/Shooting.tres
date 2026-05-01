@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="StatDef" format=3 uid="uid://csmofvm8ratq"]
+
+[ext_resource type="Script" uid="uid://cjpjnajk6cf03" path="res://stats/StatDef.cs" id="1_statdef"]
+[ext_resource type="Script" uid="uid://bscvfnvbrc8kk" path="res://resources/stat_behaviors/ShootingStatBehavior.cs" id="2_shooting"]
+[ext_resource type="Texture2D" uid="uid://cgf81cp5tixdd" path="res://resources/stat_images/Shooting.png" id="3_icon"]
+
+[sub_resource type="Resource" id="Resource_shooting"]
+script = ExtResource("2_shooting")
+
+[resource]
+script = ExtResource("1_statdef")
+Behavior = SubResource("Resource_shooting")
+Description = "每回合结束时，栋栋会[Y]{射精}，对玩家造成 %N% 点伤害"
+Icon = ExtResource("3_icon")
+MaxValue = 10
+StatName = "SemenShooting"
