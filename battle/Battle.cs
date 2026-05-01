@@ -194,6 +194,7 @@ public partial class Battle : Room {
         _endTurnButton.Text = "Victory!";
         _endTurnButton.Disabled = true;
         _battleTime.SayBattleEnded();
+        _saveLoad.Save();
     }
 
     private void OnEnemyDied() {

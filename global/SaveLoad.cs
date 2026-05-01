@@ -134,7 +134,17 @@ public partial class SaveLoad : Node {
             var count = Mathf.Min(Data.PlayerStatNames.Length, Data.PlayerStatValues.Length);
             for (var i = 0; i < count; i++) {
                 var stat = statsComp.GetStatus(Data.PlayerStatNames[i]);
-                stat?.SetValue(Data.PlayerStatValues[i]);
+                if (stat != null) {
+                    stat.SetValue(Data.PlayerStatValues[i]);
+                }
+                else {
+                    var statDef = GD.Load<StatDef>($"res://resources/stat_defs/{Data.PlayerStatNames[i]}.tres");
+                    if (statDef != null) {
+                        stat = new Stat { Definition = statDef };
+                        statsComp.AddStatus(stat);
+                        stat.SetValue(Data.PlayerStatValues[i]);
+                    }
+                }
             }
         }
     }
