@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="StageEnemyChartDef" format=3]
+
+[ext_resource type="Script" path="res://resources/StageEnemyChartDef.cs" id="1"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Gonh.tres" id="2_gonh"]
+[ext_resource type="Script" path="res://resources/EnemyChartDef.cs" id="3_chart"]
+
+[sub_resource type="Resource" id="SubResource_enemy_chart"]
+resource_local_to_scene = false
+script = ExtResource("3_chart")
+EnemyDefs = Array[Object]([ExtResource("2_gonh")])
+metadata/_custom_type_script = "res://resources/EnemyChartDef.cs"
+
+[resource]
+script = ExtResource("1")
+WeakEnemyChart = Array[Object]([SubResource("SubResource_enemy_chart")])
+StrongEnemyChart = Array[Object]([SubResource("SubResource_enemy_chart")])
+EliteChart = Array[Object]([SubResource("SubResource_enemy_chart")])
+BossChart = Array[Object]([SubResource("SubResource_enemy_chart")])

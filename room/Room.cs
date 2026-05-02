@@ -3,8 +3,9 @@ using Godot;
 public partial class Room : Node2D {
     [Export] public bool ShowStatusBar = true;
 
-    private SaveLoad _saveLoad;
-    private Label _healthLabel;
+    protected SaveLoad _saveLoad;
+    protected Label _healthLabel;
+    protected Label _stageRoomLabel;
 
     public override void _Ready() {
         _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
@@ -48,13 +49,30 @@ public partial class Room : Node2D {
         _healthLabel.SetSize(new Vector2(200, 36));
         _healthLabel.AddThemeFontSizeOverride("font_size", 28);
         AddChild(_healthLabel);
+
+        _stageRoomLabel = new Label();
+        _stageRoomLabel.Position = new Vector2(650, 12);
+        _stageRoomLabel.SetSize(new Vector2(620, 36));
+        _stageRoomLabel.AddThemeFontSizeOverride("font_size", 28);
+        _stageRoomLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        AddChild(_stageRoomLabel);
+
+        UpdateStageRoomLabel();
     }
 
-    private void OnHealthChanged(int current, int max) {
+    protected void UpdateStageRoomLabel() {
+        if (_stageRoomLabel != null) {
+            var rc = _saveLoad?.Data?.RoomCount ?? 0;
+            var sc = _saveLoad?.Data?.StageCount ?? 0;
+            _stageRoomLabel.Text = $"Stage: {sc}    Room: {rc}";
+        }
+    }
+
+    protected void OnHealthChanged(int current, int max) {
         UpdateHealthDisplay(current, max);
     }
 
-    private void UpdateHealthDisplay(int current, int max) {
+    protected void UpdateHealthDisplay(int current, int max) {
         if (_healthLabel != null) {
             _healthLabel.Text = $"{current}/{max}";
         }

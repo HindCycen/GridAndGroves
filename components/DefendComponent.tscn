@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://df17ua5hxtgv4"]
-
-[ext_resource type="Script" uid="uid://dpdeg1ugcfn3" path="res://components/DefendComponent.cs" id="1_a01ic"]
-
-[node name="DefendComponent" type="Node" unique_id=892839064]
-script = ExtResource("1_a01ic")

@@ -120,7 +120,7 @@ public partial class Bot : Node2D {
     private void GoToStarterPoint() {
         GlobalPosition = new Vector2(
             Glob.GetGridPos(new Vector2I(0, 0)).X,
-            Glob.GetGridPos(new Vector2I(0, 0)).Y - Glob.GridSize
+            Glob.GetGridPos(new Vector2I(0, 0)).Y - 96
         );
 
         // 释放之前占据的网格（但保留敌方方块和不可用格子的占用）

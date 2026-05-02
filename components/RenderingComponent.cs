@@ -49,10 +49,10 @@ public partial class RenderingComponent : Control {
         return hc.CurrentHealth;
     }
 
-    public int GetDefend() {
-        var dc = GetNode("%DefendComponent") as DefendComponent;
-        Debug.Assert(dc != null, nameof(dc) + " != null");
-        return dc.CurrentDefend;
+    public int GetShield() {
+        var sc = GetNode("%ShieldComponent") as ShieldComponent;
+        Debug.Assert(sc != null, nameof(sc) + " != null");
+        return sc.CurrentShield;
     }
 
     public Stat[] GetStat() {

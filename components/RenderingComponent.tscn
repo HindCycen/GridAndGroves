@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://drnyqrdsdids0"]
 
 [ext_resource type="Script" uid="uid://b7cjkvj8jdhfg" path="res://components/RenderingComponent.cs" id="1_p2qr1"]
-[ext_resource type="PackedScene" uid="uid://df17ua5hxtgv4" path="res://components/DefendComponent.tscn" id="2_r86ya"]
+[ext_resource type="PackedScene" uid="uid://df17ua5hxtgv4" path="res://components/ShieldComponent.tscn" id="2_r86ya"]
 [ext_resource type="PackedScene" uid="uid://mldxemstlseu" path="res://components/HealthComponent.tscn" id="3_367sg"]
 [ext_resource type="PackedScene" uid="uid://cgprlfg6by4ur" path="res://components/StatsComponent.tscn" id="4_fls8u"]
 [ext_resource type="Script" uid="uid://cgl2ouwurotrc" path="res://components/HealthBar.cs" id="5_367sg"]
@@ -19,7 +19,7 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_p2qr1")
 
-[node name="DefendComponent" parent="." unique_id=892839064 instance=ExtResource("2_r86ya")]
+[node name="ShieldComponent" parent="." unique_id=892839064 instance=ExtResource("2_r86ya")]
 unique_name_in_owner = true
 
 [node name="HealthComponent" parent="." unique_id=780490520 instance=ExtResource("3_367sg")]
@@ -31,7 +31,7 @@ unique_name_in_owner = true
 [node name="RenderThingsHere" type="Control" parent="." unique_id=1447931644]
 anchors_preset = 0
 
-[node name="HealthBar" type="TextureProgressBar" parent="RenderThingsHere" unique_id=350712039 node_paths=PackedStringArray("_healthComponent")]
+[node name="HealthBar" type="TextureProgressBar" parent="RenderThingsHere" unique_id=350712039 node_paths=PackedStringArray("_healthComponent", "_shieldComponent")]
 unique_name_in_owner = true
 layout_mode = 0
 offset_right = 300.0
@@ -46,8 +46,9 @@ texture_over = ExtResource("6_xp7we")
 texture_progress = ExtResource("7_xsshl")
 script = ExtResource("5_367sg")
 _healthComponent = NodePath("../../HealthComponent")
+_shieldComponent = NodePath("../../ShieldComponent")
 
-[node name="Health" type="Label" parent="RenderThingsHere/HealthBar" unique_id=2073368500 node_paths=PackedStringArray("HealthBar", "HealthComponent")]
+[node name="Health" type="Label" parent="RenderThingsHere/HealthBar" unique_id=2073368500 node_paths=PackedStringArray("HealthBar", "HealthComponent", "_shieldComponent")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
@@ -65,6 +66,7 @@ text = "50/100"
 script = ExtResource("5_r86ya")
 HealthBar = NodePath("..")
 HealthComponent = NodePath("../../../HealthComponent")
+_shieldComponent = NodePath("../../../ShieldComponent")
 
 [node name="StatsContainer" type="HBoxContainer" parent="RenderThingsHere" unique_id=750939676]
 unique_name_in_owner = true

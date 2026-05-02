@@ -5,7 +5,7 @@ using Godot;
 
 #endregion
 
-public partial class Battle : Room {
+public partial class BattleRoom : CountedRoom {
     private BattleTime _battleTime;
     private BlockPilesHere _blockPilesHere;
     private Bot _bot;
@@ -15,7 +15,6 @@ public partial class Battle : Room {
     private bool _isGameOver;
     private HealthComponent _playerHealth;
     private int _roundNumber;
-    private SaveLoad _saveLoad;
 
     public override void _Ready() {
         base._Ready();
@@ -41,20 +40,15 @@ public partial class Battle : Room {
             return;
         }
 
-        // 配置"结束回合"按钮
         _endTurnButton.Text = "End Turn";
         _endTurnButton.Pressed += OnEndTurnPressed;
 
-        // Bot 回合结束时触发
         _battleTime.TurnEnded += OnBotTurnEnded;
 
-        // 初始化玩家牌组（放入初始卡片，作为存档不存在时的默认数据）
         InitializePlayerDeck();
 
-        // 初始化抽牌堆（将玩家牌组的副本移入）
         _blockPilesHere.InitializeDrawPile();
 
-        // 初始化敌人 AI
         foreach (var enemy in _enemies) {
             enemy.SetupAI(_blockPilesHere);
             var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
@@ -63,31 +57,23 @@ public partial class Battle : Room {
             }
         }
 
-        // 渲染不可用网格
         RenderUnableGridCells();
 
-        // 创建牌堆查看按钮
         SetupPileViewerButtons();
 
-        // 开始游戏
         _roundNumber = 0;
         StartPlayerTurn();
     }
 
-    /// <summary>
-    ///     初始化玩家起始牌组
-    /// </summary>
     private void InitializePlayerDeck() {
         var playerPile = GetNode<PileComponent>("Player/PlayerPile");
 
-        // 仅在存档不存在时填入默认卡组（存档已存在时卡组由 SaveLoad 恢复）
         if (playerPile.Count > 0) {
             GD.Print("存档已存在，保留存档中的卡组");
             GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
             return;
         }
 
-        // 示例方块：用于检验抽牌、放置等功能
         for (var i = 0; i < 3; i++) {
             playerPile.AddBlock(Glob.CreateBlock("DamageBlock"));
         }
@@ -105,62 +91,43 @@ public partial class Battle : Room {
         GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
     }
 
-    /// <summary>
-    ///     回合开始：敌方 AI 放置方块 → 清理玩家旧牌 → 抽牌
-    /// </summary>
     private void StartPlayerTurn() {
         _roundNumber++;
         GD.Print($"\n=== 第 {_roundNumber} 回合 ===");
 
-        // 解锁方块交互（玩家回合可以拖动）
         Block.InputLocked = false;
 
-        // 敌方 AI：清理旧方块 → 按意图放置新方块
         MakeEnemiesClearOldBlocks();
         MakeEnemiesExecuteTurn();
 
-        // 清空玩家上一回合的牌面
         _blockPilesHere.ClearPlayerRound();
 
-        // 发射回合开始信号（触发 Stat 效果等）
         _battleTime.SayTurnStarted();
 
-        // 抽牌
         _blockPilesHere.DrawCards(3);
 
-        // 启用结束按钮
         _endTurnButton.Disabled = false;
         _endTurnButton.Text = "End Turn";
     }
 
-    /// <summary>
-    ///     玩家点击"结束回合" → Bot 巡逻执行
-    /// </summary>
     private void OnEndTurnPressed() {
         _endTurnButton.Disabled = true;
         _endTurnButton.Text = "Bot's Turn...";
         GD.Print("\n=== Bot 执行阶段 ===");
 
-        // 锁定方块交互（Bot 巡逻期间不能拖动）
         Block.InputLocked = true;
         _bot.StartPatrol();
     }
 
-    /// <summary>
-    ///     Bot 执行结束 → 敌人攻击玩家 → 检查胜负 → 开始下一玩家回合
-    /// </summary>
     private void OnBotTurnEnded() {
         GD.Print("Bot 执行结束");
 
-        // 活着的敌人攻击玩家
         MakeEnemiesAttackPlayer();
 
-        // 如果玩家在敌人攻击后死亡，游戏结束
         if (_isGameOver) {
             return;
         }
 
-        // 检查所有敌人是否被击败
         if (AreAllEnemiesDead()) {
             OnVictory();
             return;
@@ -168,12 +135,10 @@ public partial class Battle : Room {
 
         GD.Print($"剩余敌人: {CountAliveEnemies()}");
 
-        // 开始下一玩家回合
         StartPlayerTurn();
     }
 
     private bool AreAllEnemiesDead() {
-        // 重新获取敌人列表（可能已销毁）
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         return _enemies.Length == 0 || _enemies.All(e => {
             var hc = e.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
@@ -195,6 +160,14 @@ public partial class Battle : Room {
         _endTurnButton.Disabled = true;
         _battleTime.SayBattleEnded();
         _saveLoad.Save();
+
+        var timer = GetTree().CreateTimer(1.0);
+        timer.Timeout += () => {
+            var stageScene = GD.Load<PackedScene>("res://room/StageRoom.tscn");
+            var stage = stageScene.Instantiate<StageRoom>();
+            GetTree().Root.AddChild(stage);
+            QueueFree();
+        };
     }
 
     private void OnEnemyDied() {
@@ -217,9 +190,6 @@ public partial class Battle : Room {
         _battleTime.SayBattleEnded();
     }
 
-    /// <summary>
-    ///     所有存活敌人清理上一回合放置的方块
-    /// </summary>
     private void MakeEnemiesClearOldBlocks() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         GD.Print($"清理 {_enemies.Length} 个敌人的旧方块");
@@ -233,9 +203,6 @@ public partial class Battle : Room {
         }
     }
 
-    /// <summary>
-    ///     所有存活敌人执行 AI 回合（按意图放置方块）
-    /// </summary>
     private void MakeEnemiesExecuteTurn() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         GD.Print($"执行 {_enemies.Length} 个敌人的 AI 意图");
@@ -249,9 +216,6 @@ public partial class Battle : Room {
         }
     }
 
-    /// <summary>
-    ///     所有存活敌人对玩家发动攻击
-    /// </summary>
     private void MakeEnemiesAttackPlayer() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         foreach (var enemy in _enemies) {
@@ -364,7 +328,7 @@ public partial class Battle : Room {
     private void RenderUnableGridCells() {
         var texture = GD.Load<Texture2D>("res://battle/battle_background/UnableGrid.png");
         var texSize = texture.GetSize();
-        var scale = new Vector2(Glob.GridSize / texSize.X, Glob.GridSize / texSize.Y);
+        var scale = new Vector2(96 / texSize.X, 96 / texSize.Y);
         var bgNode = GetNode<Node2D>("BackgroundAnimator");
 
         for (var col = 0; col < 7; col++) {

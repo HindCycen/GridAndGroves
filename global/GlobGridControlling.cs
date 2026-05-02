@@ -5,8 +5,8 @@ using Godot;
 #endregion
 
 public partial class Glob {
-    public static Vector2 GridLeftUp = new Vector2(2, 4) * PxSize;
-    public static Vector2 GridRightDown = new Vector2((float) 7.6, 8) * PxSize;
+    public static Vector2 GridLeftUp = new Vector2(2, 4) * 120;
+    public static Vector2 GridRightDown = new Vector2((float) 7.6, 8) * 120;
     public static bool[] UnlockedRows = new bool[5];
     public static bool[] UnlockedCols = new bool[7];
     public static Vector2[,] GridPoints;
@@ -88,8 +88,8 @@ public partial class Glob {
             // 7 列
             for (var j = 0; j < 5; j++) {
                 // 5 行
-                GridPoints[i, j] = new Vector2(i * GridSize, j * GridSize) +
-                                   new Vector2(2 * PxSize + HalfGridSize, 4 * PxSize + HalfGridSize);
+                GridPoints[i, j] = new Vector2(i * 96, j * 96) +
+                                   new Vector2(2 * 120 + 48, 4 * 120 + 48);
                 GridStates[i, j] = IsRowUnlocked(j) && IsColUnlocked(i) ? GridState.Free : GridState.Unable;
             }
         }

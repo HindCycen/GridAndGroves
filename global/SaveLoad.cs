@@ -38,11 +38,7 @@ public partial class SaveLoad : Node {
         SyncToGameState();
     }
 
-    /// <summary>
-    ///     将当前游戏状态同步到 Data 中
-    /// </summary>
     private void SyncFromGameState() {
-        // ── RNG 状态 ──
         Data.Seed = Glob.GetCurrentSeed();
         Data.MapRandUsage = Glob.GetMapRandUsage();
         Data.MonsterRandUsage = Glob.GetMonsterRandUsage();
@@ -51,20 +47,20 @@ public partial class SaveLoad : Node {
         Data.MiscRandUsage = Glob.GetMiscRandUsage();
         Data.PileRandUsage = Glob.GetPileRandUsage();
 
-        // ── 玩家状态 ──
         var player = GetTree().GetFirstNodeInGroup("Players") as Player;
         if (player == null) {
             return;
         }
 
-        // 生命值
+        Data.StageCount = player.StageCount;
+        Data.RoomCount = player.RoomCount;
+
         var health = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
         if (health != null) {
             Data.PlayerCurrentHealth = health.CurrentHealth;
             Data.PlayerMaxHealth = health.MaxHealth;
         }
 
-        // 牌组
         var pile = player.GetNode<PileComponent>("%PlayerPile");
         if (pile != null) {
             Data.PlayerDeckBlockNames = pile.Pile
@@ -73,7 +69,6 @@ public partial class SaveLoad : Node {
                 .ToArray();
         }
 
-        // 状态栏
         var rend = player.GetNode<RenderingComponent>("RenderingComponent");
         if (rend?.StatsComponent != null) {
             var stats = rend.StatsComponent.GetAllStatuses();
@@ -82,11 +77,7 @@ public partial class SaveLoad : Node {
         }
     }
 
-    /// <summary>
-    ///     将 Data 中的数据写回游戏状态
-    /// </summary>
     private void SyncToGameState() {
-        // ── 恢复 RNG ──
         Glob.RestoreRngFromUsage(
             Data.Seed,
             Data.MapRandUsage,
@@ -97,20 +88,20 @@ public partial class SaveLoad : Node {
             Data.PileRandUsage
         );
 
-        // ── 恢复玩家状态 ──
         var player = GetTree().GetFirstNodeInGroup("Players") as Player;
         if (player == null) {
             return;
         }
 
-        // 生命值
+        player.StageCount = Data.StageCount;
+        player.RoomCount = Data.RoomCount;
+
         var health = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-        if (health != null) {
+        if (health != null && Data.PlayerMaxHealth > 0) {
             health.SetMaxHealth(Data.PlayerMaxHealth);
             health.SetCurrentHealth(Data.PlayerCurrentHealth);
         }
 
-        // 牌组
         var pile = player.GetNode<PileComponent>("%PlayerPile");
         if (pile != null && Data.PlayerDeckBlockNames != null) {
             var existing = pile.Pile.ToList();
@@ -127,7 +118,6 @@ public partial class SaveLoad : Node {
             }
         }
 
-        // 状态栏
         var rend = player.GetNode<RenderingComponent>("RenderingComponent");
         if (rend?.StatsComponent != null && Data.PlayerStatNames != null && Data.PlayerStatValues != null) {
             var statsComp = rend.StatsComponent;

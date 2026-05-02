@@ -19,12 +19,12 @@ public partial class BlockPart : Node2D {
     [Export] public BlockPartDef PartDefinition { get; set; }
 
     public int Damage { get; set; }
-    public int Defend { get; set; }
+    public int Shield { get; set; }
     public int MagicNum { get; set; }
 
     public override void _Ready() {
         var shape2D = new RectangleShape2D();
-        shape2D.SetSize(new Vector2(Glob.GridSize, Glob.GridSize));
+        shape2D.SetSize(new Vector2(96, 96));
         _detectingCollisionShape.Shape = shape2D;
         if (PartDefinition.SpriteTexture != null) {
             _sprite2D.SetTexture(PartDefinition.SpriteTexture);
@@ -54,10 +54,10 @@ public partial class BlockPart : Node2D {
         AddChild(_tooltipComponent);
 
         Damage = PartDefinition.BaseDamage;
-        Defend = PartDefinition.BaseDefend;
+        Shield = PartDefinition.BaseShield;
         MagicNum = PartDefinition.BaseMagicNum;
 
-        Position = PartDefinition.PartialPosition * Glob.GridSize;
+        Position = PartDefinition.PartialPosition * 96;
         SetProcessInput(true);
     }
 
@@ -80,7 +80,7 @@ public partial class BlockPart : Node2D {
         }
 
         var placeholders = new Dictionary<string, string> {
-            { "B", Defend.ToString() },
+            { "S", Shield.ToString() },
             { "D", Damage.ToString() },
             { "M", MagicNum.ToString() }
         };

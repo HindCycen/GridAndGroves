@@ -7,7 +7,7 @@ using Godot;
 [GlobalClass]
 public partial class BlockPartDef : Resource {
     [Export] public int BaseDamage;
-    [Export] public int BaseDefend;
+    [Export] public int BaseShield;
     [Export] public int BaseMagicNum;
     [Export] public BlockPartBehavior[] Behaviors;
     [Export] public string Description;

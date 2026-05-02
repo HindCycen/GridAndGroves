@@ -15,6 +15,14 @@ public partial class DataResource : Resource {
     [Export] public string[] PlayerStatNames = [];
     [Export] public int[] PlayerStatValues = [];
 
+    // ── Floor State ──
+    [Export] public int StageCount;
+    [Export] public int RoomCount;
+
+    [Export] public int[] GridClickable = [];
+    [Export] public int[] GridLeft = [];
+    [Export] public string StageDefPath;
+
     // ── Random State ──
     [Export] public int Seed;
     [Export] public int MapRandUsage;

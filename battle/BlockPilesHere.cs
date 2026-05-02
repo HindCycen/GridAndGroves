@@ -19,12 +19,12 @@ public partial class BlockPilesHere : Node2D {
     [Export] public PileComponent ShowingPile;
 
     public override void _Ready() {
-        // DrawPile 的初始化由 Battle.cs 在 InitializePlayerDeck 后调用
+        // DrawPile 的初始化由 BattleRoom.cs 在 InitializePlayerDeck 后调用
         ShowingPile.ChildEnteredTree += OnShowingPileChildAdded;
     }
 
     /// <summary>
-    ///     从玩家牌堆初始化抽牌堆（由 Battle.cs 在合适的时机调用）
+    ///     从玩家牌堆初始化抽牌堆（由 BattleRoom.cs 在合适的时机调用）
     /// </summary>
     public void InitializeDrawPile() {
         foreach (var b in Player.GetNode<PileComponent>("%PlayerPile").Pile) {
@@ -139,8 +139,8 @@ public partial class BlockPilesHere : Node2D {
             for (var r = 0; r < otherRows; r++) {
                 for (var c = 0; c < otherCols; c++) {
                     var p = new Vector2I(
-                        (int) ((kv.Value.X + c * Glob.GridSize - ShowingPileBaseX) / Glob.GridSize),
-                        (int) ((kv.Value.Y + r * Glob.GridSize - ShowingPileBaseY) / Glob.GridSize)
+                        (int) ((kv.Value.X + c * 96 - ShowingPileBaseX) / 96),
+                        (int) ((kv.Value.Y + r * 96 - ShowingPileBaseY) / 96)
                     );
                     occupied.Add(p);
                 }
@@ -149,15 +149,15 @@ public partial class BlockPilesHere : Node2D {
 
         for (var row = 0; row < 100; row++) {
             for (var col = 0; col < MaxShowingPileColumns; col++) {
-                var basePos = new Vector2(ShowingPileBaseX + col * Glob.GridSize * gridCols,
-                    ShowingPileBaseY + row * Glob.GridSize * gridRows);
+                var basePos = new Vector2(ShowingPileBaseX + col * 96 * gridCols,
+                    ShowingPileBaseY + row * 96 * gridRows);
 
                 var isFree = true;
                 for (var r = 0; r < gridRows && isFree; r++) {
                     for (var c = 0; c < gridCols && isFree; c++) {
                         var p = new Vector2I(
-                            (int) ((basePos.X + c * Glob.GridSize - ShowingPileBaseX) / Glob.GridSize),
-                            (int) ((basePos.Y + r * Glob.GridSize - ShowingPileBaseY) / Glob.GridSize)
+                            (int) ((basePos.X + c * 96 - ShowingPileBaseX) / 96),
+                            (int) ((basePos.Y + r * 96 - ShowingPileBaseY) / 96)
                         );
                         if (occupied.Contains(p)) isFree = false;
                     }

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bhobbalfopbtb"]
 
-[ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://battle/Battle.cs" id="1_2ckr4"]
+[ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://battle/BattleRoom.cs" id="1_2ckr4"]
 [ext_resource type="PackedScene" path="res://room/Room.tscn" id="2_room"]
 [ext_resource type="PackedScene" uid="uid://bi2mcb6tkklke" path="res://actors/player/Player.tscn" id="5_v3re7"]
 [ext_resource type="PackedScene" uid="uid://cyphyc8ryljwu" path="res://components/PileComponent.tscn" id="6_dgjnm"]
@@ -135,7 +135,7 @@ animations = [{
 "speed": 16.0
 }]
 
-[node name="Battle" unique_id=2081650975 instance=ExtResource("2_room")]
+[node name="BattleRoom" unique_id=2081650975 instance=ExtResource("2_room")]
 z_index = 100
 script = ExtResource("1_2ckr4")
 
