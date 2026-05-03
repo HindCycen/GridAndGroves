@@ -143,6 +143,12 @@ public partial class StageRoom : UncountedRoom {
         _left[col, row] = true;
         _cells[col, row].Modulate = new Color(1, 1, 1, 0.5f);
 
+        for (var c = 0; c < Cols; c++) {
+            for (var r = 0; r < Rows; r++) {
+                _clickable[c, r] = false;
+            }
+        }
+
         if (row > 0) _clickable[col, row - 1] = true;
         if (col < Cols - 1) _clickable[col + 1, row] = true;
 
