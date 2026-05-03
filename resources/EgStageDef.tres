@@ -1,13 +1,12 @@
-[gd_resource type="Resource" script_class="StageDef" format=3]
+[gd_resource type="Resource" script_class="StageDef" format=3 uid="uid://88gs1aj6p221"]
 
-[ext_resource type="Script" path="res://resources/StageDef.cs" id="1"]
-[ext_resource type="Resource" path="res://resources/EgStageEnemyChart.tres" id="2"]
-[ext_resource type="Script" path="res://resources/EventRand.cs" id="3"]
-[ext_resource type="Script" path="res://resources/EventDef.cs" id="4"]
-[ext_resource type="Script" path="res://resources/EventChoiceDef.cs" id="5"]
+[ext_resource type="Script" uid="uid://djosigrbyog20" path="res://resources/StageDef.cs" id="1"]
+[ext_resource type="Resource" uid="uid://dw44f4w22fgp4" path="res://resources/EgStageEnemyChart.tres" id="2"]
+[ext_resource type="Script" uid="uid://dbh8tdsvcvdc1" path="res://resources/EventRand.cs" id="3"]
+[ext_resource type="Script" uid="uid://ce8i8obfyk81b" path="res://resources/EventDef.cs" id="4"]
+[ext_resource type="Script" uid="uid://vko50f351v7p" path="res://resources/EventChoiceDef.cs" id="5"]
 
 [sub_resource type="Resource" id="SubResource_choice1"]
-resource_local_to_scene = false
 script = ExtResource("5")
 Name = "Heal"
 Description = "[G]{Heal 20 HP}[/G]"
@@ -17,7 +16,6 @@ ActionValue = 20
 metadata/_custom_type_script = "res://resources/EventChoiceDef.cs"
 
 [sub_resource type="Resource" id="SubResource_choice2"]
-resource_local_to_scene = false
 script = ExtResource("5")
 Name = "Train"
 Description = "[R]{Take 10 damage}[/R]"
@@ -27,41 +25,32 @@ ActionValue = 10
 metadata/_custom_type_script = "res://resources/EventChoiceDef.cs"
 
 [sub_resource type="Resource" id="SubResource_evt1"]
-resource_local_to_scene = false
 script = ExtResource("4")
 EventDesc = "You found a mysterious campfire. What will you do?"
 Choices = Array[Object]([SubResource("SubResource_choice1"), SubResource("SubResource_choice2")])
 metadata/_custom_type_script = "res://resources/EventDef.cs"
 
 [sub_resource type="Resource" id="SubResource_choice3"]
-resource_local_to_scene = false
 script = ExtResource("5")
 Name = "Open"
 Description = "[Y]{Find gold}[/Y]"
 ResultDescription = "The chest contains gold!"
-ActionType = 0
-ActionValue = 0
 metadata/_custom_type_script = "res://resources/EventChoiceDef.cs"
 
 [sub_resource type="Resource" id="SubResource_choice4"]
-resource_local_to_scene = false
 script = ExtResource("5")
 Name = "Leave"
 Description = "[B]{Walk away}[/B]"
 ResultDescription = "You leave the chest alone."
-ActionType = 0
-ActionValue = 0
 metadata/_custom_type_script = "res://resources/EventChoiceDef.cs"
 
 [sub_resource type="Resource" id="SubResource_evt2"]
-resource_local_to_scene = false
 script = ExtResource("4")
 EventDesc = "A locked chest sits in the corner."
 Choices = Array[Object]([SubResource("SubResource_choice3"), SubResource("SubResource_choice4")])
 metadata/_custom_type_script = "res://resources/EventDef.cs"
 
 [sub_resource type="Resource" id="SubResource_choice5"]
-resource_local_to_scene = false
 script = ExtResource("5")
 Name = "Drink"
 Description = "[G]{Heal 50 HP}[/G]"
@@ -71,14 +60,12 @@ ActionValue = 50
 metadata/_custom_type_script = "res://resources/EventChoiceDef.cs"
 
 [sub_resource type="Resource" id="SubResource_evt3"]
-resource_local_to_scene = false
 script = ExtResource("4")
 EventDesc = "An old hermit offers you a potion."
 Choices = Array[Object]([SubResource("SubResource_choice5")])
 metadata/_custom_type_script = "res://resources/EventDef.cs"
 
 [sub_resource type="Resource" id="SubResource_rand"]
-resource_local_to_scene = false
 script = ExtResource("3")
 PossibleEvents = Array[Object]([SubResource("SubResource_evt1"), SubResource("SubResource_evt2"), SubResource("SubResource_evt3")])
 metadata/_custom_type_script = "res://resources/EventRand.cs"

@@ -52,9 +52,6 @@ public partial class SaveLoad : Node {
             return;
         }
 
-        Data.StageCount = player.StageCount;
-        Data.RoomCount = player.RoomCount;
-
         var health = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
         if (health != null) {
             Data.PlayerCurrentHealth = health.CurrentHealth;

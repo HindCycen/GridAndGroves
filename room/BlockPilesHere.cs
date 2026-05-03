@@ -81,7 +81,7 @@ public partial class BlockPilesHere : Node2D {
                 var gridPos = Glob.FindNearestGridPoint(part.GlobalPosition);
                 var coords = Glob.GetGridCoords(gridPos);
                 if (coords.X >= 0 && coords.Y >= 0) {
-                    Glob.SetGridState(coords.X, coords.Y, Glob.GridState.Free);
+                    Glob.RestoreGridState(coords.X, coords.Y);
                 }
             }
 

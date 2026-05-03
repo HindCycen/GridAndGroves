@@ -1,7 +1,8 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bqhblxnasb5ap"]
 
-[ext_resource type="Script" path="res://room/EventRoom.cs" id="1"]
+[ext_resource type="Script" uid="uid://crloukdc0slle" path="res://room/EventRoom.cs" id="1"]
 [ext_resource type="PackedScene" path="res://room/Room.tscn" id="2_room"]
 
-[node name="EventRoom" instance=ExtResource("2_room")]
+[node name="EventRoom" unique_id=2121149791 instance=ExtResource("2_room")]
 script = ExtResource("1")
+EventDef = null

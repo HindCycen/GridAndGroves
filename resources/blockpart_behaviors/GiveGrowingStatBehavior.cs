@@ -38,7 +38,7 @@ public partial class GiveGrowingStatBehavior : BlockPartBehavior {
             var gridPoint = Glob.FindNearestGridPoint(p.GlobalPosition);
             var coords = Glob.GetGridCoords(gridPoint);
             if (coords.X >= 0 && coords.Y >= 0) {
-                Glob.SetGridState(coords.X, coords.Y, Glob.GridState.Free);
+                Glob.RestoreGridState(coords.X, coords.Y);
             }
         }
 

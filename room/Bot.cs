@@ -77,7 +77,7 @@ public partial class Bot : Node2D {
         // 释放当前格子（但保留敌方方块和不可用格子的占用）
         if (!HasEnemyBlockAt(_currentGridPos) &&
             Glob.GetGridState(_currentGridPos.X, _currentGridPos.Y) != Glob.GridState.Unable) {
-            Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Free);
+            Glob.RestoreGridState(_currentGridPos.X, _currentGridPos.Y);
         }
 
         _currentGridPos = newPos;
@@ -128,7 +128,7 @@ public partial class Bot : Node2D {
             _currentGridPos.Y >= 0 && _currentGridPos.Y <= 4) {
             if (!HasEnemyBlockAt(_currentGridPos) &&
                 Glob.GetGridState(_currentGridPos.X, _currentGridPos.Y) != Glob.GridState.Unable) {
-                Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Free);
+                Glob.RestoreGridState(_currentGridPos.X, _currentGridPos.Y);
             }
         }
 

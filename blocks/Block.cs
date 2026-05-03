@@ -106,7 +106,7 @@ public partial class Block : Node2D {
             var gridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
             var gridIndex = Glob.GetGridCoords(gridPoint);
             if (gridIndex.X >= 0 && gridIndex.Y >= 0) {
-                Glob.SetGridState(gridIndex.X, gridIndex.Y, Glob.GridState.Free);
+                Glob.RestoreGridState(gridIndex.X, gridIndex.Y);
             }
         }
 

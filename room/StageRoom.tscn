@@ -1,9 +1,9 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://chle3ix1uhbtu"]
 
-[ext_resource type="Script" path="res://room/StageRoom.cs" id="1"]
+[ext_resource type="Script" uid="uid://bricgjh4bw4e5" path="res://room/StageRoom.cs" id="1"]
 [ext_resource type="PackedScene" path="res://room/Room.tscn" id="2"]
-[ext_resource type="Resource" path="res://resources/EgStageDef.tres" id="3"]
+[ext_resource type="Resource" uid="uid://88gs1aj6p221" path="res://resources/EgStageDef.tres" id="3"]
 
-[node name="StageRoom" instance=ExtResource("2")]
+[node name="StageRoom" unique_id=1436153365 instance=ExtResource("2")]
 script = ExtResource("1")
 StageDef = ExtResource("3")

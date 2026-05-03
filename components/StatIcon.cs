@@ -16,22 +16,24 @@ public partial class StatIcon : Control {
         CustomMinimumSize = new Vector2(iconSize, iconSize);
         Size = new Vector2(iconSize, iconSize);
 
-        var iconRect = new TextureRect();
-        iconRect.Texture = stat.Definition.Icon;
-        iconRect.ExpandMode = TextureRect.ExpandModeEnum.FitWidth;
-        iconRect.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
-        iconRect.Size = new Vector2(iconSize, iconSize);
-        iconRect.Position = Vector2.Zero;
-        iconRect.MouseFilter = MouseFilterEnum.Ignore;
+        var iconRect = new TextureRect {
+            Texture = stat.Definition.Icon,
+            ExpandMode = TextureRect.ExpandModeEnum.FitWidth,
+            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+            Size = new Vector2(iconSize, iconSize),
+            Position = Vector2.Zero,
+            MouseFilter = MouseFilterEnum.Ignore
+        };
         AddChild(iconRect);
 
-        _countLabel = new Label();
-        _countLabel.Text = stat.CurrentValue.ToString();
-        _countLabel.HorizontalAlignment = HorizontalAlignment.Right;
-        _countLabel.VerticalAlignment = VerticalAlignment.Bottom;
-        _countLabel.Size = new Vector2(iconSize, iconSize);
-        _countLabel.Position = Vector2.Zero;
-        _countLabel.MouseFilter = MouseFilterEnum.Ignore;
+        _countLabel = new Label {
+            Text = stat.CurrentValue.ToString(),
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Size = new Vector2(iconSize, iconSize),
+            Position = Vector2.Zero,
+            MouseFilter = MouseFilterEnum.Ignore
+        };
         _countLabel.AddThemeColorOverride("font_color", Colors.White);
         AddChild(_countLabel);
 

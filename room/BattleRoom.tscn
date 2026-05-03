@@ -1,14 +1,14 @@
 [gd_scene format=3 uid="uid://bhobbalfopbtb"]
 
-[ext_resource type="Script" uid="uid://02rmsmajbrx2" path="res://battle/BattleRoom.cs" id="1_2ckr4"]
+[ext_resource type="Script" uid="uid://dx3mdt8ydv52i" path="res://room/BattleRoom.cs" id="1_2ckr4"]
 [ext_resource type="PackedScene" path="res://room/Room.tscn" id="2_room"]
 [ext_resource type="PackedScene" uid="uid://bi2mcb6tkklke" path="res://actors/player/Player.tscn" id="5_v3re7"]
 [ext_resource type="PackedScene" uid="uid://cyphyc8ryljwu" path="res://components/PileComponent.tscn" id="6_dgjnm"]
 [ext_resource type="Script" uid="uid://nenaxcfp7joo" path="res://actors/player/Player.cs" id="6_r8nfv"]
-[ext_resource type="Script" uid="uid://cdjqvdfqmjboe" path="res://battle/BlockPilesHere.cs" id="6_wuq8c"]
-[ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://battle/Bot.cs" id="8_pfxs1"]
-[ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://battle/bot_frames/BotFrames.png" id="9_q5nyf"]
-[ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://battle/battle_background/UpperLayer.png" id="11_pk84k"]
+[ext_resource type="Script" uid="uid://cdjqvdfqmjboe" path="res://room/BlockPilesHere.cs" id="6_wuq8c"]
+[ext_resource type="Script" uid="uid://cbqf40g55leq4" path="res://room/Bot.cs" id="8_pfxs1"]
+[ext_resource type="Texture2D" uid="uid://dlqovyudaomq3" path="res://room/bot_frames/BotFrames.png" id="9_q5nyf"]
+[ext_resource type="Texture2D" uid="uid://cyykw0ha7r7vd" path="res://room/battle_background/UpperLayer.png" id="11_pk84k"]
 [ext_resource type="PackedScene" uid="uid://dh4hjkd8jqy1l" path="res://actors/enemy/Enemy.tscn" id="12_fn3my"]
 [ext_resource type="Resource" uid="uid://3wrfrk1m835i" path="res://resources/enemy_defs/Gonh.tres" id="13_enemydef"]
 
@@ -138,6 +138,7 @@ animations = [{
 [node name="BattleRoom" unique_id=2081650975 instance=ExtResource("2_room")]
 z_index = 100
 script = ExtResource("1_2ckr4")
+EnemyChart = null
 
 [node name="Bot" type="Node2D" parent="." index="0" unique_id=1956716059]
 script = ExtResource("8_pfxs1")

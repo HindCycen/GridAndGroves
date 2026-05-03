@@ -20,19 +20,22 @@ public partial class TooltipComponent : Node {
     public void Show(Vector2 globalPosition, string richText) {
         Hide();
 
-        var label = new RichTextLabel();
-        label.BbcodeEnabled = true;
-        label.MouseFilter = Control.MouseFilterEnum.Ignore;
-        label.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        label.Size = new Vector2(MaxWidth, 200);
+        var label = new RichTextLabel {
+            BbcodeEnabled = true,
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+            AutowrapMode = TextServer.AutowrapMode.WordSmart,
+            Size = new Vector2(MaxWidth, 200)
+        };
 
-        var panel = new Panel();
-        panel.MouseFilter = Control.MouseFilterEnum.Ignore;
-        panel.Size = new Vector2(MaxWidth + PaddingX * 2, 216);
+        var panel = new Panel {
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+            Size = new Vector2(MaxWidth + PaddingX * 2, 216)
+        };
         panel.AddChild(label);
 
-        var layer = new CanvasLayer();
-        layer.Layer = CanvasLayerOrder;
+        var layer = new CanvasLayer {
+            Layer = CanvasLayerOrder
+        };
         GetViewport()?.AddChild(layer);
         layer.AddChild(panel);
         _tooltip = layer;

@@ -85,28 +85,34 @@ public partial class Glob {
     }
 
     public static void InitRng() {
-        _mapRand = new RandomNumberGenerator();
-        _mapRand.Seed = (ulong) _currentSeed;
+        _mapRand = new RandomNumberGenerator {
+            Seed = (ulong) _currentSeed
+        };
         _mapRandUsage = 0;
 
-        _monsterRand = new RandomNumberGenerator();
-        _monsterRand.Seed = (ulong) _currentSeed;
+        _monsterRand = new RandomNumberGenerator {
+            Seed = (ulong) _currentSeed
+        };
         _monsterRandUsage = 0;
 
-        _rewardRand = new RandomNumberGenerator();
-        _rewardRand.Seed = (ulong) _currentSeed;
+        _rewardRand = new RandomNumberGenerator {
+            Seed = (ulong) _currentSeed
+        };
         _rewardRandUsage = 0;
 
-        _chestRand = new RandomNumberGenerator();
-        _chestRand.Seed = (ulong) _currentSeed;
+        _chestRand = new RandomNumberGenerator {
+            Seed = (ulong) _currentSeed
+        };
         _chestRandUsage = 0;
 
-        _miscRand = new RandomNumberGenerator();
-        _miscRand.Seed = (ulong) _currentSeed;
+        _miscRand = new RandomNumberGenerator {
+            Seed = (ulong) _currentSeed
+        };
         _miscRandUsage = 0;
 
-        _pileRand = new RandomNumberGenerator();
-        _pileRand.Seed = (ulong) _currentSeed;
+        _pileRand = new RandomNumberGenerator {
+            Seed = (ulong) _currentSeed
+        };
         _pileRandUsage = 0;
     }
 }

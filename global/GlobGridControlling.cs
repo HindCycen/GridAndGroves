@@ -118,8 +118,13 @@ public partial class Glob {
 
     public static void SetGridState(int col, int row, GridState state) {
         if (col >= 0 && col < 7 && row >= 0 && row < 5) {
-            // 检查坐标是否在有效范围内
             GridStates[col, row] = state;
+        }
+    }
+
+    public static void RestoreGridState(int col, int row) {
+        if (col >= 0 && col < 7 && row >= 0 && row < 5) {
+            GridStates[col, row] = IsRowUnlocked(row) && IsColUnlocked(col) ? GridState.Free : GridState.Unable;
         }
     }
 

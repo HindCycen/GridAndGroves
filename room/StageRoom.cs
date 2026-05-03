@@ -32,8 +32,9 @@ public partial class StageRoom : UncountedRoom {
             _mapGenerated = true;
         }
 
-        _gridContainer = new Node2D();
-        _gridContainer.Name = "GridContainer";
+        _gridContainer = new Node2D {
+            Name = "GridContainer"
+        };
         AddChild(_gridContainer);
 
         var totalWidth = Cols * CellSize;
@@ -49,8 +50,8 @@ public partial class StageRoom : UncountedRoom {
     }
 
     private void GenerateMap() {
-        var battleTex = GD.Load<Texture2D>("res://room/room_pictures/BattleRoomBn.png");
-        var eventTex = GD.Load<Texture2D>("res://room/room_pictures/EventRoomBn.png");
+        _ = GD.Load<Texture2D>("res://room/room_pictures/BattleRoomBn.png");
+        _ = GD.Load<Texture2D>("res://room/room_pictures/EventRoomBn.png");
 
         for (var col = 0; col < Cols; col++) {
             for (var row = 0; row < Rows; row++) {
@@ -62,6 +63,10 @@ public partial class StageRoom : UncountedRoom {
                 }
             }
         }
+
+        if (_saveLoad?.Data != null) {
+            _saveLoad.Data.StageCount++;
+        }
     }
 
     private void BuildGridVisuals() {
@@ -72,9 +77,10 @@ public partial class StageRoom : UncountedRoom {
             for (var row = 0; row < Rows; row++) {
                 var tex = _isBattleCell[col, row] ? battleTex : eventTex;
 
-                var sprite = new Sprite2D();
-                sprite.Texture = tex;
-                sprite.Position = new Vector2(col * CellSize + CellSize / 2, row * CellSize + CellSize / 2);
+                var sprite = new Sprite2D {
+                    Texture = tex,
+                    Position = new Vector2(col * CellSize + CellSize / 2, row * CellSize + CellSize / 2)
+                };
 
                 if (_left[col, row]) {
                     sprite.Modulate = new Color(1, 1, 1, 0.5f);
@@ -83,17 +89,19 @@ public partial class StageRoom : UncountedRoom {
                     sprite.Modulate = new Color(1, 1, 1, 0);
                 }
                 else {
-                    sprite.Modulate = new Color(1, 1, 1, 0.4f);
+                    sprite.Modulate = new Color(1, 1, 1, 1f);
                 }
 
                 _gridContainer.AddChild(sprite);
                 _cells[col, row] = sprite;
 
-                var area = new Area2D();
-                area.Name = $"Cell_{col}_{row}";
+                var area = new Area2D {
+                    Name = $"Cell_{col}_{row}"
+                };
                 var shape = new CollisionShape2D();
-                var rect = new RectangleShape2D();
-                rect.Size = new Vector2(CellSize, CellSize);
+                var rect = new RectangleShape2D {
+                    Size = new Vector2(CellSize, CellSize)
+                };
                 shape.Shape = rect;
                 area.AddChild(shape);
                 area.Position = sprite.Position;
@@ -152,23 +160,25 @@ public partial class StageRoom : UncountedRoom {
         if (row > 0) _clickable[col, row - 1] = true;
         if (col < Cols - 1) _clickable[col + 1, row] = true;
 
-        var player = GetTree().GetFirstNodeInGroup("Players") as Player;
         var isBattle = _isBattleCell[col, row];
 
+        _saveLoad?.Save();
+
         if (isBattle) {
+            var roomCount = _saveLoad?.Data?.RoomCount ?? 0;
             var stageEnemyChart = GD.Load<StageEnemyChartDef>("res://resources/EgStageEnemyChart.tres");
             EnemyChartDef chartDef;
-            if (player != null && player.RoomCount == 20) {
+            if (roomCount == 20) {
                 chartDef = stageEnemyChart.BossChart[Glob.GetMonsterRand(stageEnemyChart.BossChart.Length)];
             }
-            else if (player != null && player.RoomCount > 6) {
+            else if (roomCount > 6) {
                 chartDef = stageEnemyChart.StrongEnemyChart[Glob.GetMonsterRand(stageEnemyChart.StrongEnemyChart.Length)];
             }
             else {
                 chartDef = stageEnemyChart.WeakEnemyChart[Glob.GetMonsterRand(stageEnemyChart.WeakEnemyChart.Length)];
             }
 
-            var battleScene = GD.Load<PackedScene>("res://battle/BattleRoom.tscn");
+            var battleScene = GD.Load<PackedScene>("res://room/BattleRoom.tscn");
             var battle = battleScene.Instantiate<BattleRoom>();
             battle.EnemyChart = chartDef;
             GetTree().Root.AddChild(battle);

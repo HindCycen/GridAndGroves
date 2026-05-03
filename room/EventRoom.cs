@@ -19,8 +19,9 @@ public partial class EventRoom : CountedRoom {
     private void ShowEventPhase1() {
         _phase = 1;
 
-        _descLabel = new RichTextLabel();
-        _descLabel.Position = new Vector2(300, 200);
+        _descLabel = new RichTextLabel {
+            Position = new Vector2(300, 200)
+        };
         _descLabel.SetSize(new Vector2(1320, 400));
         _descLabel.AddThemeFontSizeOverride("font_size", 24);
         _descLabel.BbcodeEnabled = true;
@@ -37,8 +38,9 @@ public partial class EventRoom : CountedRoom {
 
         var choiceCount = EventDef.Choices.Length;
         foreach (var choice in EventDef.Choices) {
-            var btn = new Button();
-            btn.Text = choice.Name;
+            var btn = new Button {
+                Text = choice.Name
+            };
             btn.SetSize(new Vector2(1320 / choiceCount - 20, 80));
             btn.AddThemeFontSizeOverride("font_size", 20);
 
@@ -81,8 +83,9 @@ public partial class EventRoom : CountedRoom {
                 child.QueueFree();
             }
 
-            var continueBtn = new Button();
-            continueBtn.Text = "Continue";
+            var continueBtn = new Button {
+                Text = "Continue"
+            };
             continueBtn.SetSize(new Vector2(200, 80));
             continueBtn.AddThemeFontSizeOverride("font_size", 24);
             continueBtn.Pressed += OnContinue;
@@ -113,6 +116,7 @@ public partial class EventRoom : CountedRoom {
     }
 
     private void GoBackToStage() {
+        _saveLoad?.Save();
         var stageScene = GD.Load<PackedScene>("res://room/StageRoom.tscn");
         var stage = stageScene.Instantiate<StageRoom>();
         GetTree().Root.AddChild(stage);

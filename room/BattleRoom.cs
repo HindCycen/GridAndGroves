@@ -255,15 +255,17 @@ public partial class BattleRoom : CountedRoom {
     }
 
     private void SetupPileViewerButtons() {
-        var drawBtn = new Button();
-        drawBtn.Text = "抽牌堆";
+        var drawBtn = new Button {
+            Text = "抽牌堆"
+        };
         drawBtn.SetPosition(new Vector2I(20, 1030));
         drawBtn.SetSize(new Vector2I(120, 40));
         drawBtn.Pressed += () => ShowPileViewer("抽牌堆", _blockPilesHere.DrawPile);
         AddChild(drawBtn);
 
-        var discardBtn = new Button();
-        discardBtn.Text = "弃牌堆";
+        var discardBtn = new Button {
+            Text = "弃牌堆"
+        };
         discardBtn.SetPosition(new Vector2I(1780, 1030));
         discardBtn.SetSize(new Vector2I(120, 40));
         discardBtn.Pressed += () => ShowPileViewer("弃牌堆", _blockPilesHere.DiscardedPile);
@@ -271,8 +273,9 @@ public partial class BattleRoom : CountedRoom {
     }
 
     private void ShowPileViewer(string title, PileComponent pile) {
-        var overlay = new ColorRect();
-        overlay.Color = new Color(0, 0, 0, 0.6f);
+        var overlay = new ColorRect {
+            Color = new Color(0, 0, 0, 0.6f)
+        };
         overlay.SetSize(new Vector2I(1920, 1080));
         overlay.SetPosition(Vector2I.Zero);
         overlay.MouseFilter = Control.MouseFilterEnum.Stop;
@@ -283,14 +286,16 @@ public partial class BattleRoom : CountedRoom {
         panel.SetPosition(new Vector2I(610, 140));
         overlay.AddChild(panel);
 
-        var titleLabel = new Label();
-        titleLabel.Text = title;
+        var titleLabel = new Label {
+            Text = title
+        };
         titleLabel.SetPosition(new Vector2I(20, 10));
         titleLabel.AddThemeFontSizeOverride("font_size", 24);
         panel.AddChild(titleLabel);
 
-        var closeBtn = new Button();
-        closeBtn.Text = "关闭";
+        var closeBtn = new Button {
+            Text = "关闭"
+        };
         closeBtn.SetPosition(new Vector2I(640, 10));
         closeBtn.SetSize(new Vector2I(50, 30));
         closeBtn.Pressed += overlay.QueueFree;
@@ -305,18 +310,21 @@ public partial class BattleRoom : CountedRoom {
         scroll.AddChild(vbox);
 
         if (pile.Count == 0) {
-            var empty = new Label();
-            empty.Text = "（空）";
-            empty.CustomMinimumSize = new Vector2I(0, 30);
+            var empty = new Label {
+                Text = "（空）",
+                CustomMinimumSize = new Vector2I(0, 30)
+            };
             vbox.AddChild(empty);
         }
         else {
             foreach (var block in pile.Pile) {
-                var card = new Panel();
-                card.CustomMinimumSize = new Vector2I(640, 36);
+                var card = new Panel {
+                    CustomMinimumSize = new Vector2I(640, 36)
+                };
 
-                var nameLabel = new Label();
-                nameLabel.Text = $"  {block.Definition.BlockName}    (Faction: {block.Faction})";
+                var nameLabel = new Label {
+                    Text = $"  {block.Definition.BlockName}    (Faction: {block.Faction})"
+                };
                 nameLabel.SetPosition(new Vector2I(10, 8));
                 card.AddChild(nameLabel);
 
@@ -326,7 +334,7 @@ public partial class BattleRoom : CountedRoom {
     }
 
     private void RenderUnableGridCells() {
-        var texture = GD.Load<Texture2D>("res://battle/battle_background/UnableGrid.png");
+        var texture = GD.Load<Texture2D>("res://room/battle_background/UnableGrid.png");
         var texSize = texture.GetSize();
         var scale = new Vector2(96 / texSize.X, 96 / texSize.Y);
         var bgNode = GetNode<Node2D>("BackgroundAnimator");
@@ -337,11 +345,12 @@ public partial class BattleRoom : CountedRoom {
                     continue;
                 }
 
-                var sprite = new Sprite2D();
-                sprite.Texture = texture;
-                sprite.Scale = scale;
-                sprite.ZIndex = 0;
-                sprite.GlobalPosition = Glob.GetGridPos(new Vector2I(col, row));
+                var sprite = new Sprite2D {
+                    Texture = texture,
+                    Scale = scale,
+                    ZIndex = 0,
+                    GlobalPosition = Glob.GetGridPos(new Vector2I(col, row))
+                };
                 bgNode.AddChild(sprite);
             }
         }
