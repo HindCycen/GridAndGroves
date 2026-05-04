@@ -2,16 +2,18 @@ using System;
 using Godot;
 
 public partial class StageRoom : UncountedRoom {
+    public const int MapCols = 14;
+    public const int MapRows = 7;
     private const int Cols = 14;
     private const int Rows = 7;
     private const int CellSize = 96;
 
     [Export] public StageDef StageDef;
 
-    private static bool[,] _clickable;
-    private static bool[,] _left;
-    private static bool _mapGenerated;
-    private static bool[,] _isBattleCell;
+    public static bool[,] Clickable;
+    public static bool[,] Left;
+    public static bool[,] IsBattleCell;
+    public static bool MapGenerated;
 
     private Node2D _gridContainer;
     private Sprite2D[,] _cells;
@@ -23,13 +25,16 @@ public partial class StageRoom : UncountedRoom {
     public override void _Ready() {
         base._Ready();
 
-        if (!_mapGenerated) {
-            _clickable = new bool[Cols, Rows];
-            _left = new bool[Cols, Rows];
-            _isBattleCell = new bool[Cols, Rows];
-            GenerateMap();
-            _clickable[0, Rows - 1] = true;
-            _mapGenerated = true;
+        if (!MapGenerated) {
+            var loadedFromSave = TryRestoreMapFromSave();
+            if (!loadedFromSave) {
+                Clickable = new bool[Cols, Rows];
+                Left = new bool[Cols, Rows];
+                IsBattleCell = new bool[Cols, Rows];
+                GenerateMap();
+                Clickable[0, Rows - 1] = true;
+                MapGenerated = true;
+            }
         }
 
         _gridContainer = new Node2D {
@@ -56,17 +61,43 @@ public partial class StageRoom : UncountedRoom {
         for (var col = 0; col < Cols; col++) {
             for (var row = 0; row < Rows; row++) {
                 if ((col == 0 && row == Rows - 1) || (col == Cols - 1 && row == 0)) {
-                    _isBattleCell[col, row] = true;
+                    IsBattleCell[col, row] = true;
                 }
                 else {
-                    _isBattleCell[col, row] = Glob.GetMapRand(2) == 0;
+                    IsBattleCell[col, row] = Glob.GetMapRand(2) == 0;
                 }
             }
         }
 
-        if (_saveLoad?.Data != null) {
+        if (_saveLoad?.Data != null && (_saveLoad.Data.GridClickable == null || _saveLoad.Data.GridClickable.Length == 0)) {
             _saveLoad.Data.StageCount++;
         }
+    }
+
+    private bool TryRestoreMapFromSave() {
+        var data = _saveLoad?.Data;
+        if (data?.GridClickable == null || data.GridClickable.Length == 0) return false;
+        if (data.GridLeft == null || data.GridLeft.Length == 0) return false;
+        if (data.GridIsBattleCell == null || data.GridIsBattleCell.Length == 0) return false;
+
+        var totalCells = Cols * Rows;
+        if (data.GridClickable.Length != totalCells) return false;
+
+        Clickable = new bool[Cols, Rows];
+        Left = new bool[Cols, Rows];
+        IsBattleCell = new bool[Cols, Rows];
+
+        for (var col = 0; col < Cols; col++) {
+            for (var row = 0; row < Rows; row++) {
+                var index = row * Cols + col;
+                Clickable[col, row] = data.GridClickable[index] != 0;
+                Left[col, row] = data.GridLeft[index] != 0;
+                IsBattleCell[col, row] = data.GridIsBattleCell[index] != 0;
+            }
+        }
+
+        MapGenerated = true;
+        return true;
     }
 
     private void BuildGridVisuals() {
@@ -75,17 +106,17 @@ public partial class StageRoom : UncountedRoom {
 
         for (var col = 0; col < Cols; col++) {
             for (var row = 0; row < Rows; row++) {
-                var tex = _isBattleCell[col, row] ? battleTex : eventTex;
+                var tex = IsBattleCell[col, row] ? battleTex : eventTex;
 
                 var sprite = new Sprite2D {
                     Texture = tex,
                     Position = new Vector2(col * CellSize + CellSize / 2, row * CellSize + CellSize / 2)
                 };
 
-                if (_left[col, row]) {
+                if (Left[col, row]) {
                     sprite.Modulate = new Color(1, 1, 1, 0.5f);
                 }
-                else if (_clickable[col, row]) {
+                else if (Clickable[col, row]) {
                     sprite.Modulate = new Color(1, 1, 1, 0);
                 }
                 else {
@@ -126,7 +157,7 @@ public partial class StageRoom : UncountedRoom {
 
         for (var col = 0; col < Cols; col++) {
             for (var row = 0; row < Rows; row++) {
-                if (_clickable[col, row] && !_left[col, row]) {
+                if (Clickable[col, row] && !Left[col, row]) {
                     var c = _cells[col, row].Modulate;
                     _cells[col, row].Modulate = new Color(c.R, c.G, c.B, alpha);
                 }
@@ -135,7 +166,7 @@ public partial class StageRoom : UncountedRoom {
     }
 
     private void OnCellClicked(int col, int row) {
-        if (!_clickable[col, row] || _left[col, row]) return;
+        if (!Clickable[col, row] || Left[col, row]) return;
 
         if (_flashTween != null && _flashTween.IsRunning()) return;
 
@@ -148,19 +179,19 @@ public partial class StageRoom : UncountedRoom {
     }
 
     private void EnterRoom(int col, int row) {
-        _left[col, row] = true;
+        Left[col, row] = true;
         _cells[col, row].Modulate = new Color(1, 1, 1, 0.5f);
 
         for (var c = 0; c < Cols; c++) {
             for (var r = 0; r < Rows; r++) {
-                _clickable[c, r] = false;
+                Clickable[c, r] = false;
             }
         }
 
-        if (row > 0) _clickable[col, row - 1] = true;
-        if (col < Cols - 1) _clickable[col + 1, row] = true;
+        if (row > 0) Clickable[col, row - 1] = true;
+        if (col < Cols - 1) Clickable[col + 1, row] = true;
 
-        var isBattle = _isBattleCell[col, row];
+        var isBattle = IsBattleCell[col, row];
 
         _saveLoad?.Save();
 

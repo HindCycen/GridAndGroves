@@ -47,6 +47,8 @@ public partial class SaveLoad : Node {
         Data.MiscRandUsage = Glob.GetMiscRandUsage();
         Data.PileRandUsage = Glob.GetPileRandUsage();
 
+        SaveStageMap();
+
         var player = GetTree().GetFirstNodeInGroup("Players") as Player;
         if (player == null) {
             return;
@@ -84,6 +86,8 @@ public partial class SaveLoad : Node {
             Data.MiscRandUsage,
             Data.PileRandUsage
         );
+
+        RestoreStageMap();
 
         var player = GetTree().GetFirstNodeInGroup("Players") as Player;
         if (player == null) {
@@ -134,5 +138,34 @@ public partial class SaveLoad : Node {
                 }
             }
         }
+    }
+
+    private void SaveStageMap() {
+        if (StageRoom.Clickable == null) return;
+
+        var cols = StageRoom.MapCols;
+        var rows = StageRoom.MapRows;
+        var totalCells = cols * rows;
+
+        var clickable = new int[totalCells];
+        var left = new int[totalCells];
+        var isBattleCell = new int[totalCells];
+
+        for (var col = 0; col < cols; col++) {
+            for (var row = 0; row < rows; row++) {
+                var index = row * cols + col;
+                clickable[index] = StageRoom.Clickable[col, row] ? 1 : 0;
+                left[index] = StageRoom.Left[col, row] ? 1 : 0;
+                isBattleCell[index] = StageRoom.IsBattleCell[col, row] ? 1 : 0;
+            }
+        }
+
+        Data.GridClickable = clickable;
+        Data.GridLeft = left;
+        Data.GridIsBattleCell = isBattleCell;
+    }
+
+    private static void RestoreStageMap() {
+        if (StageRoom.MapGenerated) return;
     }
 }

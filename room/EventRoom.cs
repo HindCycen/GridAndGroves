@@ -94,18 +94,35 @@ public partial class EventRoom : CountedRoom {
     }
 
     private void ExecuteAction(EventActionType type, int value) {
-        var player = GetTree().GetFirstNodeInGroup("Players") as Player;
-        if (player == null) return;
+        var data = _saveLoad?.Data;
+        if (data == null) return;
 
         switch (type) {
-            case EventActionType.HealPlayer: {
-                var health = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-                health?.Heal(value);
+            case EventActionType.HealPlayer:
+                data.PlayerCurrentHealth = Mathf.Min(data.PlayerCurrentHealth + value, data.PlayerMaxHealth);
+                break;
+            case EventActionType.DamagePlayer:
+                data.PlayerCurrentHealth = Mathf.Max(data.PlayerCurrentHealth - value, 0);
+                break;
+            case EventActionType.AddBlockToDeck: {
+                var list = data.PlayerDeckBlockNames != null
+                    ? new System.Collections.Generic.List<string>(data.PlayerDeckBlockNames)
+                    : new System.Collections.Generic.List<string>();
+                for (var i = 0; i < value; i++) {
+                    list.Add("DamageBlock");
+                }
+                data.PlayerDeckBlockNames = list.ToArray();
                 break;
             }
-            case EventActionType.DamagePlayer: {
-                var health = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-                health?.TakeDamage(value);
+            case EventActionType.RemoveBlockFromDeck: {
+                if (data.PlayerDeckBlockNames != null && data.PlayerDeckBlockNames.Length > 0) {
+                    var list = new System.Collections.Generic.List<string>(data.PlayerDeckBlockNames);
+                    var removeCount = Mathf.Min(value, list.Count);
+                    for (var i = 0; i < removeCount; i++) {
+                        list.RemoveAt(list.Count - 1);
+                    }
+                    data.PlayerDeckBlockNames = list.ToArray();
+                }
                 break;
             }
         }

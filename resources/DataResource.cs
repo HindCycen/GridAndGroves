@@ -21,6 +21,7 @@ public partial class DataResource : Resource {
 
     [Export] public int[] GridClickable = [];
     [Export] public int[] GridLeft = [];
+    [Export] public int[] GridIsBattleCell = [];
     [Export] public string StageDefPath;
 
     // ── Random State ──

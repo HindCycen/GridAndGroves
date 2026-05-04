@@ -7,11 +7,12 @@ using Godot;
 
 #endregion
 
-public partial class BlockPilesHere : Node2D {
+    public partial class BlockPilesHere : Node2D {
     private const float ShowingPileBaseX = 0f;
     private const float ShowingPileBaseY = 0f;
     private const int MaxShowingPileColumns = 4;
     private readonly Dictionary<Block, Vector2> _blockLayoutPositions = [];
+    private bool _isDrawingCards;
     [Export] public PileComponent DiscardedPile;
     [Export] public PileComponent DrawPile;
     [Export] public PileComponent PlacedPile;
@@ -38,9 +39,12 @@ public partial class BlockPilesHere : Node2D {
     ///     从抽牌堆中抽取 count 张牌到展示区
     /// </summary>
     public void DrawCards(int count) {
+        if (_isDrawingCards) return;
+        if (DrawPile.Count == 0 && DiscardedPile.Count == 0) return;
+
+        _isDrawingCards = true;
         for (var i = 0; i < count; i++) {
             if (DrawPile.Count == 0) {
-                // 如果抽牌堆空了，从弃牌堆洗牌回来
                 ReshuffleDiscardToDraw();
                 if (DrawPile.Count == 0) {
                     break;
@@ -49,6 +53,7 @@ public partial class BlockPilesHere : Node2D {
 
             ShowOneBlock();
         }
+        _isDrawingCards = false;
     }
 
     /// <summary>

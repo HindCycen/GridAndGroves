@@ -1,5 +1,7 @@
 #region
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
@@ -12,6 +14,7 @@ public partial class Bot : Node2D {
     private Vector2I _currentDirection = Vector2I.Down;
     private Vector2I _currentGridPos;
     private bool _stopped;
+    private readonly Queue<Action> _pendingInstructions = new();
 
     public override void _Ready() {
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
@@ -39,6 +42,15 @@ public partial class Bot : Node2D {
         _stopped = false;
     }
 
+    public void AddInstruction(Action instruction) {
+        _pendingInstructions.Enqueue(instruction);
+    }
+
+    public void ClearInstructions() {
+        _pendingInstructions.Clear();
+    }
+
+
     private void ScheduleNextStep() {
         GetTree().CreateTimer(1.0f).Timeout += () => {
             if (_stopped) return;
@@ -52,6 +64,10 @@ public partial class Bot : Node2D {
     ///     默认方向为 Down（蛇形巡逻），遇到方块改变方向后沿新方向移动直到边界。
     /// </summary>
     private void MoveToNextCell() {
+        while (_pendingInstructions.TryDequeue(out var instruction)) {
+            instruction();
+        }
+
         var newPos = _currentGridPos + _currentDirection;
 
         // 蛇形折行：默认 Down 方向到达底部时换到下一列顶部

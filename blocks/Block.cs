@@ -141,9 +141,24 @@ public partial class Block : Node2D {
         return Glob.IsPointInGrid(GlobalPosition);
     }
 
+    public Vector2I GetGridPosition() {
+        if (!IsPlaced) return new Vector2I(-1, -1);
+        return Glob.GetGridCoords(GlobalPosition);
+    }
+
+    public Vector2I[] GetPartsGridPositions() {
+        return _parts
+            .Select(part => Glob.GetGridCoords(Glob.FindNearestGridPoint(part.GlobalPosition)))
+            .ToArray();
+    }
+
     public void PlaceAtGrid(Vector2I coords) {
         if (coords.X < 0 || coords.X >= 7 || coords.Y < 0 || coords.Y >= 5) {
             return;
+        }
+
+        if (_parts.Count == 0) {
+            LoadParts();
         }
 
         var centerPos = Glob.GetGridPos(coords);
