@@ -402,6 +402,33 @@ FieldName = value
 ArrayField = Array[Type]([item1, item2])
 ```
 
+### 3.16 卡牌包 — BlockBag
+
+| 字段 | 类型 | 用途 |
+|---|---|---|
+| `CommonBlocks` | `BlockDef[]` | 普通稀有度卡牌（3 张） |
+| `UncommonBlocks` | `BlockDef[]` | 罕见稀有度卡牌（4 张） |
+| `RareBlocks` | `BlockDef[]` | 稀有卡牌（3 张） |
+
+> 共 10 个 `BlockDef`，按稀有度从低到高 3/4/3 分布。
+> 可通过 `All` 属性获取全部 10 个方块的合并数组。
+
+**示例 `.tres`** (`resources/block_bags/ExampleBag.tres`)：
+
+```
+[gd_resource type="Resource" script_class="BlockBag" format=3]
+
+[ext_resource type="Script" path="res://resources/BlockBag.cs" id="1"]
+[ext_resource type="Resource" path="res://resources/blockdefs/DamageBlock.tres" id="2"]
+[ext_resource type="Resource" path="res://resources/blockdefs/ExampleBlock.tres" id="3"]
+
+[resource]
+script = ExtResource("1")
+CommonBlocks = Array[Object]([ExtResource("2"), ExtResource("2"), ExtResource("3")])
+UncommonBlocks = Array[Object]([ExtResource("2"), ExtResource("3"), ExtResource("2"), ExtResource("3")])
+RareBlocks = Array[Object]([ExtResource("3"), ExtResource("2"), ExtResource("3")])
+```
+
 ---
 
 ## 5. SubResource 与 ExtResource
@@ -485,9 +512,11 @@ resources/
 ├── EventChoiceDef.cs         # 事件选项
 ├── EnemyDefinition.cs        # 敌人定义
 ├── EnemyChartDef.cs          # 敌人图鉴
+├── BlockBag.cs               # 卡牌包
 ├── BlockPlacementDef.cs      # 方块放置点
 ├── IntentDefinition.cs       # 行动意图
 │
+├── block_bags/               # BlockBag .tres
 ├── blockdefs/                # BlockDef .tres
 ├── blockparts/               # BlockPartDef .tres
 ├── blockpart_behaviors/      # BlockPartBehavior .cs
