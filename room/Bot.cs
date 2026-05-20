@@ -14,6 +14,7 @@ public partial class Bot : Node2D {
     private Vector2I _currentDirection = Vector2I.Down;
     private Vector2I _currentGridPos;
     private bool _stopped;
+    private SceneTreeTimer _patrolTimer;
     private readonly Queue<Action> _pendingInstructions = new();
 
     public override void _Ready() {
@@ -52,11 +53,21 @@ public partial class Bot : Node2D {
 
 
     private void ScheduleNextStep() {
-        GetTree().CreateTimer(1.0f).Timeout += () => {
-            if (_stopped) return;
-            _battleTime.SayTicTac();
-            MoveToNextCell();
-        };
+        _patrolTimer = GetTree().CreateTimer(1.0f);
+        _patrolTimer.Timeout += OnPatrolTimerTimeout;
+    }
+
+    private void OnPatrolTimerTimeout() {
+        if (!GodotObject.IsInstanceValid(this)) return;
+        if (_stopped) return;
+        _battleTime.SayTicTac();
+        MoveToNextCell();
+    }
+
+    public override void _ExitTree() {
+        if (_patrolTimer != null && GodotObject.IsInstanceValid(_patrolTimer)) {
+            _patrolTimer.Timeout -= OnPatrolTimerTimeout;
+        }
     }
 
     /// <summary>

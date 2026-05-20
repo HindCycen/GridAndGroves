@@ -17,7 +17,18 @@ public partial class ShieldComponent : Node {
     public override void _Ready() {
         CurrentShield = 0;
         var battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
-        battleTime!.TurnEnded += () => { CurrentShield = 0; };
+        battleTime.TurnEnded += OnTurnEnded;
+    }
+
+    public override void _ExitTree() {
+        if (GetTree()?.Root is not { } root) return;
+        if (root.GetNodeOrNull<BattleTime>("BattleTime") is { } battleTime) {
+            battleTime.TurnEnded -= OnTurnEnded;
+        }
+    }
+
+    private void OnTurnEnded() {
+        CurrentShield = 0;
     }
 
     public void AddShield(int amount) {
