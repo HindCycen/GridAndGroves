@@ -34,7 +34,10 @@ public partial class EventRoom : CountedRoom {
         _buttonContainer.AddThemeConstantOverride("separation", 20);
         AddChild(_buttonContainer);
 
-        if (EventDef?.Choices == null) return;
+        if (EventDef?.Choices == null) {
+            return;
+        }
+
 
         var choiceCount = EventDef.Choices.Length;
         foreach (var choice in EventDef.Choices) {
@@ -68,7 +71,10 @@ public partial class EventRoom : CountedRoom {
     }
 
     private void OnChoiceSelected(EventChoiceDef choice) {
-        if (_phase != 1) return;
+        if (_phase != 1) {
+            return;
+        }
+
 
         ExecuteAction(choice.ActionType, choice.ActionValue);
 
@@ -95,7 +101,10 @@ public partial class EventRoom : CountedRoom {
 
     private void ExecuteAction(EventActionType type, int value) {
         var data = _saveLoad?.Data;
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
+
 
         switch (type) {
             case EventActionType.HealPlayer:

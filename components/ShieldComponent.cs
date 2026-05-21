@@ -21,7 +21,11 @@ public partial class ShieldComponent : Node {
     }
 
     public override void _ExitTree() {
-        if (GetTree()?.Root is not { } root) return;
+        if (GetTree()?.Root is not { } root) {
+            return;
+        }
+
+
         if (root.GetNodeOrNull<BattleTime>("BattleTime") is { } battleTime) {
             battleTime.TurnEnded -= OnTurnEnded;
         }

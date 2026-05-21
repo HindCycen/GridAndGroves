@@ -171,7 +171,11 @@ public partial class BattleRoom : CountedRoom {
     }
 
     private void OnEnemyDied() {
-        if (_isGameOver) return;
+        if (_isGameOver) {
+            return;
+        }
+
+
         if (AreAllEnemiesDead()) {
             _bot.StopPatrol();
             OnVictory();
@@ -241,7 +245,11 @@ public partial class BattleRoom : CountedRoom {
 
         var index = 0;
         foreach (var enemyDef in EnemyChart.EnemyDefs) {
-            if (enemyDef == null) continue;
+            if (enemyDef == null) {
+                continue;
+            }
+
+
             var enemyScene = GD.Load<PackedScene>("res://actors/enemy/Enemy.tscn");
             var enemy = enemyScene.Instantiate<Enemy>();
             enemy.Definition = enemyDef;

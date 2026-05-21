@@ -39,8 +39,15 @@ using Godot;
     ///     从抽牌堆中抽取 count 张牌到展示区
     /// </summary>
     public void DrawCards(int count) {
-        if (_isDrawingCards) return;
-        if (DrawPile.Count == 0 && DiscardedPile.Count == 0) return;
+        if (_isDrawingCards) {
+            return;
+        }
+
+
+        if (DrawPile.Count == 0 && DiscardedPile.Count == 0) {
+            return;
+        }
+
 
         _isDrawingCards = true;
         for (var i = 0; i < count; i++) {
@@ -136,7 +143,11 @@ using Godot;
         // 动态构建当前手牌中所有 Block 占用的格子集合
         var occupied = new HashSet<Vector2I>();
         foreach (var kv in _blockLayoutPositions) {
-            if (kv.Key == block) continue;
+            if (kv.Key == block) {
+                continue;
+            }
+
+
             var otherPartCount = kv.Key.Definition.PartDefinitions.Length;
             var otherCols = (int) Math.Ceiling(Math.Sqrt(otherPartCount));
             var otherRows = (int) Math.Ceiling((double) otherPartCount / otherCols);
@@ -164,7 +175,10 @@ using Godot;
                             (int) ((basePos.X + c * 96 - ShowingPileBaseX) / 96),
                             (int) ((basePos.Y + r * 96 - ShowingPileBaseY) / 96)
                         );
-                        if (occupied.Contains(p)) isFree = false;
+                        if (occupied.Contains(p)) {
+                            isFree = false;
+                        }
+
                     }
                 }
 

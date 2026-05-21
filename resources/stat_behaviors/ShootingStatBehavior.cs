@@ -4,12 +4,24 @@ public partial class ShootingStatBehavior : StatBehavior {
     [StatusBehavior(Period = Glob.StatExecuteAt.OnTurnEnded)]
     public void ShootPlayer() {
         var stat = BelongingStat;
-        if (stat == null) return;
+        if (stat == null) {
+            return;
+        }
+
+
         var tree = stat.GetTree();
-        if (tree == null) return;
+        if (tree == null) {
+            return;
+        }
+
+
         var players = tree.GetNodesInGroup("Players");
         foreach (var node in players) {
-            if (node is not Node2D player) continue;
+            if (node is not Node2D player) {
+                continue;
+            }
+
+
             var healthComponent = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
             if (healthComponent != null) {
                 healthComponent.TakeDamage(10);

@@ -47,7 +47,11 @@ public partial class StatIcon : Control {
     }
 
     private void OnMouseEntered() {
-        if (_stat?.Definition == null) return;
+        if (_stat?.Definition == null) {
+            return;
+        }
+
+
         var placeholders = new Dictionary<string, string> {
             { "N", _stat.CurrentValue.ToString() }
         };

@@ -5,11 +5,18 @@ using Godot;
 public partial class GiveGrowingStatBehavior : BlockPartBehavior {
     public override void Execute(Block block, BlockPart part) {
         var tree = block.GetTree();
-        if (tree == null) return;
+        if (tree == null) {
+            return;
+        }
+
 
         var players = tree.GetNodesInGroup("Players");
         foreach (var node in players) {
-            if (node is not Node2D player) continue;
+            if (node is not Node2D player) {
+                continue;
+            }
+
+
             var renderingComponent = player.GetNode<RenderingComponent>("RenderingComponent");
             var statsComponent = renderingComponent.StatsComponent;
 

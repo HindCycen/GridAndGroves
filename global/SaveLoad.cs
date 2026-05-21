@@ -141,7 +141,10 @@ public partial class SaveLoad : Node {
     }
 
     private void SaveStageMap() {
-        if (StageRoom.Clickable == null) return;
+        if (StageRoom.Clickable == null) {
+            return;
+        }
+
 
         var cols = StageRoom.MapCols;
         var rows = StageRoom.MapRows;
@@ -166,6 +169,9 @@ public partial class SaveLoad : Node {
     }
 
     private static void RestoreStageMap() {
-        if (StageRoom.MapGenerated) return;
+        if (StageRoom.MapGenerated) {
+            return;
+        }
+
     }
 }

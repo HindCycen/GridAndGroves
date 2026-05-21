@@ -70,12 +70,36 @@ public partial class Glob {
         int rewardUsage, int chestUsage, int miscUsage, int pileUsage) {
         _currentSeed = seed;
         InitRng();
-        for (var i = 0; i < mapUsage; i++) _mapRand.RandiRange(0, 1);
-        for (var i = 0; i < monsterUsage; i++) _monsterRand.RandiRange(0, 1);
-        for (var i = 0; i < rewardUsage; i++) _rewardRand.RandiRange(0, 1);
-        for (var i = 0; i < chestUsage; i++) _chestRand.RandiRange(0, 1);
-        for (var i = 0; i < miscUsage; i++) _miscRand.RandiRange(0, 1);
-        for (var i = 0; i < pileUsage; i++) _pileRand.RandiRange(0, 1);
+        for (var i = 0; i < mapUsage; i++) {
+            _mapRand.RandiRange(0, 1);
+        }
+
+
+        for (var i = 0; i < monsterUsage; i++) {
+            _monsterRand.RandiRange(0, 1);
+        }
+
+
+        for (var i = 0; i < rewardUsage; i++) {
+            _rewardRand.RandiRange(0, 1);
+        }
+
+
+        for (var i = 0; i < chestUsage; i++) {
+            _chestRand.RandiRange(0, 1);
+        }
+
+
+        for (var i = 0; i < miscUsage; i++) {
+            _miscRand.RandiRange(0, 1);
+        }
+
+
+        for (var i = 0; i < pileUsage; i++) {
+            _pileRand.RandiRange(0, 1);
+        }
+
+
         _mapRandUsage = mapUsage;
         _monsterRandUsage = monsterUsage;
         _rewardRandUsage = rewardUsage;

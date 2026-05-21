@@ -58,8 +58,16 @@ public partial class Bot : Node2D {
     }
 
     private void OnPatrolTimerTimeout() {
-        if (!GodotObject.IsInstanceValid(this)) return;
-        if (_stopped) return;
+        if (!GodotObject.IsInstanceValid(this)) {
+            return;
+        }
+
+
+        if (_stopped) {
+            return;
+        }
+
+
         _battleTime.SayTicTac();
         MoveToNextCell();
     }

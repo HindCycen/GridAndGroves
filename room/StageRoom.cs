@@ -76,12 +76,26 @@ public partial class StageRoom : UncountedRoom {
 
     private bool TryRestoreMapFromSave() {
         var data = _saveLoad?.Data;
-        if (data?.GridClickable == null || data.GridClickable.Length == 0) return false;
-        if (data.GridLeft == null || data.GridLeft.Length == 0) return false;
-        if (data.GridIsBattleCell == null || data.GridIsBattleCell.Length == 0) return false;
+        if (data?.GridClickable == null || data.GridClickable.Length == 0) {
+            return false;
+        }
+
+
+        if (data.GridLeft == null || data.GridLeft.Length == 0) {
+            return false;
+        }
+
+
+        if (data.GridIsBattleCell == null || data.GridIsBattleCell.Length == 0) {
+            return false;
+        }
+
 
         var totalCells = Cols * Rows;
-        if (data.GridClickable.Length != totalCells) return false;
+        if (data.GridClickable.Length != totalCells) {
+            return false;
+        }
+
 
         Clickable = new bool[Cols, Rows];
         Left = new bool[Cols, Rows];
@@ -150,7 +164,10 @@ public partial class StageRoom : UncountedRoom {
     }
 
     public override void _Process(double delta) {
-        if (!_initialized) return;
+        if (!_initialized) {
+            return;
+        }
+
 
         _pulseTime += (float)delta;
         var alpha = (Mathf.Sin(_pulseTime * Mathf.Pi * 2) + 1) / 2;
@@ -166,9 +183,15 @@ public partial class StageRoom : UncountedRoom {
     }
 
     private void OnCellClicked(int col, int row) {
-        if (!Clickable[col, row] || Left[col, row]) return;
+        if (!Clickable[col, row] || Left[col, row]) {
+            return;
+        }
 
-        if (_flashTween != null && _flashTween.IsRunning()) return;
+
+        if (_flashTween != null && _flashTween.IsRunning()) {
+            return;
+        }
+
 
         _flashTween = CreateTween();
         for (var i = 0; i < 3; i++) {
@@ -188,8 +211,15 @@ public partial class StageRoom : UncountedRoom {
             }
         }
 
-        if (row > 0) Clickable[col, row - 1] = true;
-        if (col < Cols - 1) Clickable[col + 1, row] = true;
+        if (row > 0) {
+            Clickable[col, row - 1] = true;
+        }
+
+
+        if (col < Cols - 1) {
+            Clickable[col + 1, row] = true;
+        }
+
 
         var isBattle = IsBattleCell[col, row];
 

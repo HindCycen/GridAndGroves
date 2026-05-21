@@ -142,7 +142,11 @@ public partial class Block : Node2D {
     }
 
     public Vector2I GetGridPosition() {
-        if (!IsPlaced) return new Vector2I(-1, -1);
+        if (!IsPlaced) {
+            return new Vector2I(-1, -1);
+        }
+
+
         return Glob.GetGridCoords(GlobalPosition);
     }
 
