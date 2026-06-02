@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://cne0evnm21bwa"]
+
+[ext_resource type="Texture2D" uid="uid://ernt7yx2pi0t" path="res://resources/blockpart_picture/green/Blank-G.png" id="1_2iloy"]
+[ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="1_enoqm"]
+
+[resource]
+script = ExtResource("1_enoqm")
+Behaviors = Array[Object]([])
+Description = "Just do nothing."
+MovingDirection = Vector2i(0, 1)
+PartId = "JustDoNothing"
+SpriteTexture = ExtResource("1_2iloy")
+metadata/_custom_type_script = "uid://cxi0d1tnlamis"
