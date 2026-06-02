@@ -1,26 +1,29 @@
-using System;
+#region
+
 using Godot;
 
-public partial class StageRoom : UncountedRoom {
+#endregion
+
+public partial class StageRoom : Room {
     public const int MapCols = 14;
     public const int MapRows = 7;
     private const int Cols = 14;
     private const int Rows = 7;
     private const int CellSize = 96;
 
-    [Export] public StageDef StageDef;
-
     public static bool[,] Clickable;
     public static bool[,] Left;
     public static bool[,] IsBattleCell;
     public static bool MapGenerated;
-
-    private Node2D _gridContainer;
     private Sprite2D[,] _cells;
-    private float _pulseTime;
     private Tween _flashTween;
 
+    private Node2D _gridContainer;
+
     private bool _initialized;
+    private float _pulseTime;
+
+    [Export] public StageDef StageDef;
 
     public override void _Ready() {
         base._Ready();
@@ -69,7 +72,8 @@ public partial class StageRoom : UncountedRoom {
             }
         }
 
-        if (_saveLoad?.Data != null && (_saveLoad.Data.GridClickable == null || _saveLoad.Data.GridClickable.Length == 0)) {
+        if (_saveLoad?.Data != null &&
+            (_saveLoad.Data.GridClickable == null || _saveLoad.Data.GridClickable.Length == 0)) {
             _saveLoad.Data.StageCount++;
         }
     }
@@ -134,7 +138,7 @@ public partial class StageRoom : UncountedRoom {
                     sprite.Modulate = new Color(1, 1, 1, 0);
                 }
                 else {
-                    sprite.Modulate = new Color(1, 1, 1, 1f);
+                    sprite.Modulate = new Color(1, 1, 1);
                 }
 
                 _gridContainer.AddChild(sprite);
@@ -169,7 +173,7 @@ public partial class StageRoom : UncountedRoom {
         }
 
 
-        _pulseTime += (float)delta;
+        _pulseTime += (float) delta;
         var alpha = (Mathf.Sin(_pulseTime * Mathf.Pi * 2) + 1) / 2;
 
         for (var col = 0; col < Cols; col++) {
@@ -198,6 +202,7 @@ public partial class StageRoom : UncountedRoom {
             _flashTween.TweenProperty(_cells[col, row], "modulate:a", 0.0, 0.15);
             _flashTween.TweenProperty(_cells[col, row], "modulate:a", 1.0, 0.15);
         }
+
         _flashTween.TweenCallback(Callable.From(() => EnterRoom(col, row)));
     }
 
@@ -233,7 +238,8 @@ public partial class StageRoom : UncountedRoom {
                 chartDef = stageEnemyChart.BossChart[Glob.GetMonsterRand(stageEnemyChart.BossChart.Length)];
             }
             else if (roomCount > 6) {
-                chartDef = stageEnemyChart.StrongEnemyChart[Glob.GetMonsterRand(stageEnemyChart.StrongEnemyChart.Length)];
+                chartDef = stageEnemyChart.StrongEnemyChart[
+                    Glob.GetMonsterRand(stageEnemyChart.StrongEnemyChart.Length)];
             }
             else {
                 chartDef = stageEnemyChart.WeakEnemyChart[Glob.GetMonsterRand(stageEnemyChart.WeakEnemyChart.Length)];

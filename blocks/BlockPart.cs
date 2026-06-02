@@ -92,16 +92,4 @@ public partial class BlockPart : Node2D {
     private void OnMouseExited() {
         _tooltipComponent.Hide();
     }
-
-    public Vector2I Execute(Block owner) {
-        if (PartDefinition.Behaviors == null) {
-            return Vector2I.Down;
-        }
-
-        foreach (var behavior in PartDefinition.Behaviors) {
-            behavior?.Execute(owner, this);
-        }
-
-        return PartDefinition.MovingDirection;
-    }
 }

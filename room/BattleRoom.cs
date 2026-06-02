@@ -5,16 +5,16 @@ using Godot;
 
 #endregion
 
-public partial class BattleRoom : CountedRoom {
+public partial class BattleRoom : Room {
     private BattleTime _battleTime;
     private BlockPilesHere _blockPilesHere;
     private Bot _bot;
     private Button _endTurnButton;
     private Enemy[] _enemies;
-    [Export] public EnemyChartDef EnemyChart;
     private bool _isGameOver;
     private HealthComponent _playerHealth;
     private int _roundNumber;
+    [Export] public EnemyChartDef EnemyChart;
 
     public override void _Ready() {
         base._Ready();
@@ -78,6 +78,7 @@ public partial class BattleRoom : CountedRoom {
         if (ActionQueue.Instance != null) {
             ActionQueue.Instance.Clear();
         }
+
         base._ExitTree();
     }
 
@@ -271,7 +272,7 @@ public partial class BattleRoom : CountedRoom {
             var enemy = enemyScene.Instantiate<Enemy>();
             enemy.Definition = enemyDef;
             var x = 1300 + index * 200;
-            var y = 150 + (index % 2) * 200;
+            var y = 150 + index % 2 * 200;
             enemy.Position = new Vector2(x, y);
             AddChild(enemy);
             GD.Print($"SpawnEnemiesFromChart: 生成敌人 {enemyDef.EnemyName} 在 ({x}, {y})");

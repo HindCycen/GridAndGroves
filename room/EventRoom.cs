@@ -1,15 +1,17 @@
+#region
+
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 
-public partial class EventRoom : CountedRoom {
-    [Export] public EventDef EventDef;
+#endregion
+
+public partial class EventRoom : Room {
+    private readonly List<TooltipComponent> _activeTooltips = new();
+    private HBoxContainer _buttonContainer;
 
     private RichTextLabel _descLabel;
-    private HBoxContainer _buttonContainer;
     private int _phase;
-
-    private readonly List<TooltipComponent> _activeTooltips = new();
+    [Export] public EventDef EventDef;
 
     public override void _Ready() {
         base._Ready();
@@ -61,6 +63,7 @@ public partial class EventRoom : CountedRoom {
                         t.QueueFree();
                     }
                 }
+
                 _activeTooltips.Clear();
             };
 
@@ -85,7 +88,7 @@ public partial class EventRoom : CountedRoom {
         }
 
         if (_buttonContainer != null) {
-            foreach (Node child in _buttonContainer.GetChildren()) {
+            foreach (var child in _buttonContainer.GetChildren()) {
                 child.QueueFree();
             }
 
@@ -115,23 +118,26 @@ public partial class EventRoom : CountedRoom {
                 break;
             case EventActionType.AddBlockToDeck: {
                 var list = data.PlayerDeckBlockNames != null
-                    ? new System.Collections.Generic.List<string>(data.PlayerDeckBlockNames)
-                    : new System.Collections.Generic.List<string>();
+                    ? new List<string>(data.PlayerDeckBlockNames)
+                    : new List<string>();
                 for (var i = 0; i < value; i++) {
                     list.Add("DamageBlock");
                 }
+
                 data.PlayerDeckBlockNames = list.ToArray();
                 break;
             }
             case EventActionType.RemoveBlockFromDeck: {
                 if (data.PlayerDeckBlockNames != null && data.PlayerDeckBlockNames.Length > 0) {
-                    var list = new System.Collections.Generic.List<string>(data.PlayerDeckBlockNames);
+                    var list = new List<string>(data.PlayerDeckBlockNames);
                     var removeCount = Mathf.Min(value, list.Count);
                     for (var i = 0; i < removeCount; i++) {
                         list.RemoveAt(list.Count - 1);
                     }
+
                     data.PlayerDeckBlockNames = list.ToArray();
                 }
+
                 break;
             }
         }

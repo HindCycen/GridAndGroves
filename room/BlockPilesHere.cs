@@ -7,7 +7,7 @@ using Godot;
 
 #endregion
 
-    public partial class BlockPilesHere : Node2D {
+public partial class BlockPilesHere : Node2D {
     private const float ShowingPileBaseX = 0f;
     private const float ShowingPileBaseY = 0f;
     private const int MaxShowingPileColumns = 4;
@@ -60,6 +60,7 @@ using Godot;
 
             ShowOneBlock();
         }
+
         _isDrawingCards = false;
     }
 
@@ -178,7 +179,6 @@ using Godot;
                         if (occupied.Contains(p)) {
                             isFree = false;
                         }
-
                     }
                 }
 

@@ -1,12 +1,16 @@
+#region
+
 using Godot;
+
+#endregion
 
 [GlobalClass]
 public partial class EventChoiceDef : Resource {
-    [Export] public string Name;
-    [Export] public string Description;
-    [Export] public string ResultDescription;
     [Export] public EventActionType ActionType;
     [Export] public int ActionValue;
+    [Export] public string Description;
+    [Export] public string Name;
+    [Export] public string ResultDescription;
 }
 
 public enum EventActionType {
@@ -16,5 +20,5 @@ public enum EventActionType {
     AddGold,
     RemoveGold,
     AddBlockToDeck,
-    RemoveBlockFromDeck,
+    RemoveBlockFromDeck
 }

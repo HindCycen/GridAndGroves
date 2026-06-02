@@ -5,11 +5,10 @@ using Godot;
 #endregion
 
 public partial class HealthBar : TextureProgressBar {
-    [Export] private HealthComponent _healthComponent;
-    [Export] private ShieldComponent _shieldComponent;
-
     private Texture2D _healthBarMid;
+    [Export] private HealthComponent _healthComponent;
     private Texture2D _shieldBarMid;
+    [Export] private ShieldComponent _shieldComponent;
 
     public override void _Ready() {
         _healthBarMid = GD.Load<Texture2D>("res://components/healthbar/HealthBarMid.png");

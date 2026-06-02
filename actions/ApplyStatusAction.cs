@@ -1,11 +1,15 @@
+#region
+
 using Godot;
 
+#endregion
+
 /// <summary>
-/// 施加状态动作。duration 归零后将指定 Stat 添加到目标的 StatsComponent。
+///     施加状态动作。duration 归零后将指定 Stat 添加到目标的 StatsComponent。
 /// </summary>
 public class ApplyStatusAction : AbstractAction {
-    private readonly StatDef _statDef;
     private readonly int _initialValue;
+    private readonly StatDef _statDef;
 
     public ApplyStatusAction(Node target, StatDef statDef, int initialValue, float duration = 0.3f) : base(duration) {
         Target = target;
@@ -16,10 +20,14 @@ public class ApplyStatusAction : AbstractAction {
     }
 
     public override void Update(float delta) {
-        if (IsDone) return;
+        if (IsDone) {
+            return;
+        }
 
         TickDuration(delta);
-        if (!IsDone) return;
+        if (!IsDone) {
+            return;
+        }
 
         if (Target is Node2D targetNode) {
             var rendering = targetNode.GetNodeOrNull<RenderingComponent>("RenderingComponent");

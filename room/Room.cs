@@ -1,15 +1,22 @@
+#region
+
 using Godot;
 
+#endregion
+
 public partial class Room : Node2D {
-    [Export] public bool ShowStatusBar = true;
+    protected Label _healthLabel;
 
     protected SaveLoad _saveLoad;
-    protected Label _healthLabel;
     protected Label _stageRoomLabel;
+    [Export] public bool ShowStatusBar = true;
 
     public override void _Ready() {
         _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
         _saveLoad.Load();
+        if (_saveLoad?.Data != null) {
+            _saveLoad.Data.RoomCount++;
+        }
 
         if (ShowStatusBar) {
             CreateStatusBar();

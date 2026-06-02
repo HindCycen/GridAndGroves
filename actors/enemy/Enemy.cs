@@ -66,6 +66,7 @@ public partial class Enemy : Node2D {
         if (IsInstanceValid(this) && GetParent() != null) {
             GetParent().RemoveChild(this);
         }
+
         QueueFree();
     }
 }

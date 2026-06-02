@@ -1,4 +1,8 @@
+#region
+
 using Godot;
+
+#endregion
 
 public partial class GrowingStatBehavior : StatBehavior {
     [StatusBehavior(Period = Glob.StatExecuteAt.OnBattleEnded)]
@@ -25,7 +29,8 @@ public partial class GrowingStatBehavior : StatBehavior {
             var healthComponent = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
             if (healthComponent != null) {
                 healthComponent.Heal(12);
-                GD.Print($"GrowingStatBehavior: 回复 12 点生命，当前 HP: {healthComponent.CurrentHealth}/{healthComponent.MaxHealth}");
+                GD.Print(
+                    $"GrowingStatBehavior: 回复 12 点生命，当前 HP: {healthComponent.CurrentHealth}/{healthComponent.MaxHealth}");
             }
         }
     }

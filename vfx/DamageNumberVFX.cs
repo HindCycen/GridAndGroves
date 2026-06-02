@@ -1,16 +1,20 @@
+#region
+
 using Godot;
 
+#endregion
+
 /// <summary>
-/// 浮动伤害数字效果。从目标位置向上飘移并淡出。
-/// 使用 Godot 的 Label 节点实现，自动销毁。
+///     浮动伤害数字效果。从目标位置向上飘移并淡出。
+///     使用 Godot 的 Label 节点实现，自动销毁。
 /// </summary>
 public partial class DamageNumberVFX : Node2D {
     private readonly Label _label;
-    private Vector2 _velocity;
     private float _alpha = 1.0f;
+    private Vector2 _velocity;
 
     /// <summary>
-    /// 创建一个浮动伤害数字。
+    ///     创建一个浮动伤害数字。
     /// </summary>
     public DamageNumberVFX(Vector2 position, int amount, Color? color = null) {
         GlobalPosition = position;
@@ -21,7 +25,7 @@ public partial class DamageNumberVFX : Node2D {
             Text = amount.ToString(),
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            MouseFilter = Control.MouseFilterEnum.Ignore,
+            MouseFilter = Control.MouseFilterEnum.Ignore
         };
         _label.AddThemeFontSizeOverride("font_size", 36);
         _label.AddThemeColorOverride("font_color", color ?? Colors.Red);
@@ -31,7 +35,7 @@ public partial class DamageNumberVFX : Node2D {
     }
 
     public override void _Process(double delta) {
-        var dt = (float)delta;
+        var dt = (float) delta;
         // 向上飘移
         GlobalPosition += _velocity * dt;
         // 淡出

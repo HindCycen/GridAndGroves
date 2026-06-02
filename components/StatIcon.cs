@@ -59,9 +59,11 @@ public partial class StatIcon : Control {
         if (!string.IsNullOrEmpty(_stat.Definition.StatName)) {
             text = $"{_stat.Definition.StatName}";
         }
+
         if (!string.IsNullOrEmpty(_stat.Definition.Description)) {
             text += $"\n{_stat.Definition.Description}";
         }
+
         text = _tooltipComponent.ProcessText(text, placeholders);
         _tooltipComponent.Show(GlobalPosition, text);
     }
@@ -78,6 +80,7 @@ public partial class StatIcon : Control {
         if (_stat != null) {
             _stat.ValueChanged -= OnValueChanged;
         }
+
         MouseEntered -= OnMouseEntered;
         MouseExited -= OnMouseExited;
     }

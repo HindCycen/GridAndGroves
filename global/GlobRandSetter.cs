@@ -55,12 +55,29 @@ public partial class Glob {
         return _currentSeed;
     }
 
-    public static int GetMapRandUsage() => _mapRandUsage;
-    public static int GetMonsterRandUsage() => _monsterRandUsage;
-    public static int GetRewardRandUsage() => _rewardRandUsage;
-    public static int GetChestRandUsage() => _chestRandUsage;
-    public static int GetMiscRandUsage() => _miscRandUsage;
-    public static int GetPileRandUsage() => _pileRandUsage;
+    public static int GetMapRandUsage() {
+        return _mapRandUsage;
+    }
+
+    public static int GetMonsterRandUsage() {
+        return _monsterRandUsage;
+    }
+
+    public static int GetRewardRandUsage() {
+        return _rewardRandUsage;
+    }
+
+    public static int GetChestRandUsage() {
+        return _chestRandUsage;
+    }
+
+    public static int GetMiscRandUsage() {
+        return _miscRandUsage;
+    }
+
+    public static int GetPileRandUsage() {
+        return _pileRandUsage;
+    }
 
     public static void InitSeed(int seed) {
         _currentSeed = seed == 0 ? GD.RandRange(1, 1_000_000_000) : seed;

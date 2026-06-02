@@ -1,4 +1,8 @@
+#region
+
 using Godot;
+
+#endregion
 
 [GlobalClass]
 public partial class StageDef : Resource {

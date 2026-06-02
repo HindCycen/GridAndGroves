@@ -1,49 +1,42 @@
+#region
+
+using System.Linq;
 using Godot;
 
+#endregion
+
 /// <summary>
-/// 对全体敌人造成伤害。CreateAction 返回 DamageAction 以支持时长和 VFX。
+///     对全体存活敌人造成伤害。
+///     CreateAction 为每个敌人创建一个 DamageAction（带 duration），
+///     第一个作为返回值入队，其余通过 AddToBottom 追加。
 /// </summary>
 [GlobalClass]
 public partial class DamageEnemyBehavior : BlockPartBehavior {
-    public override void Execute(Block block, BlockPart part) {
-        var damage = part.Damage;
-        if (damage <= 0) return;
-
-        GD.Print($"DamageEnemyBehavior: 造成 {damage} 点伤害！");
-        var enemies = block.GetTree().GetNodesInGroup("Enemies");
-        foreach (var node in enemies) {
-            if (node is not Node2D enemy) continue;
-            var healthComponent = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            if (healthComponent != null) {
-                healthComponent.TakeDamage(damage);
-                GD.Print($"  对 {enemy.Name} 造成 {damage} 点伤害，剩余 HP: {healthComponent.CurrentHealth}/{healthComponent.MaxHealth}");
-            }
-        }
-    }
-
     public override AbstractAction CreateAction(Block block, BlockPart part) {
         var tree = block.GetTree();
-        if (tree == null) return base.CreateAction(block, part);
+        if (tree == null) {
+            return null;
+        }
 
-        var enemies = tree.GetNodesInGroup("Enemies");
-        Node target = null;
-        foreach (var enemy in enemies) {
-            if (enemy is Node2D e) {
+        var targets = tree.GetNodesInGroup("Enemies")
+            .OfType<Node2D>()
+            .Where(e => {
                 var hc = e.GetNodeOrNull<HealthComponent>("RenderingComponent/HealthComponent");
-                if (hc != null && !hc.IsDead) {
-                    target = e;
-                    break;
-                }
-            }
+                return hc != null && !hc.IsDead;
+            })
+            .ToList();
+
+        if (targets.Count == 0) {
+            return null;
         }
 
-        // 每个 DamageAction 作用一个敌人
-        // 如果只有一个敌人，直接返回单体 DamageAction
-        if (target != null) {
-            return new DamageAction(block, target, part.Damage, 0.4f);
+        // 对每个敌人单独创建一个 DamageAction
+        // 第一个作为返回值，其余追加到队列
+        foreach (var target in targets.Skip(1)) {
+            ActionQueue.Instance?.AddToBottom(
+                new DamageAction(block, target, part.Damage));
         }
 
-        // 旧式兼容
-        return base.CreateAction(block, part);
+        return new DamageAction(block, targets[0], part.Damage, 0.4f);
     }
 }

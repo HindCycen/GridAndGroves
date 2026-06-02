@@ -8,13 +8,12 @@ using Godot;
 
 [GlobalClass]
 public partial class StatBehavior : Resource {
-    private Stat _belongingStat;
+    public Stat BelongingStat { get; private set; }
 
-    public Stat BelongingStat => _belongingStat;
     public StatExecuteMethod[] ExecuteMethods { get; private set; }
 
     public void SetBelongingStat(Stat statName) {
-        _belongingStat = statName;
+        BelongingStat = statName;
         CacheExecuteMethods();
     }
 

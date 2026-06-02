@@ -9,10 +9,10 @@ using Godot;
 // ReSharper disable CheckNamespace
 public partial class Block : Node2D {
     [Signal]
-    public delegate void PlacedEventHandler(Block block);
+    public delegate void LeftGridEventHandler(Block block);
 
     [Signal]
-    public delegate void LeftGridEventHandler(Block block);
+    public delegate void PlacedEventHandler(Block block);
 
     public enum BlockFaction {
         Player,
@@ -22,13 +22,13 @@ public partial class Block : Node2D {
     public static bool InputLocked;
 
     private readonly List<BlockPart> _parts = [];
+    private bool _wasOnGrid;
     [Export] public BlockDef Definition;
     public BlockFaction Faction = BlockFaction.Player;
 
     public bool IsPlaced;
     public bool IsPressed;
     public Vector2 OriginalPos;
-    private bool _wasOnGrid;
 
     public BlockPart[] GetParts() {
         return _parts.ToArray();
@@ -106,7 +106,7 @@ public partial class Block : Node2D {
             var gridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
             var gridIndex = Glob.GetGridCoords(gridPoint);
             if (gridIndex.X >= 0 && gridIndex.Y >= 0) {
-                Glob.RestoreGridState(gridIndex.X, gridIndex.Y);
+                Glob.SetGridState(gridIndex.X, gridIndex.Y, Glob.GridState.Free);
             }
         }
 
@@ -141,28 +141,9 @@ public partial class Block : Node2D {
         return Glob.IsPointInGrid(GlobalPosition);
     }
 
-    public Vector2I GetGridPosition() {
-        if (!IsPlaced) {
-            return new Vector2I(-1, -1);
-        }
-
-
-        return Glob.GetGridCoords(GlobalPosition);
-    }
-
-    public Vector2I[] GetPartsGridPositions() {
-        return _parts
-            .Select(part => Glob.GetGridCoords(Glob.FindNearestGridPoint(part.GlobalPosition)))
-            .ToArray();
-    }
-
     public void PlaceAtGrid(Vector2I coords) {
         if (coords.X < 0 || coords.X >= 7 || coords.Y < 0 || coords.Y >= 5) {
             return;
-        }
-
-        if (_parts.Count == 0) {
-            LoadParts();
         }
 
         var centerPos = Glob.GetGridPos(coords);

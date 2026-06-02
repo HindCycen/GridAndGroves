@@ -170,8 +170,6 @@ public partial class SaveLoad : Node {
 
     private static void RestoreStageMap() {
         if (StageRoom.MapGenerated) {
-            return;
         }
-
     }
 }

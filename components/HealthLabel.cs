@@ -5,9 +5,9 @@ using Godot;
 #endregion
 
 public partial class HealthLabel : Label {
+    [Export] private ShieldComponent _shieldComponent;
     [Export] public TextureProgressBar HealthBar;
     [Export] public HealthComponent HealthComponent;
-    [Export] private ShieldComponent _shieldComponent;
 
     public override void _Ready() {
         UpdateText(HealthComponent.CurrentHealth, HealthComponent.MaxHealth);
