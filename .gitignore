@@ -33,6 +33,7 @@ _ReSharper*/
 
 # JetBrains Rider
 .idea/
+.codewhale/
 .lingma/
 
 # OS generated files

@@ -7,6 +7,22 @@ using Godot;
 
 #endregion
 
+/// <summary>
+/// Bot 在网格上巡逻，遇到 BlockPart 时将行为转为 Action 并加入队列。
+///
+/// 改造后（三段式 TicTac）：
+/// ┌─────────────────────────────────────┐
+/// │ OnPatrolTimerTimeout()              │
+/// │  ① SayPreBlockExecute()  ← Phase A │
+/// │  ② MoveToNextCell()                │
+/// │     → EnqueueBlockActions()  ← Phase B │
+/// │  ③ SayPostBlockExecute() ← Phase C │
+/// └─────────────────────────────────────┘
+///
+/// Bot 不再直接执行 Block 的逻辑，而是将行为转变为 AbstractAction
+/// 并加入 ActionQueue，由队列顺序执行。
+/// 方向修改（MovingDirection）仍为同步，因为影响下一帧的巡逻路径。
+/// </summary>
 public partial class Bot : Node2D {
     private AnimatedSprite2D _animatedSprite2D;
     private BattleTime _battleTime;
@@ -14,6 +30,7 @@ public partial class Bot : Node2D {
     private Vector2I _currentDirection = Vector2I.Down;
     private Vector2I _currentGridPos;
     private bool _stopped;
+    private bool _endingTurn;
     private SceneTreeTimer _patrolTimer;
     private readonly Queue<Action> _pendingInstructions = new();
 
@@ -28,6 +45,8 @@ public partial class Bot : Node2D {
     }
 
     public void StartPatrol() {
+        _stopped = false;
+        _endingTurn = false;
         _currentDirection = Vector2I.Down;
         Visible = true;
         _animatedSprite2D.Play("bot_animation");
@@ -51,7 +70,6 @@ public partial class Bot : Node2D {
         _pendingInstructions.Clear();
     }
 
-
     private void ScheduleNextStep() {
         _patrolTimer = GetTree().CreateTimer(1.0f);
         _patrolTimer.Timeout += OnPatrolTimerTimeout;
@@ -62,14 +80,31 @@ public partial class Bot : Node2D {
             return;
         }
 
-
         if (_stopped) {
             return;
         }
 
+        // ─── Phase A: PreBlockExecute（统计行为、修饰器在此触发） ───
+        _battleTime.SayPreBlockExecute();
 
-        _battleTime.SayTicTac();
+        // 处理队列中的延迟指令
+        while (_pendingInstructions.TryDequeue(out var instruction)) {
+            instruction();
+        }
+
+        // Bot 移动到下一格（过程中若遇到 Block，执行 Phase B）
+        _battleTime.SayTicTac(); // 保留旧信号用于兼容
         MoveToNextCell();
+
+        // 如果 EndTurn 在 MoveToNextCell 中被调用，停止此 tick 的后续流程
+        if (_endingTurn) {
+            return;
+        }
+
+        // ─── Phase C: PostBlockExecute（反击、触发类效果在此触发） ───
+        _battleTime.SayPostBlockExecute();
+
+        ScheduleNextStep();
     }
 
     public override void _ExitTree() {
@@ -83,10 +118,6 @@ public partial class Bot : Node2D {
     ///     默认方向为 Down（蛇形巡逻），遇到方块改变方向后沿新方向移动直到边界。
     /// </summary>
     private void MoveToNextCell() {
-        while (_pendingInstructions.TryDequeue(out var instruction)) {
-            instruction();
-        }
-
         var newPos = _currentGridPos + _currentDirection;
 
         // 蛇形折行：默认 Down 方向到达底部时换到下一列顶部
@@ -121,16 +152,56 @@ public partial class Bot : Node2D {
         // 占据新格子
         Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Occupied);
 
-        // 如果目标格有方块，执行其行为
+        // 如果目标格有方块，将方块行为转变为 Action 加入队列（Phase B）
         if (targetHasBlock) {
-            TryExecuteBlockAt(newPos);
+            EnqueueBlockActionsAt(newPos);
         }
-
-        ScheduleNextStep();
     }
 
     /// <summary>
-    ///     在指定网格坐标查找方块并执行其行为
+    /// 在指定网格坐标查找方块，将其所有 BlockPart 的行为转变为 AbstractAction
+    /// 加入 ActionQueue。方向修改同步生效，其他效果异步排队。
+    /// </summary>
+    private void EnqueueBlockActionsAt(Vector2I gridPos) {
+        foreach (var block in _blockPilesHere.PlacedPile.Pile) {
+            foreach (var part in block.GetParts()) {
+                var partGridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
+                var coords = Glob.GetGridCoords(partGridPoint);
+                if (coords != gridPos) continue;
+
+                GD.Print($"Bot 在 ({gridPos.X}, {gridPos.Y}) 检测到 BlockPart: {part.Name}");
+
+                // Phase B 信号：告知 Stat 的 OnBlockExecute 钩子
+                _battleTime.SayBlockExecute();
+
+                // 获取 MovingDirection —— 这是同步的，立即影响巡逻方向
+                var moveDir = part.PartDefinition?.MovingDirection ?? Vector2I.Down;
+                // 总是设置巡逻方向：Down 表示恢复蛇形，否则按块指定的方向走
+                _currentDirection = moveDir;
+                if (moveDir != Vector2I.Down) {
+                    GD.Print($"  Bot 方向改为 ({moveDir.X}, {moveDir.Y})");
+                }
+
+                // 每个 Behavior 创建 Action 入队
+                if (part.PartDefinition?.Behaviors != null) {
+                    foreach (var behavior in part.PartDefinition.Behaviors) {
+                        var action = behavior?.CreateAction(block, part);
+                        if (action != null) {
+                            ActionQueue.Instance?.AddToBottom(action);
+                            GD.Print($"  队列加入 Action: {action.GetType().Name} (amount={action.Amount})");
+                        }
+                    }
+                }
+
+                // 同一个 Block 可能有多个 part 在同一坐标？一般只有一个，找到了就返回
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// （旧方法）直接在当前位置执行 Block 的行为。
+    /// 被 EnqueueBlockActionsAt 替代，暂保留用于调试。
     /// </summary>
     private void TryExecuteBlockAt(Vector2I gridPos) {
         foreach (var block in _blockPilesHere.PlacedPile.Pile) {
@@ -148,6 +219,8 @@ public partial class Bot : Node2D {
 
     private void EndTurn() {
         GD.Print("Bot 回合结束");
+        _stopped = true;
+        _endingTurn = true;
         _battleTime.SayTurnEnded();
         GoToStarterPoint();
     }
@@ -174,9 +247,7 @@ public partial class Bot : Node2D {
 
     private bool HasEnemyBlockAt(Vector2I gridPos) {
         return _blockPilesHere.PlacedPile.Pile.Any(block => {
-            if (block.Faction != Block.BlockFaction.Enemy) {
-                return false;
-            }
+            if (block.Faction != Block.BlockFaction.Enemy) return false;
 
             return block.GetParts().Any(part => {
                 var coords = Glob.GetGridCoords(Glob.FindNearestGridPoint(part.GlobalPosition));

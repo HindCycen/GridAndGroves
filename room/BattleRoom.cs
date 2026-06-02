@@ -24,6 +24,14 @@ public partial class BattleRoom : CountedRoom {
         _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
         _endTurnButton = GetNode<Button>("%Button");
 
+        // 初始化 ActionQueue
+        var actionQueue = GetNodeOrNull<ActionQueue>("%ActionQueue");
+        if (actionQueue == null) {
+            actionQueue = new ActionQueue { Name = "ActionQueue" };
+            AddChild(actionQueue);
+            actionQueue.Owner = this;
+        }
+
         if (EnemyChart?.EnemyDefs != null) {
             SpawnEnemiesFromChart();
         }
@@ -63,6 +71,14 @@ public partial class BattleRoom : CountedRoom {
 
         _roundNumber = 0;
         StartPlayerTurn();
+    }
+
+    public override void _ExitTree() {
+        // 清理 ActionQueue 的单例引用
+        if (ActionQueue.Instance != null) {
+            ActionQueue.Instance.Clear();
+        }
+        base._ExitTree();
     }
 
     private void InitializePlayerDeck() {
@@ -191,6 +207,7 @@ public partial class BattleRoom : CountedRoom {
         GD.Print("\n=== 败北！玩家已被击败！===");
         _endTurnButton.Text = "Defeat...";
         _endTurnButton.Disabled = true;
+        _bot.StopPatrol();
         _battleTime.SayBattleEnded();
     }
 
