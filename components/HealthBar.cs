@@ -19,13 +19,37 @@ public partial class HealthBar : TextureProgressBar {
         Value = _healthComponent.CurrentHealth;
         _healthComponent.HealthChanged += (current, max) => (Value, MaxValue) = (current, max);
 
-        if (_shieldComponent != null) {
-            UpdateMidTexture(_shieldComponent.CurrentShield);
-            _shieldComponent.ShieldChanged += (current, _) => UpdateMidTexture(current);
+        // 自动查找 ShieldComponent（如果 Export 没绑）
+        var shield = _shieldComponent;
+        if (shield == null) {
+            shield = ResolveShieldComponent();
+        }
+
+        if (shield != null) {
+            _shieldComponent = shield;
+            UpdateMidTexture(shield.CurrentShield);
+            shield.ShieldChanged += (current, _) => UpdateMidTexture(current);
         }
     }
 
     private void UpdateMidTexture(int shield) {
         TextureProgress = shield > 0 ? _shieldBarMid : _healthBarMid;
+    }
+
+    /// <summary>
+    ///     向上遍历场景树查找 ShieldComponent。
+    /// </summary>
+    private ShieldComponent ResolveShieldComponent() {
+        var shield = GetNodeOrNull<ShieldComponent>("%ShieldComponent");
+        if (shield != null) return shield;
+
+        var parent = GetParent();
+        while (parent != null) {
+            shield = parent.GetNodeOrNull<ShieldComponent>("%ShieldComponent");
+            if (shield != null) return shield;
+            parent = parent.GetParent();
+        }
+
+        return null;
     }
 }

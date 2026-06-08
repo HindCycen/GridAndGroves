@@ -1,0 +1,9 @@
+block Shield
+    starter
+    part 0,0
+        pic "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        pass
+    part 0,1
+        BS 5
+        pic resources/blockpart_picture/blue/Shield.png
+        shield S -> player

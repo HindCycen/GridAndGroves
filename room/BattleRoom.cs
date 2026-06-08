@@ -107,6 +107,7 @@ public partial class BattleRoom : Room {
         }
 
         playerPile.AddBlock(Glob.CreateBlock("Growing"));
+        playerPile.AddBlock(Glob.CreateBlock("Shield"));
 
         GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
     }

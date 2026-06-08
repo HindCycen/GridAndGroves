@@ -12,8 +12,16 @@ public partial class HealthLabel : Label {
     public override void _Ready() {
         UpdateText(HealthComponent.CurrentHealth, HealthComponent.MaxHealth);
         HealthComponent.HealthChanged += UpdateText;
-        if (_shieldComponent != null) {
-            _shieldComponent.ShieldChanged += (_, _) =>
+
+        // 自动查找 ShieldComponent（如果 Export 没绑）
+        var shield = _shieldComponent;
+        if (shield == null) {
+            shield = ResolveShieldComponent();
+        }
+
+        if (shield != null) {
+            _shieldComponent = shield;
+            shield.ShieldChanged += (_, _) =>
                 UpdateText(HealthComponent.CurrentHealth, HealthComponent.MaxHealth);
         }
     }
@@ -25,5 +33,19 @@ public partial class HealthLabel : Label {
         else {
             Text = $"{current}/{max}";
         }
+    }
+
+    private ShieldComponent ResolveShieldComponent() {
+        var shield = GetNodeOrNull<ShieldComponent>("%ShieldComponent");
+        if (shield != null) return shield;
+
+        var parent = GetParent();
+        while (parent != null) {
+            shield = parent.GetNodeOrNull<ShieldComponent>("%ShieldComponent");
+            if (shield != null) return shield;
+            parent = parent.GetParent();
+        }
+
+        return null;
     }
 }
