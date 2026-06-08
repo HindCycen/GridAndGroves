@@ -92,44 +92,45 @@ public partial class Bot : Node2D {
     ///     默认方向为 Down（蛇形巡逻），遇到方块改变方向后沿新方向移动直到边界。
     /// </summary>
     private void MoveToNextCell() {
-        var newPos = _currentGridPos + _currentDirection;
+        if (!TryCalculateNextCell(out var newPos)) {
+            EndTurn();
+            return;
+        }
 
-        // 蛇形折行：默认 Down 方向到达底部时换到下一列顶部
+        var targetHasBlock = Glob.GetGridState(newPos.X, newPos.Y) == Glob.GridState.Occupied;
+
+        ReleaseCellSafely(_currentGridPos);
+
+        _currentGridPos = newPos;
+        GlobalPosition = Glob.GetGridPos(_currentGridPos);
+        Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Occupied);
+
+        if (targetHasBlock) {
+            EnqueueBlockActionsAt(newPos);
+        }
+    }
+
+    private bool TryCalculateNextCell(out Vector2I newPos) {
+        newPos = _currentGridPos + _currentDirection;
+
         if (_currentDirection == Vector2I.Down) {
             if (newPos.Y > 4) {
                 newPos = new Vector2I(_currentGridPos.X + 1, 0);
             }
 
             if (newPos.X > 6) {
-                EndTurn();
-                return;
+                return false;
             }
         }
-        // 非默认方向：严格边界检测，出界则结束回合
-        else if (newPos.X < 0 || newPos.X > 6 || newPos.Y < 0 || newPos.Y > 4) {
-            EndTurn();
-            return;
+        else if (IsOutOfBounds(newPos)) {
+            return false;
         }
 
-        // 在占据新格子前，检测目标格是否已被方块占据
-        var targetHasBlock = Glob.GetGridState(newPos.X, newPos.Y) == Glob.GridState.Occupied;
+        return true;
+    }
 
-        // 释放当前格子（但保留敌方方块和不可用格子的占用）
-        if (!HasEnemyBlockAt(_currentGridPos) &&
-            Glob.GetGridState(_currentGridPos.X, _currentGridPos.Y) != Glob.GridState.Unable) {
-            Glob.RestoreGridState(_currentGridPos.X, _currentGridPos.Y);
-        }
-
-        _currentGridPos = newPos;
-        GlobalPosition = Glob.GetGridPos(_currentGridPos);
-
-        // 占据新格子
-        Glob.SetGridState(_currentGridPos.X, _currentGridPos.Y, Glob.GridState.Occupied);
-
-        // 如果目标格有方块，将方块行为转变为 Action 加入队列（Phase B）
-        if (targetHasBlock) {
-            EnqueueBlockActionsAt(newPos);
-        }
+    private static bool IsOutOfBounds(Vector2I pos) {
+        return pos.X < 0 || pos.X > 6 || pos.Y < 0 || pos.Y > 4;
     }
 
     /// <summary>
@@ -139,40 +140,73 @@ public partial class Bot : Node2D {
     private void EnqueueBlockActionsAt(Vector2I gridPos) {
         foreach (var block in _blockPilesHere.PlacedPile.Pile) {
             foreach (var part in block.GetParts()) {
-                var partGridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
-                var coords = Glob.GetGridCoords(partGridPoint);
-                if (coords != gridPos) {
+                if (!IsPartAtGrid(part, gridPos)) {
                     continue;
                 }
 
                 GD.Print($"Bot 在 ({gridPos.X}, {gridPos.Y}) 检测到 BlockPart: {part.Name}");
-
-                // Phase B 信号：告知 Stat 的 OnBlockExecute 钩子
-                _battleTime.SayBlockExecute();
-
-                // 获取 MovingDirection —— 这是同步的，立即影响巡逻方向
-                var moveDir = part.PartDefinition?.MovingDirection ?? Vector2I.Down;
-                // 总是设置巡逻方向：Down 表示恢复蛇形，否则按块指定的方向走
-                _currentDirection = moveDir;
-                if (moveDir != Vector2I.Down) {
-                    GD.Print($"  Bot 方向改为 ({moveDir.X}, {moveDir.Y})");
-                }
-
-                // 每个 Behavior 创建 Action 入队
-                if (part.PartDefinition?.Behaviors != null) {
-                    foreach (var behavior in part.PartDefinition.Behaviors) {
-                        var action = behavior?.CreateAction(block, part);
-                        if (action != null) {
-                            ActionQueue.Instance?.AddToBottom(action);
-                            GD.Print($"  队列加入 Action: {action.GetType().Name} (amount={action.Amount})");
-                        }
-                    }
-                }
-
-                // 同一个 Block 可能有多个 part 在同一坐标？一般只有一个，找到了就返回
+                ProcessBlockPart(block, part);
                 return;
             }
         }
+    }
+
+    private static bool IsPartAtGrid(BlockPart part, Vector2I gridPos) {
+        var partGridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
+        var coords = Glob.GetGridCoords(partGridPoint);
+        return coords == gridPos;
+    }
+
+    private void ProcessBlockPart(Block block, BlockPart part) {
+        _battleTime.SayBlockExecute();
+
+        var moveDir = part.PartDefinition?.MovingDirection ?? Vector2I.Down;
+        _currentDirection = moveDir;
+        if (moveDir != Vector2I.Down) {
+            GD.Print($"  Bot 方向改为 ({moveDir.X}, {moveDir.Y})");
+        }
+
+        if (part.PartDefinition?.Behaviors == null) {
+            return;
+        }
+
+        var shouldExhaust = false;
+        foreach (var behavior in part.PartDefinition.Behaviors) {
+            var action = behavior?.CreateAction(block, part);
+            if (action != null) {
+                ActionManager.Instance?.AddToBottom(action);
+                GD.Print($"  队列加入 Action: {action.GetType().Name} (amount={action.Amount})");
+                if (action.ExhaustSourceBlock) {
+                    shouldExhaust = true;
+                }
+            }
+        }
+
+        // 如果有任何一个 Action 声明了 ExhaustSourceBlock，立即将 Block 移出战斗
+        if (shouldExhaust && block.Faction == Block.BlockFaction.Player) {
+            GD.Print($"  Block {block.Definition?.BlockName} 被耗尽，移出战斗");
+            ExhaustBlock(block);
+        }
+    }
+
+    /// <summary>
+    ///     将 Block 从本场战斗中移除：释放网格、移出 PlacedPile、销毁节点。
+    ///     Block 不会进入弃牌堆，也不会参与洗牌。
+    /// </summary>
+    private void ExhaustBlock(Block block) {
+        foreach (var p in block.GetParts()) {
+            var gridPoint = Glob.FindNearestGridPoint(p.GlobalPosition);
+            var coords = Glob.GetGridCoords(gridPoint);
+            if (coords.X >= 0 && coords.Y >= 0) {
+                Glob.RestoreGridState(coords.X, coords.Y);
+            }
+        }
+
+        _blockPilesHere.PlacedPile.RemoveBlock(block);
+        if (block.GetParent() != null && IsInstanceValid(block.GetParent())) {
+            block.GetParent().RemoveChild(block);
+        }
+        block.QueueFree();
     }
 
     private void EndTurn() {
@@ -183,20 +217,24 @@ public partial class Bot : Node2D {
         GoToStarterPoint();
     }
 
+    private void ReleaseCellSafely(Vector2I pos) {
+        if (IsOutOfBounds(pos)) {
+            return;
+        }
+
+        if (!HasEnemyBlockAt(pos) &&
+            Glob.GetGridState(pos.X, pos.Y) != Glob.GridState.Unable) {
+            Glob.RestoreGridState(pos.X, pos.Y);
+        }
+    }
+
     private void GoToStarterPoint() {
         GlobalPosition = new Vector2(
             Glob.GetGridPos(new Vector2I(0, 0)).X,
             Glob.GetGridPos(new Vector2I(0, 0)).Y - 96
         );
 
-        // 释放之前占据的网格（但保留敌方方块和不可用格子的占用）
-        if (_currentGridPos.X >= 0 && _currentGridPos.X <= 6 &&
-            _currentGridPos.Y >= 0 && _currentGridPos.Y <= 4) {
-            if (!HasEnemyBlockAt(_currentGridPos) &&
-                Glob.GetGridState(_currentGridPos.X, _currentGridPos.Y) != Glob.GridState.Unable) {
-                Glob.RestoreGridState(_currentGridPos.X, _currentGridPos.Y);
-            }
-        }
+        ReleaseCellSafely(_currentGridPos);
 
         _currentGridPos = new Vector2I(0, -1);
         _animatedSprite2D.Stop();

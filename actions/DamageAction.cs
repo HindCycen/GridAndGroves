@@ -15,7 +15,14 @@ using Godot;
 ///     - Stat 的 OnAfterDamageApply
 ///     3. 标记 IsDone = true
 /// </summary>
-public class DamageAction : AbstractAction {
+public class DamageAction : AbstractGameAction {
+    /// <summary>
+    ///     创建一个伤害动作。
+    /// </summary>
+    /// <param name="source">伤害来源节点</param>
+    /// <param name="target">伤害目标节点</param>
+    /// <param name="damage">基础伤害值</param>
+    /// <param name="duration">动作持续时长（秒），默认 0.3f</param>
     public DamageAction(Node source, Node target, int damage, float duration = 0.3f)
         : base(duration) {
         Source = source;
@@ -104,27 +111,38 @@ public class DamageAction : AbstractAction {
     }
 
     private HealthComponent FindTargetHealth() {
-        // 如果 Target 是 Enemy 或 Player
         if (Target is Node2D targetNode) {
-            var hc = targetNode.GetNodeOrNull<HealthComponent>("RenderingComponent/HealthComponent");
+            var hc = GetHealthComponent(targetNode);
             if (hc != null) {
                 return hc;
             }
         }
 
-        // 回退：在所有敌人中找第一个活的
-        if (Source != null) {
-            var tree = Source.GetTree();
-            if (tree != null) {
-                var enemies = tree.GetNodesInGroup("Enemies");
-                foreach (var enemy in enemies) {
-                    if (enemy is Node2D e) {
-                        var hc = e.GetNodeOrNull<HealthComponent>("RenderingComponent/HealthComponent");
-                        if (hc != null && !hc.IsDead) {
-                            return hc;
-                        }
-                    }
-                }
+        return FindFirstAliveEnemyHealth();
+    }
+
+    private static HealthComponent GetHealthComponent(Node2D node) {
+        return node.GetNodeOrNull<HealthComponent>("RenderingComponent/HealthComponent");
+    }
+
+    private HealthComponent FindFirstAliveEnemyHealth() {
+        if (Source == null) {
+            return null;
+        }
+
+        var tree = Source.GetTree();
+        if (tree == null) {
+            return null;
+        }
+
+        foreach (var enemy in tree.GetNodesInGroup("Enemies")) {
+            if (enemy is not Node2D e) {
+                continue;
+            }
+
+            var hc = GetHealthComponent(e);
+            if (hc != null && !hc.IsDead) {
+                return hc;
             }
         }
 

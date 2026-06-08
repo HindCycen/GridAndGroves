@@ -5,24 +5,26 @@ using Godot;
 #endregion
 
 /// <summary>
-///     所有动作的基类。每个动作携带一个 duration，
-///     在此期间播放视觉效果，duration 归零时执行实际逻辑。
-///     设计对标 StS 的 AbstractGameAction：
-///     - duration：动作持续时长
+///     所有动作的基类。对标 StS 的 AbstractGameAction。
+///     - duration / startDuration：动作持续时长与初始值
 ///     - TickDuration()：每帧推进，归零时 isDone = true
-///     - AddToBot() / AddToTop()：快捷加入当前 ActionQueue
+///     - AddToBot() / AddToTop()：快捷加入当前 ActionManager
 ///     - Update()：子类实现具体行为
 /// </summary>
-public abstract class AbstractAction {
-    protected AbstractAction() {
+public abstract class AbstractGameAction {
+    protected AbstractGameAction() {
     }
 
-    protected AbstractAction(float duration) {
+    protected AbstractGameAction(float duration) {
         Duration = duration;
+        StartDuration = duration;
     }
 
     /// <summary>当前剩余时长（秒）。归零时标记完成。</summary>
-    protected float Duration { get; set; }
+    public float Duration { get; set; }
+
+    /// <summary>初始时长。同 StS startDuration，用于显示进度或重置参考。</summary>
+    public float StartDuration { get; protected set; }
 
     /// <summary>动作是否已完成。</summary>
     public bool IsDone { get; protected set; }
@@ -40,7 +42,13 @@ public abstract class AbstractAction {
     public int Amount { get; set; }
 
     /// <summary>
-    ///     每帧由 ActionQueue 调用，驱动动作逻辑和视觉效果。
+    ///     此 Action 被执行后，其来源 Block 是否被移出本场战斗（不进入弃牌堆也不参与洗牌）。
+    ///     由 Bot.ProcessBlockPart() 在入队后检测，如果为 true 则立即将 Block 从 PlacedPile 移除并释放。
+    /// </summary>
+    public virtual bool ExhaustSourceBlock => false;
+
+    /// <summary>
+    ///     每帧由 ActionManager 调用，驱动动作逻辑和视觉效果。
     ///     子类在此方法中实现具体行为，结束时将 IsDone 置为 true。
     /// </summary>
     public abstract void Update(float delta);
@@ -58,17 +66,17 @@ public abstract class AbstractAction {
     }
 
     /// <summary>
-    ///     将另一个动作追加到当前 ActionQueue 的末尾。
+    ///     将另一个动作追加到当前 ActionManager 的末尾。
     /// </summary>
-    protected void AddToBot(AbstractAction action) {
-        ActionQueue.Instance?.AddToBottom(action);
+    protected void AddToBot(AbstractGameAction action) {
+        ActionManager.Instance?.AddToBottom(action);
     }
 
     /// <summary>
-    ///     将另一个动作插入到当前 ActionQueue 的队首。
+    ///     将另一个动作插入到当前 ActionManager 的队首。
     ///     用于紧急动作（如反击触发），会在当前动作之后立即执行。
     /// </summary>
-    protected void AddToTop(AbstractAction action) {
-        ActionQueue.Instance?.AddToTop(action);
+    protected void AddToTop(AbstractGameAction action) {
+        ActionManager.Instance?.AddToTop(action);
     }
 }

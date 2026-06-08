@@ -7,7 +7,7 @@ using Godot;
 /// <summary>
 ///     施加状态动作。duration 归零后将指定 Stat 添加到目标的 StatsComponent。
 /// </summary>
-public class ApplyStatusAction : AbstractAction {
+public class ApplyStatusAction : AbstractGameAction {
     private readonly int _initialValue;
     private readonly StatDef _statDef;
 

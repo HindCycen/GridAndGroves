@@ -30,6 +30,9 @@ public partial class Block : Node2D {
     public bool IsPressed;
     public Vector2 OriginalPos;
 
+    /// <summary>
+    ///     返回当前方块所有部件的快照数组。
+    /// </summary>
     public BlockPart[] GetParts() {
         return _parts.ToArray();
     }
@@ -48,56 +51,75 @@ public partial class Block : Node2D {
 
     private void LoadParts() {
         foreach (var def in Definition.PartDefinitions) {
-            var part = new BlockPart {
-                PartDefinition = def
-            };
-            _parts.Add(part);
-            AddChild(part);
-            if (!part.HasSignal("Pressed")) {
-                continue;
+            var part = CreatePart(def);
+            if (part.HasSignal("Pressed")) {
+                WirePartPressEvents(part);
             }
+        }
+    }
 
-            part.Pressed += n => {
-                if (!_parts.Contains(n) || InputLocked || Faction != BlockFaction.Player) {
-                    return;
-                }
+    private BlockPart CreatePart(BlockPartDef def) {
+        var part = new BlockPart { PartDefinition = def };
+        _parts.Add(part);
+        AddChild(part);
+        return part;
+    }
 
-                IsPressed = true;
-                if (IsPlaced) {
-                    _wasOnGrid = true;
-                    LiftFromGrid();
-                }
-            };
-            part.Released += n => {
-                if (!_parts.Contains(n) || InputLocked || Faction != BlockFaction.Player) {
-                    return;
-                }
+    private void WirePartPressEvents(BlockPart part) {
+        part.Pressed += OnPartPressed;
+        part.Released += OnPartReleased;
+    }
 
-                IsPressed = false;
-                if (CheckConditionP() && CheckConditionQ() && CheckConditionR()) {
-                    GlobalPosition = Glob.FindNearestGridPoint(GlobalPosition);
-                    foreach (var part in _parts) {
-                        var gridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
-                        var gridIndex = Glob.GetGridCoords(gridPoint);
-                        if (gridIndex.X >= 0 && gridIndex.Y >= 0) {
-                            Glob.SetGridState(gridIndex.X, gridIndex.Y,
-                                Glob.GridState.Occupied);
-                        }
-                    }
+    private void OnPartPressed(Node n) {
+        if (!_parts.Contains(n) || InputLocked || Faction != BlockFaction.Player) {
+            return;
+        }
 
-                    _wasOnGrid = false;
-                    OriginalPos = GlobalPosition;
-                    IsPlaced = true;
-                    EmitSignalPlaced(this);
-                }
-                else if (_wasOnGrid) {
-                    _wasOnGrid = false;
-                    EmitSignalLeftGrid(this);
-                }
-                else {
-                    GlobalPosition = OriginalPos;
-                }
-            };
+        IsPressed = true;
+        if (IsPlaced) {
+            _wasOnGrid = true;
+            LiftFromGrid();
+        }
+    }
+
+    private void OnPartReleased(Node n) {
+        if (!_parts.Contains(n) || InputLocked || Faction != BlockFaction.Player) {
+            return;
+        }
+
+        IsPressed = false;
+        if (CheckPlacementConditions()) {
+            FinalizePlacement();
+        }
+        else if (_wasOnGrid) {
+            _wasOnGrid = false;
+            EmitSignalLeftGrid(this);
+        }
+        else {
+            GlobalPosition = OriginalPos;
+        }
+    }
+
+    private bool CheckPlacementConditions() {
+        return CheckConditionP() && CheckConditionQ() && CheckConditionR();
+    }
+
+    private void FinalizePlacement() {
+        GlobalPosition = Glob.FindNearestGridPoint(GlobalPosition);
+        OccupyAllPartGrids();
+        _wasOnGrid = false;
+        OriginalPos = GlobalPosition;
+        IsPlaced = true;
+        EmitSignalPlaced(this);
+    }
+
+    private void OccupyAllPartGrids() {
+        foreach (var part in _parts) {
+            var gridPoint = Glob.FindNearestGridPoint(part.GlobalPosition);
+            var gridIndex = Glob.GetGridCoords(gridPoint);
+            if (gridIndex.X >= 0 && gridIndex.Y >= 0) {
+                Glob.SetGridState(gridIndex.X, gridIndex.Y, Glob.GridState.Occupied);
+            }
         }
     }
 
@@ -141,6 +163,10 @@ public partial class Block : Node2D {
         return Glob.IsPointInGrid(GlobalPosition);
     }
 
+    /// <summary>
+    ///     将方块放置到指定网格坐标并占用对应格子。
+    /// </summary>
+    /// <param name="coords">网格坐标 (col, row)，范围 (0-6, 0-4)</param>
     public void PlaceAtGrid(Vector2I coords) {
         if (coords.X < 0 || coords.X >= 7 || coords.Y < 0 || coords.Y >= 5) {
             return;

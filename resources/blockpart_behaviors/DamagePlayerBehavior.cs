@@ -9,7 +9,7 @@ using Godot;
 /// </summary>
 [GlobalClass]
 public partial class DamagePlayerBehavior : BlockPartBehavior {
-    public override AbstractAction CreateAction(Block block, BlockPart part) {
+    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
         var tree = block.GetTree();
         var players = tree?.GetNodesInGroup("Players");
         var target = players?.Count > 0 ? players[0] as Node2D : null;

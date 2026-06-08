@@ -12,7 +12,7 @@ using Godot;
 /// </summary>
 [GlobalClass]
 public partial class DamageEnemyBehavior : BlockPartBehavior {
-    public override AbstractAction CreateAction(Block block, BlockPart part) {
+    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
         var tree = block.GetTree();
         if (tree == null) {
             return null;
@@ -33,7 +33,7 @@ public partial class DamageEnemyBehavior : BlockPartBehavior {
         // 对每个敌人单独创建一个 DamageAction
         // 第一个作为返回值，其余追加到队列
         foreach (var target in targets.Skip(1)) {
-            ActionQueue.Instance?.AddToBottom(
+            ActionManager.Instance?.AddToBottom(
                 new DamageAction(block, target, part.Damage));
         }
 

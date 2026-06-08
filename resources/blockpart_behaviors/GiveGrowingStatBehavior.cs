@@ -11,60 +11,74 @@ using Godot;
 /// </summary>
 [GlobalClass]
 public partial class GiveGrowingStatBehavior : BlockPartBehavior {
-    public override AbstractAction CreateAction(Block block, BlockPart part) {
+    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
         return new CallbackAction(() => {
             var tree = block.GetTree();
             if (tree == null) {
                 return;
             }
 
-            var players = tree.GetNodesInGroup("Players");
-            foreach (var node in players) {
+            foreach (var node in tree.GetNodesInGroup("Players")) {
                 if (node is not Node2D player) {
                     continue;
                 }
 
-                var renderingComponent = player.GetNode<RenderingComponent>("RenderingComponent");
-                var statsComponent = renderingComponent.StatsComponent;
-
-                if (!statsComponent.HasStatus("Growing")) {
-                    var statDef = GD.Load<StatDef>("res://resources/stat_defs/Growing.tres");
-                    if (statDef != null) {
-                        var stat = new Stat { Definition = statDef };
-                        statsComponent.AddStatus(stat);
-                        stat.AddValue(statDef.MaxValue);
-                    }
-                }
-
-                var playerPile = player.GetNode<PileComponent>("%PlayerPile");
-                var growingBlock = playerPile.Pile
-                    .FirstOrDefault(b => b.Definition?.BlockName == "Growing");
-                if (growingBlock != null) {
-                    playerPile.RemoveBlock(growingBlock);
-                    if (IsInstanceValid(growingBlock) && growingBlock.GetParent() != null) {
-                        growingBlock.GetParent().RemoveChild(growingBlock);
-                    }
-
-                    growingBlock.QueueFree();
-                }
+                TryAddGrowingStat(player);
+                TryRemoveGrowingBlock(player);
             }
 
-            // 销毁场上此 Block 并释放网格
-            foreach (var p in block.GetParts()) {
-                var gridPoint = Glob.FindNearestGridPoint(p.GlobalPosition);
-                var coords = Glob.GetGridCoords(gridPoint);
-                if (coords.X >= 0 && coords.Y >= 0) {
-                    Glob.RestoreGridState(coords.X, coords.Y);
-                }
-            }
-
-            var blockPilesHere = block.GetParent() as BlockPilesHere;
-            blockPilesHere?.PlacedPile.RemoveBlock(block);
-            if (IsInstanceValid(block) && block.GetParent() != null) {
-                block.GetParent().RemoveChild(block);
-            }
-
-            block.QueueFree();
+            DestroyBlockOnGrid(block);
         }, Glob.ActionType.ApplyStatus);
+    }
+
+    private static void TryAddGrowingStat(Node2D player) {
+        var renderingComponent = player.GetNode<RenderingComponent>("RenderingComponent");
+        var statsComponent = renderingComponent.StatsComponent;
+        if (statsComponent.HasStatus("Growing")) {
+            return;
+        }
+
+        var statDef = GD.Load<StatDef>("res://resources/stat_defs/Growing.tres");
+        if (statDef == null) {
+            return;
+        }
+
+        var stat = new Stat { Definition = statDef };
+        statsComponent.AddStatus(stat);
+        stat.AddValue(statDef.MaxValue);
+    }
+
+    private static void TryRemoveGrowingBlock(Node2D player) {
+        var playerPile = player.GetNode<PileComponent>("%PlayerPile");
+        var growingBlock = playerPile.Pile
+            .FirstOrDefault(b => b.Definition?.BlockName == "Growing");
+        if (growingBlock == null) {
+            return;
+        }
+
+        playerPile.RemoveBlock(growingBlock);
+        if (IsInstanceValid(growingBlock) && growingBlock.GetParent() != null) {
+            growingBlock.GetParent().RemoveChild(growingBlock);
+        }
+
+        growingBlock.QueueFree();
+    }
+
+    private static void DestroyBlockOnGrid(Block block) {
+        foreach (var p in block.GetParts()) {
+            var gridPoint = Glob.FindNearestGridPoint(p.GlobalPosition);
+            var coords = Glob.GetGridCoords(gridPoint);
+            if (coords.X >= 0 && coords.Y >= 0) {
+                Glob.RestoreGridState(coords.X, coords.Y);
+            }
+        }
+
+        var blockPilesHere = block.GetParent() as BlockPilesHere;
+        blockPilesHere?.PlacedPile.RemoveBlock(block);
+        if (IsInstanceValid(block) && block.GetParent() != null) {
+            block.GetParent().RemoveChild(block);
+        }
+
+        block.QueueFree();
     }
 }

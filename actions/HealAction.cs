@@ -7,7 +7,7 @@ using Godot;
 /// <summary>
 ///     治疗动作。duration 归零后执行治疗逻辑。
 /// </summary>
-public class HealAction : AbstractAction {
+public class HealAction : AbstractGameAction {
     public HealAction(Node target, int amount, float duration = 0.3f) : base(duration) {
         Target = target;
         Amount = amount;

@@ -12,6 +12,7 @@ public partial class BattleRoom : Room {
     private Button _endTurnButton;
     private Enemy[] _enemies;
     private bool _isGameOver;
+    private Player _player;
     private HealthComponent _playerHealth;
     private int _roundNumber;
     [Export] public EnemyChartDef EnemyChart;
@@ -24,12 +25,12 @@ public partial class BattleRoom : Room {
         _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
         _endTurnButton = GetNode<Button>("%Button");
 
-        // 初始化 ActionQueue
-        var actionQueue = GetNodeOrNull<ActionQueue>("%ActionQueue");
-        if (actionQueue == null) {
-            actionQueue = new ActionQueue { Name = "ActionQueue" };
-            AddChild(actionQueue);
-            actionQueue.Owner = this;
+        // 初始化 ActionManager
+        var actionManager = GetNodeOrNull<ActionManager>("%ActionManager");
+        if (actionManager == null) {
+            actionManager = new ActionManager { Name = "ActionManager" };
+            AddChild(actionManager);
+            actionManager.Owner = this;
         }
 
         if (EnemyChart?.EnemyDefs != null) {
@@ -37,7 +38,8 @@ public partial class BattleRoom : Room {
         }
 
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
-        _playerHealth = GetNode<Player>("Player").GetNode<HealthComponent>("RenderingComponent/HealthComponent");
+        _player = GetNode<Player>("Player");
+        _playerHealth = _player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
         _isGameOver = false;
 
         _playerHealth.Died += OnPlayerDied;
@@ -52,6 +54,7 @@ public partial class BattleRoom : Room {
         _endTurnButton.Pressed += OnEndTurnPressed;
 
         _battleTime.TurnEnded += OnBotTurnEnded;
+        _battleTime.BattleEnded += OnBattleEndedCleanup;
 
         InitializePlayerDeck();
 
@@ -74,9 +77,9 @@ public partial class BattleRoom : Room {
     }
 
     public override void _ExitTree() {
-        // 清理 ActionQueue 的单例引用
-        if (ActionQueue.Instance != null) {
-            ActionQueue.Instance.Clear();
+        // 清理 ActionManager 的单例引用
+        if (ActionManager.Instance != null) {
+            ActionManager.Instance.Clear();
         }
 
         base._ExitTree();
@@ -139,20 +142,8 @@ public partial class BattleRoom : Room {
     private void OnBotTurnEnded() {
         GD.Print("Bot 执行结束");
 
-        MakeEnemiesAttackPlayer();
-
-        if (_isGameOver) {
-            return;
-        }
-
-        if (AreAllEnemiesDead()) {
-            OnVictory();
-            return;
-        }
-
-        GD.Print($"剩余敌人: {CountAliveEnemies()}");
-
-        StartPlayerTurn();
+        // 将敌人攻击改为通过 ActionManager 入队（走 DamageAction，触发 Stat 钩子）
+        QueueEnemyAttacks();
     }
 
     private bool AreAllEnemiesDead() {
@@ -212,6 +203,32 @@ public partial class BattleRoom : Room {
         _battleTime.SayBattleEnded();
     }
 
+    /// <summary>
+    ///     战斗结束清理：
+    ///     移除玩家身上标记了 RemoveOnBattleEnd 的临时状态（药水效果）。
+    ///     永久状态（遗物效果）保留，由 SaveLoad 持久化。
+    /// </summary>
+    private void OnBattleEndedCleanup() {
+        if (!IsInstanceValid(_player)) {
+            return;
+        }
+
+        var rend = _player.GetNodeOrNull<RenderingComponent>("RenderingComponent");
+        var statsComponent = rend?.StatsComponent;
+        if (statsComponent == null) {
+            return;
+        }
+
+        var tempStats = statsComponent.GetAllStatuses()
+            .Where(s => s.Definition?.RemoveOnBattleEnd == true)
+            .ToList();
+
+        foreach (var stat in tempStats) {
+            GD.Print($"战斗结束，移除临时状态 [{stat.Definition?.StatName}]");
+            statsComponent.RemoveStatus(stat.Definition?.StatName);
+        }
+    }
+
     private void MakeEnemiesClearOldBlocks() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         GD.Print($"清理 {_enemies.Length} 个敌人的旧方块");
@@ -238,7 +255,12 @@ public partial class BattleRoom : Room {
         }
     }
 
-    private void MakeEnemiesAttackPlayer() {
+    /// <summary>
+    ///     将敌人的攻击转为 DamageAction 入队，走完整的 ActionQueue 管线。
+    ///     每个敌人产生一个 DamageAction，全部入队后追加一个 CallbackAction
+    ///     等待所有攻击动作完成后再检查胜负。
+    /// </summary>
+    private void QueueEnemyAttacks() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         foreach (var enemy in _enemies) {
             var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
@@ -248,8 +270,30 @@ public partial class BattleRoom : Room {
 
             var damage = enemy.AttackDamage;
             GD.Print($"敌人 {enemy.Name} 对玩家造成 {damage} 点伤害");
-            _playerHealth.TakeDamage(damage);
+            ActionManager.Instance?.AddToBottom(new DamageAction(enemy, _player, damage, 0.2f));
         }
+
+        // 所有攻击入队后，追加一个回调等待队列排空后检查胜负
+        ActionManager.Instance?.AddToBottom(new CallbackAction(OnAllEnemyAttacksResolved));
+    }
+
+    /// <summary>
+    ///     所有敌人攻击动作执行完毕后的回调。
+    ///     检查玩家是否死亡、敌人是否全灭，然后开始下一回合或结束战斗。
+    /// </summary>
+    private void OnAllEnemyAttacksResolved() {
+        if (_isGameOver) {
+            return;
+        }
+
+        if (AreAllEnemiesDead()) {
+            OnVictory();
+            return;
+        }
+
+        GD.Print($"剩余敌人: {CountAliveEnemies()}");
+
+        StartPlayerTurn();
     }
 
     private void SpawnEnemiesFromChart() {

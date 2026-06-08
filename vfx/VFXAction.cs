@@ -11,7 +11,7 @@ using Godot;
 ///     var vfx = new SomeVFX(atPosition);
 ///     queue.AddToBottom(new VFXAction(vfx, 0.5f));
 /// </summary>
-public class VFXAction : AbstractAction {
+public class VFXAction : AbstractGameAction {
     private readonly Node _parent;
     private readonly Node2D _vfxNode;
 

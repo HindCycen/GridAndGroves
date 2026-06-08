@@ -2,7 +2,7 @@
 ///     等待动作。不执行任何逻辑，仅消耗 duration。
 ///     用于在动作序列中插入停顿。
 /// </summary>
-public class WaitAction : AbstractAction {
+public class WaitAction : AbstractGameAction {
     public WaitAction(float duration) : base(duration) {
         ActionType = Glob.ActionType.Wait;
     }
