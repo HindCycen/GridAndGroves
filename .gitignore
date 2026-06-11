@@ -31,10 +31,11 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.[Rr]e[Ss]harper.*
 
-# JetBrains Rider
+# JetBrains Rider and AI Tools
 .idea/
 .codewhale/
 .lingma/
+.claude/
 
 # OS generated files
 ehthumbs.db
