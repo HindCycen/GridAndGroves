@@ -131,3 +131,23 @@ Player.log
 # Slay the Spire Code
 foreign-influence/
 memory/
+
+# Python / AI tools
+tools/venv/
+tools/output/
+tools/models/
+__pycache__/
+*.pyc
+*.pyo
+
+# AI model files (large .safetensors checkpoints)
+*.safetensors
+*.bin
+*.ckpt
+*.pt
+*.pth
+
+# HuggingFace / torch cache
+.cache/
+.huggingface_cache/
+*.h5
