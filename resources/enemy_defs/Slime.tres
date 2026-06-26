@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://clgwigp7q46ug" path="res://resources/EnemyDefinition.cs" id="1_define"]
+[ext_resource type="Resource" uid="uid://cojbhv415lc4q" path="res://resources/enemy_intents/PlaceAttackAtCenter.tres" id="2_intent"]
+[ext_resource type="Texture2D" path="res://resources/enemy_images/Slime.png" id="3_image"]
+
+[resource]
+script = ExtResource("1_define")
+AttackDamage = 2
+EnemyName = "Slime"
+Image = ExtResource("3_image")
+IntentCycle = Array[Object]([ExtResource("2_intent")])
+MaxHealth = 12

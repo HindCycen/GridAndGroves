@@ -19,7 +19,7 @@ public partial class Glob {
 
     public static Vector2 FindNearestGridPoint(Vector2 targetPoint) {
         if (GridPoints == null) {
-            GD.PrintErr("GridPoints 未初始化");
+            GameLog.Err("GridPoints 未初始化");
             return new Vector2I(-1, -1);
         }
 
@@ -112,7 +112,7 @@ public partial class Glob {
             return GridPoints[coords.X, coords.Y];
         }
 
-        GD.PrintErr("Invalid coordinates");
+        GameLog.Err("Invalid coordinates");
         return Vector2.Zero;
     }
 

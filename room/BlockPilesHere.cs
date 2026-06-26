@@ -13,7 +13,7 @@ public partial class BlockPilesHere : Node2D {
     private const int MaxShowingPileColumns = 4;
     private const int CellSize = 96;
     private readonly Dictionary<Block, Vector2> _blockLayoutPositions = [];
-    private bool _isDrawingCards;
+    private int _pendingDraws;
     [Export] public PileComponent DiscardedPile;
     [Export] public PileComponent DrawPile;
     [Export] public PileComponent PlacedPile;
@@ -33,36 +33,38 @@ public partial class BlockPilesHere : Node2D {
             DrawPile.AddBlock(Glob.CreateBlock(b.Definition));
         }
 
-        GD.Print($"抽牌堆初始化完成，共 {DrawPile.Count} 张牌");
+        GameLog.Debug($"抽牌堆初始化完成，共 {DrawPile.Count} 张牌");
     }
 
     /// <summary>
-    ///     从抽牌堆中抽取 count 张牌到展示区
+    ///     从抽牌堆中抽取 count 张牌到展示区。
+    ///     使用待办计数器而非布尔锁：如果正在抽牌过程中又被调用，
+    ///     将请求排队，等当前批次处理完再继续，不会丢牌。
     /// </summary>
     public void DrawCards(int count) {
-        if (_isDrawingCards) {
+        _pendingDraws += count;
+        if (_pendingDraws > count) {
+            // 已经在抽牌中，本次请求已计入 _pendingDraws，稍后处理
             return;
         }
 
+        ProcessPendingDraws();
+    }
 
-        if (DrawPile.Count == 0 && DiscardedPile.Count == 0) {
-            return;
-        }
+    private void ProcessPendingDraws() {
+        while (_pendingDraws > 0) {
+            _pendingDraws--;
 
-
-        _isDrawingCards = true;
-        for (var i = 0; i < count; i++) {
             if (DrawPile.Count == 0) {
                 ReshuffleDiscardToDraw();
                 if (DrawPile.Count == 0) {
+                    _pendingDraws = 0;
                     break;
                 }
             }
 
             ShowOneBlock();
         }
-
-        _isDrawingCards = false;
     }
 
     /// <summary>
@@ -94,7 +96,7 @@ public partial class BlockPilesHere : Node2D {
             // 检查 Block 是否有任何 Part 声明了 PreventsClear
             if (block.GetParts().Any(p =>
                     p.PartDefinition?.Behaviors?.Any(bh => bh.PreventsClear) == true)) {
-                GD.Print($"Block {block.Definition?.BlockName} 声明了 PreventsClear，保留在网格上");
+                GameLog.Debug($"Block {block.Definition?.BlockName} 声明了 PreventsClear，保留在网格上");
                 continue;
             }
 
@@ -130,7 +132,7 @@ public partial class BlockPilesHere : Node2D {
     }
 
     private void ReshuffleDiscardToDraw() {
-        GD.Print("抽牌堆空了，洗回弃牌堆！");
+        GameLog.Debug("抽牌堆空了，洗回弃牌堆！");
         var discarded = DiscardedPile.Pile.ToList();
         foreach (var block in discarded) {
             DiscardedPile.RemoveBlock(block);
@@ -176,7 +178,7 @@ public partial class BlockPilesHere : Node2D {
             }
         }
 
-        GD.PrintErr("No available position found for block");
+        GameLog.Err("No available position found for block");
         return new Vector2(ShowingPileBaseX, ShowingPileBaseY);
     }
 

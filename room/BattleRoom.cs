@@ -19,10 +19,16 @@ public partial class BattleRoom : Room {
 
     public override void _Ready() {
         base._Ready();
+
+        // 计入房间数（仅在战斗/事件房间增加）
+        _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
+        if (_saveLoad?.Data != null) {
+            _saveLoad.Data.RoomCount++;
+        }
+
         _blockPilesHere = GetNode<BlockPilesHere>("BlockPilesHere");
         _bot = GetNode<Bot>("Bot");
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
-        _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
         _endTurnButton = GetNode<Button>("%Button");
 
         // 初始化 ActionManager
@@ -44,9 +50,9 @@ public partial class BattleRoom : Room {
 
         _playerHealth.Died += OnPlayerDied;
 
-        GD.Print($"检测到 {_enemies.Length} 个敌人");
+        GameLog.Debug($"检测到 {_enemies.Length} 个敌人");
         if (_enemies.Length == 0) {
-            GD.PrintErr("没有敌人！请配置 EnemyChart 或在场景中放置 Enemy 节点。");
+            GameLog.Err("没有敌人！请配置 EnemyChart 或在场景中放置 Enemy 节点。");
             return;
         }
 
@@ -77,9 +83,21 @@ public partial class BattleRoom : Room {
     }
 
     public override void _ExitTree() {
-        // 清理 ActionManager 的单例引用
         if (ActionManager.Instance != null) {
             ActionManager.Instance.Clear();
+        }
+
+        if (_battleTime != null) {
+            _battleTime.TurnEnded -= OnBotTurnEnded;
+            _battleTime.BattleEnded -= OnBattleEndedCleanup;
+        }
+
+        if (_playerHealth != null) {
+            _playerHealth.Died -= OnPlayerDied;
+        }
+
+        if (_endTurnButton != null) {
+            _endTurnButton.Pressed -= OnEndTurnPressed;
         }
 
         base._ExitTree();
@@ -89,8 +107,8 @@ public partial class BattleRoom : Room {
         var playerPile = GetNode<PileComponent>("Player/PlayerPile");
 
         if (playerPile.Count > 0) {
-            GD.Print("存档已存在，保留存档中的卡组");
-            GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
+            GameLog.Info("存档已存在，保留存档中的卡组");
+            GameLog.Debug($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
             return;
         }
 
@@ -109,12 +127,12 @@ public partial class BattleRoom : Room {
         playerPile.AddBlock(Glob.CreateBlock("Growing"));
         playerPile.AddBlock(Glob.CreateBlock("Shield"));
 
-        GD.Print($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
+        GameLog.Debug($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
     }
 
     private void StartPlayerTurn() {
         _roundNumber++;
-        GD.Print($"\n=== 第 {_roundNumber} 回合 ===");
+        GameLog.Info($"\n=== 第 {_roundNumber} 回合 ===");
 
         Block.InputLocked = false;
 
@@ -134,14 +152,14 @@ public partial class BattleRoom : Room {
     private void OnEndTurnPressed() {
         _endTurnButton.Disabled = true;
         _endTurnButton.Text = "Bot's Turn...";
-        GD.Print("\n=== Bot 执行阶段 ===");
+        GameLog.Debug("\n=== Bot 执行阶段 ===");
 
         Block.InputLocked = true;
         _bot.StartPatrol();
     }
 
     private void OnBotTurnEnded() {
-        GD.Print("Bot 执行结束");
+        GameLog.Debug("Bot 执行结束");
 
         // 将敌人攻击改为通过 ActionManager 入队（走 DamageAction，触发 Stat 钩子）
         QueueEnemyAttacks();
@@ -164,7 +182,7 @@ public partial class BattleRoom : Room {
     }
 
     private void OnVictory() {
-        GD.Print("\n=== 胜利！所有敌人已被击败！===");
+        GameLog.Debug("\n=== 胜利！所有敌人已被击败！===");
         _endTurnButton.Text = "Victory!";
         _endTurnButton.Disabled = true;
         _battleTime.SayBattleEnded();
@@ -197,7 +215,7 @@ public partial class BattleRoom : Room {
     }
 
     private void OnDefeat() {
-        GD.Print("\n=== 败北！玩家已被击败！===");
+        GameLog.Debug("\n=== 败北！玩家已被击败！===");
         _endTurnButton.Text = "Defeat...";
         _endTurnButton.Disabled = true;
         _bot.StopPatrol();
@@ -225,14 +243,14 @@ public partial class BattleRoom : Room {
             .ToList();
 
         foreach (var stat in tempStats) {
-            GD.Print($"战斗结束，移除临时状态 [{stat.Definition?.StatName}]");
+            GameLog.Info($"战斗结束，移除临时状态 [{stat.Definition?.StatName}]");
             statsComponent.RemoveStatus(stat.Definition?.StatName);
         }
     }
 
     private void MakeEnemiesClearOldBlocks() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
-        GD.Print($"清理 {_enemies.Length} 个敌人的旧方块");
+        GameLog.Debug($"清理 {_enemies.Length} 个敌人的旧方块");
         foreach (var enemy in _enemies) {
             var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
             if (hc == null || hc.IsDead) {
@@ -245,7 +263,7 @@ public partial class BattleRoom : Room {
 
     private void MakeEnemiesExecuteTurn() {
         _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
-        GD.Print($"执行 {_enemies.Length} 个敌人的 AI 意图");
+        GameLog.Debug($"执行 {_enemies.Length} 个敌人的 AI 意图");
         foreach (var enemy in _enemies) {
             var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
             if (hc == null || hc.IsDead) {
@@ -257,7 +275,7 @@ public partial class BattleRoom : Room {
     }
 
     /// <summary>
-    ///     将敌人的攻击转为 DamageAction 入队，走完整的 ActionQueue 管线。
+    ///     将敌人的攻击转为 DamageAction 入队，走完整的 ActionManager 管线。
     ///     每个敌人产生一个 DamageAction，全部入队后追加一个 CallbackAction
     ///     等待所有攻击动作完成后再检查胜负。
     /// </summary>
@@ -270,7 +288,7 @@ public partial class BattleRoom : Room {
             }
 
             var damage = enemy.AttackDamage;
-            GD.Print($"敌人 {enemy.Name} 对玩家造成 {damage} 点伤害");
+            GameLog.Debug($"敌人 {enemy.Name} 对玩家造成 {damage} 点伤害");
             ActionManager.Instance?.AddToBottom(new DamageAction(enemy, _player, damage, 0.2f));
         }
 
@@ -292,7 +310,7 @@ public partial class BattleRoom : Room {
             return;
         }
 
-        GD.Print($"剩余敌人: {CountAliveEnemies()}");
+        GameLog.Debug($"剩余敌人: {CountAliveEnemies()}");
 
         StartPlayerTurn();
     }
@@ -320,7 +338,7 @@ public partial class BattleRoom : Room {
             var y = 150 + index % 2 * 200;
             enemy.Position = new Vector2(x, y);
             AddChild(enemy);
-            GD.Print($"SpawnEnemiesFromChart: 生成敌人 {enemyDef.EnemyName} 在 ({x}, {y})");
+            GameLog.Debug($"SpawnEnemiesFromChart: 生成敌人 {enemyDef.EnemyName} 在 ({x}, {y})");
             index++;
         }
     }

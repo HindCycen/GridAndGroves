@@ -134,8 +134,8 @@ public partial class Bot : Node2D {
     }
 
     /// <summary>
-    ///     在指定网格坐标查找方块，将其所有 BlockPart 的行为转变为 AbstractAction
-    ///     加入 ActionQueue。方向修改同步生效，其他效果异步排队。
+    ///     在指定网格坐标查找方块，将其所有 BlockPart 的行为转变为 AbstractGameAction
+    ///     加入 ActionManager。方向修改同步生效，其他效果异步排队。
     /// </summary>
     private void EnqueueBlockActionsAt(Vector2I gridPos) {
         foreach (var block in _blockPilesHere.PlacedPile.Pile) {
@@ -144,7 +144,7 @@ public partial class Bot : Node2D {
                     continue;
                 }
 
-                GD.Print($"Bot 在 ({gridPos.X}, {gridPos.Y}) 检测到 BlockPart: {part.Name}");
+                GameLog.Debug($"Bot 在 ({gridPos.X}, {gridPos.Y}) 检测到 BlockPart: {part.Name}");
                 ProcessBlockPart(block, part);
                 return;
             }
@@ -163,7 +163,7 @@ public partial class Bot : Node2D {
         var moveDir = part.PartDefinition?.MovingDirection ?? Vector2I.Down;
         _currentDirection = moveDir;
         if (moveDir != Vector2I.Down) {
-            GD.Print($"  Bot 方向改为 ({moveDir.X}, {moveDir.Y})");
+            GameLog.Debug($"  Bot 方向改为 ({moveDir.X}, {moveDir.Y})");
         }
 
         if (part.PartDefinition?.Behaviors == null) {
@@ -175,7 +175,7 @@ public partial class Bot : Node2D {
             var action = behavior?.CreateAction(block, part);
             if (action != null) {
                 ActionManager.Instance?.AddToBottom(action);
-                GD.Print($"  队列加入 Action: {action.GetType().Name} (amount={action.Amount})");
+                GameLog.Debug($"  队列加入 Action: {action.GetType().Name} (amount={action.Amount})");
                 if (action.ExhaustSourceBlock) {
                     shouldExhaust = true;
                 }
@@ -184,7 +184,7 @@ public partial class Bot : Node2D {
 
         // 如果有任何一个 Action 声明了 ExhaustSourceBlock，立即将 Block 移出战斗
         if (shouldExhaust && block.Faction == Block.BlockFaction.Player) {
-            GD.Print($"  Block {block.Definition?.BlockName} 被耗尽，移出战斗");
+            GameLog.Debug($"  Block {block.Definition?.BlockName} 被耗尽，移出战斗");
             ExhaustBlock(block);
         }
     }
@@ -210,7 +210,7 @@ public partial class Bot : Node2D {
     }
 
     private void EndTurn() {
-        GD.Print("Bot 回合结束");
+        GameLog.Info("Bot 回合结束");
         _stopped = true;
         _endingTurn = true;
         _battleTime.SayTurnEnded();

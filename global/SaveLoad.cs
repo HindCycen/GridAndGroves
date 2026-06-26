@@ -18,19 +18,19 @@ public partial class SaveLoad : Node {
         SyncFromGameState();
         var result = ResourceSaver.Save(Data, path);
         if (result != Error.Ok) {
-            GD.PrintErr($"SaveLoad: 保存失败 ({result})");
+            GameLog.Err($"SaveLoad: 保存失败 ({result})");
         }
     }
 
     public void Load(string path = DefaultSavePath) {
         if (!ResourceLoader.Exists(path)) {
-            GD.Print($"SaveLoad: 存档文件不存在 ({path})，使用默认初始数据");
+            GameLog.Info($"SaveLoad: 存档文件不存在 ({path})，使用默认初始数据");
             return;
         }
 
         var loaded = ResourceLoader.Load<DataResource>(path);
         if (loaded == null) {
-            GD.PrintErr("SaveLoad: 加载存档失败");
+            GameLog.Err("SaveLoad: 加载存档失败");
             return;
         }
 
@@ -141,13 +141,13 @@ public partial class SaveLoad : Node {
     }
 
     private void SaveStageMap() {
-        if (StageRoom.Clickable == null) {
+        var stage = StageRoom.Current;
+        if (stage?.Clickable == null) {
             return;
         }
 
-
-        var cols = StageRoom.MapCols;
-        var rows = StageRoom.MapRows;
+        var cols = StageRoom.Cols;
+        var rows = StageRoom.Rows;
         var totalCells = cols * rows;
 
         var clickable = new int[totalCells];
@@ -157,9 +157,9 @@ public partial class SaveLoad : Node {
         for (var col = 0; col < cols; col++) {
             for (var row = 0; row < rows; row++) {
                 var index = row * cols + col;
-                clickable[index] = StageRoom.Clickable[col, row] ? 1 : 0;
-                left[index] = StageRoom.Left[col, row] ? 1 : 0;
-                isBattleCell[index] = StageRoom.IsBattleCell[col, row] ? 1 : 0;
+                clickable[index] = stage.Clickable[col, row] ? 1 : 0;
+                left[index] = stage.Left[col, row] ? 1 : 0;
+                isBattleCell[index] = stage.IsBattleCell[col, row] ? 1 : 0;
             }
         }
 
@@ -168,8 +168,7 @@ public partial class SaveLoad : Node {
         Data.GridIsBattleCell = isBattleCell;
     }
 
-    private static void RestoreStageMap() {
-        if (StageRoom.MapGenerated) {
-        }
-    }
+    // StageRoom 地图恢复在其自身的 _Ready() 中通过 TryRestoreMapFromSave() 完成，
+    // 不需要在这里额外处理。
+    private static void RestoreStageMap() { }
 }

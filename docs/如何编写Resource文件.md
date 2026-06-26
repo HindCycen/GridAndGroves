@@ -222,7 +222,8 @@ RepeatCount = 2
 ```csharp
 [GlobalClass]
 public abstract partial class BlockPartBehavior : Resource {
-    public abstract void Execute(Block block, BlockPart part);
+    public abstract AbstractGameAction CreateAction(Block block, BlockPart part);
+    public virtual bool PreventsClear => false;
 }
 ```
 
@@ -230,7 +231,7 @@ public abstract partial class BlockPartBehavior : Resource {
 
 1. 在 `resources/blockpart_behaviors/` 下新建 `.cs`。
 2. 继承 `BlockPartBehavior`。
-3. 实现 `Execute` 方法。
+3. 覆写 `CreateAction` 方法，返回一个 `AbstractGameAction` 子类。
 4. 加 `[GlobalClass]`。
 
 **示例** (`DamageEnemyBehavior.cs`)：
@@ -238,14 +239,25 @@ public abstract partial class BlockPartBehavior : Resource {
 ```csharp
 [GlobalClass]
 public partial class DamageEnemyBehavior : BlockPartBehavior {
-    public override void Execute(Block block, BlockPart part) {
-        var damage = part.Damage;
-        var enemies = block.GetTree().GetNodesInGroup("Enemies");
-        foreach (var node in enemies) {
-            if (node is not Node2D enemy) continue;
-            var health = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            health?.TakeDamage(damage);
+    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
+        var tree = block.GetTree();
+        if (tree == null) return null;
+
+        var targets = tree.GetNodesInGroup("Enemies")
+            .OfType<Node2D>()
+            .Where(e => {
+                var hc = e.GetNodeOrNull<HealthComponent>("RenderingComponent/HealthComponent");
+                return hc != null && !hc.IsDead;
+            })
+            .ToList();
+
+        if (targets.Count == 0) return null;
+
+        foreach (var target in targets.Skip(1)) {
+            ActionManager.Instance?.AddToBottom(
+                new DamageAction(block, target, part.Damage));
         }
+        return new DamageAction(block, targets[0], part.Damage, 0.4f);
     }
 }
 ```
@@ -413,7 +425,7 @@ ArrayField = Array[Type]([item1, item2])
 > 共 10 个 `BlockDef`，按稀有度从低到高 3/4/3 分布。
 > 可通过 `All` 属性获取全部 10 个方块的合并数组。
 
-**示例 `.tres`** (`resources/block_bags/ExampleBag.tres`)：
+**示例 `.tres`** (`resources/blockdefs/ExampleBag.tres`)：
 
 ```
 [gd_resource type="Resource" script_class="BlockBag" format=3]
@@ -456,10 +468,11 @@ RareBlocks = Array[Object]([ExtResource("3"), ExtResource("2"), ExtResource("3")
 ```csharp
 [GlobalClass]
 public partial class MyBehavior : BlockPartBehavior {
-    public override void Execute(Block block, BlockPart part) {
+    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
         // block:  所属的方块实例
         // part:   所属的部件实例
-        // 通过 block.GetTree() 访问场景
+        // 返回 AbstractGameAction 子类（如 DamageAction）或 null
+        return new DamageAction(block, target, part.Damage, 0.4f);
     }
 }
 ```
@@ -516,8 +529,7 @@ resources/
 ├── BlockPlacementDef.cs      # 方块放置点
 ├── IntentDefinition.cs       # 行动意图
 │
-├── block_bags/               # BlockBag .tres
-├── blockdefs/                # BlockDef .tres
+├── blockdefs/                # BlockDef .tres (含 BlockBag/BigBlockBag)
 ├── blockparts/               # BlockPartDef .tres
 ├── blockpart_behaviors/      # BlockPartBehavior .cs
 ├── blockpart_picture/        # 方块贴图

@@ -43,7 +43,7 @@ public partial class GrantPlayerStatBehavior : BlockPartBehavior {
 
     public override AbstractGameAction CreateAction(Block block, BlockPart part) {
         if (TargetStatDef == null) {
-            GD.PrintErr("GrantPlayerStatBehavior: TargetStatDef 未设置！");
+            GameLog.Err("GrantPlayerStatBehavior: TargetStatDef 未设置！");
             return null;
         }
 
@@ -65,12 +65,12 @@ public partial class GrantPlayerStatBehavior : BlockPartBehavior {
                     var stat = new Stat { Definition = TargetStatDef };
                     statsComponent.AddStatus(stat);
                     stat.AddValue(InitialValue);
-                    GD.Print($"GrantPlayerStatBehavior: 添加 Stat [{TargetStatDef.StatName}] = {InitialValue}");
+                    GameLog.Debug($"GrantPlayerStatBehavior: 添加 Stat [{TargetStatDef.StatName}] = {InitialValue}");
                 }
                 else {
                     var existing = statsComponent.GetStatus(TargetStatDef.StatName);
                     existing?.AddValue(InitialValue);
-                    GD.Print($"GrantPlayerStatBehavior: 叠加 Stat [{TargetStatDef.StatName}] +{InitialValue} = {existing?.CurrentValue}");
+                    GameLog.Debug($"GrantPlayerStatBehavior: 叠加 Stat [{TargetStatDef.StatName}] +{InitialValue} = {existing?.CurrentValue}");
                 }
             }
 
@@ -85,7 +85,7 @@ public partial class GrantPlayerStatBehavior : BlockPartBehavior {
                         blockInDeck.GetParent().RemoveChild(blockInDeck);
                     }
                     blockInDeck.QueueFree();
-                    GD.Print($"GrantPlayerStatBehavior: 从卡组中移除 [{block.Definition.BlockName}]");
+                    GameLog.Debug($"GrantPlayerStatBehavior: 从卡组中移除 [{block.Definition.BlockName}]");
                 }
             }
         }, Glob.ActionType.ApplyStatus, exhaustSourceBlock: ShouldExhaust);

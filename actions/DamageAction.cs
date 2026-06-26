@@ -92,14 +92,11 @@ public class DamageAction : AbstractGameAction {
     }
 
     private void TriggerDamageHooks(Glob.StatExecuteAt period) {
-        if (Source == null) {
-            return;
-        }
+        var tree = Source?.GetTree();
+        if (tree == null) return;
 
-        var statsComponents = Source.GetTree()?.GetNodesInGroup("stats_components");
-        if (statsComponents == null) {
-            return;
-        }
+        var statsComponents = tree.GetNodesInGroup("stats_components");
+        if (statsComponents == null) return;
 
         foreach (var node in statsComponents) {
             if (node is StatsComponent sc) {

@@ -55,23 +55,20 @@ public partial class ActionManager : Node {
             return;
         }
 
-        // StS 风格：零 duration 动作在同一帧内链式执行
-        // 循环直到队列清空，或当前动作有 duration 需要等待下一帧
-        while (Phase == QueuePhase.Executing) {
-            if (CurrentAction != null && !CurrentAction.IsDone) {
-                CurrentAction.Update((float) delta);
-            }
+        // 每帧只推进一个动作。零 duration 动作通过 PopNextAction 链式推进，
+        // 不用 while 循环，避免同一帧内用同一个 delta 反复 Update。
+        if (CurrentAction != null && !CurrentAction.IsDone) {
+            CurrentAction.Update((float) delta);
+        }
 
-            // 当前动作已完成 → 记录并取下个
-            if (CurrentAction is { IsDone: true }) {
-                PreviousAction = CurrentAction;
-                CurrentAction = null;
-            }
-
-            if (CurrentAction == null) {
-                PopNextAction();
-                // PopNextAction 会将 Phase 设为 Idle（队列空时）
-            }
+        // 当前动作已完成 → 记录并取下个
+        if (CurrentAction is { IsDone: true }) {
+            PreviousAction = CurrentAction;
+            CurrentAction = null;
+            PopNextAction(); // 立即取下个动作（零 duration 动作链式执行）
+        }
+        else if (CurrentAction == null) {
+            PopNextAction();
         }
     }
 

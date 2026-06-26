@@ -8,7 +8,7 @@
 
 ### 1. StatusBehaviorAttribute - 特性定义
 
-**位置**: `script/attributes/StatusBehavior.cs`
+**位置**: `attributes/StatusBehavior.cs`
 
 ```csharp
 [AttributeUsage(AttributeTargets.Method)]
@@ -34,7 +34,7 @@ public class StatusBehaviorAttribute : Attribute {
 
 ### 2. StatBehavior - 基类扩展
 
-**位置**: `script/core/stats/StatBehavior.cs`
+**位置**: `stats/StatBehavior.cs`
 
 **新增功能**:
 
@@ -98,7 +98,7 @@ public void ExecuteAt(Glob.StatExecuteAt period) {
 
 ### 3. Stat - 节点注册
 
-**位置**: `script/core/stats/Stat.cs`
+**位置**: `stats/Stat.cs`
 
 **修改内容**:
 
@@ -118,7 +118,7 @@ public override void _Ready() {
 
 ### 4. BattleTime - 事件触发器
 
-**位置**: `script/global/BattleTime.cs`
+**位置**: `global/BattleTime.cs`
 
 **修改内容**:
 
@@ -350,11 +350,11 @@ public partial class HealthRegenerationBehavior : StatBehavior {
 
 | 文件路径                                              | 作用      | 修改状态  |
 |---------------------------------------------------|---------|-------|
-| `script/attributes/StatusBehavior.cs`             | 特性定义    | 已有    |
-| `script/core/stats/StatBehavior.cs`               | 行为基类    | ✨ 已扩展 |
-| `script/core/stats/Stat.cs`                       | 统计节点    | ✨ 已修改 |
-| `script/global/BattleTime.cs`                     | 战斗时间管理  | ✨ 已扩展 |
-| `script/global/GlobConstants.cs`                  | 全局常量/枚举 | 已有    |
+| `attributes/StatusBehavior.cs`                   | 特性定义    | 已有    |
+| `stats/StatBehavior.cs`                          | 行为基类    | ✨ 已扩展 |
+| `stats/Stat.cs`                                   | 统计节点    | ✨ 已修改 |
+| `global/BattleTime.cs`                            | 战斗时间管理  | ✨ 已扩展 |
+| `global/GlobConstants.cs`                         | 全局常量/枚举 | 已有    |
 | `resources/stat_behaviors/ExampleStatBehavior.cs` | 示例行为    | 用户创建  |
 
 ---

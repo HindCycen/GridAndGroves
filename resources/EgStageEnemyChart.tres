@@ -1,17 +1,42 @@
 [gd_resource type="Resource" script_class="StageEnemyChartDef" format=3 uid="uid://dw44f4w22fgp4"]
 
 [ext_resource type="Script" uid="uid://d0403qta4f5dv" path="res://resources/StageEnemyChartDef.cs" id="1"]
-[ext_resource type="Resource" uid="uid://3wrfrk1m835i" path="res://resources/enemy_defs/Gonh.tres" id="2_gonh"]
-[ext_resource type="Script" uid="uid://bg63crehrnth1" path="res://resources/EnemyChartDef.cs" id="3_chart"]
+[ext_resource type="Script" uid="uid://bg63crehrnth1" path="res://resources/EnemyChartDef.cs" id="2_chart"]
 
-[sub_resource type="Resource" id="SubResource_enemy_chart"]
-script = ExtResource("3_chart")
-EnemyDefs = Array[Object]([ExtResource("2_gonh")])
+[ext_resource type="Resource" path="res://resources/enemy_defs/Goblin.tres" id="3_goblin"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Slime.tres" id="4_slime"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Bat.tres" id="5_bat"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Orc.tres" id="6_orc"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Skeleton.tres" id="7_skeleton"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Wolf.tres" id="8_wolf"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Demon.tres" id="9_demon"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Dragon.tres" id="10_dragon"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/King.tres" id="11_king"]
+[ext_resource type="Resource" path="res://resources/enemy_defs/Gonh.tres" id="12_gonh"]
+
+[sub_resource type="Resource" id="SubResource_weak"]
+script = ExtResource("2_chart")
+EnemyDefs = Array[Object]([ExtResource("3_goblin"), ExtResource("4_slime"), ExtResource("5_bat")])
+metadata/_custom_type_script = "res://resources/EnemyChartDef.cs"
+
+[sub_resource type="Resource" id="SubResource_strong"]
+script = ExtResource("2_chart")
+EnemyDefs = Array[Object]([ExtResource("6_orc"), ExtResource("7_skeleton"), ExtResource("8_wolf")])
+metadata/_custom_type_script = "res://resources/EnemyChartDef.cs"
+
+[sub_resource type="Resource" id="SubResource_elite"]
+script = ExtResource("2_chart")
+EnemyDefs = Array[Object]([ExtResource("12_gonh")])
+metadata/_custom_type_script = "res://resources/EnemyChartDef.cs"
+
+[sub_resource type="Resource" id="SubResource_boss"]
+script = ExtResource("2_chart")
+EnemyDefs = Array[Object]([ExtResource("9_demon"), ExtResource("10_dragon"), ExtResource("11_king")])
 metadata/_custom_type_script = "res://resources/EnemyChartDef.cs"
 
 [resource]
 script = ExtResource("1")
-WeakEnemyChart = Array[Object]([SubResource("SubResource_enemy_chart")])
-StrongEnemyChart = Array[Object]([SubResource("SubResource_enemy_chart")])
-EliteChart = Array[Object]([SubResource("SubResource_enemy_chart")])
-BossChart = Array[Object]([SubResource("SubResource_enemy_chart")])
+WeakEnemyChart = Array[Object]([SubResource("SubResource_weak")])
+StrongEnemyChart = Array[Object]([SubResource("SubResource_strong")])
+EliteChart = Array[Object]([SubResource("SubResource_elite")])
+BossChart = Array[Object]([SubResource("SubResource_boss")])

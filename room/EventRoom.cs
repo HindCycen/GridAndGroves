@@ -15,6 +15,13 @@ public partial class EventRoom : Room {
 
     public override void _Ready() {
         base._Ready();
+
+        // 计入房间数（仅在战斗/事件房间增加）
+        _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
+        if (_saveLoad?.Data != null) {
+            _saveLoad.Data.RoomCount++;
+        }
+
         ShowEventPhase1();
     }
 

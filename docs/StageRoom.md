@@ -10,16 +10,14 @@
 
 ```
 Room (res://room/Room.cs)
-├── CountedRoom (res://room/CountedRoom.cs)
-│   ├── BattleRoom (res://battle/BattleRoom.cs) — 战斗房间
-│   └── EventRoom (res://room/EventRoom.cs) — 事件房间
-└── UncountedRoom (res://room/UncountedRoom.cs)
-    └── StageRoom (res://room/StageRoom.cs) — 楼层地图
+├── BattleRoom (res://room/BattleRoom.cs) — 战斗房间
+├── EventRoom (res://room/EventRoom.cs) — 事件房间
+└── StageRoom (res://room/StageRoom.cs) — 楼层地图
 ```
 
 ## 核心变量
 
-- `Player.RoomCount`: 当前楼层已探索的房间数(仅 CountedRoom 计入)
+- `Player.RoomCount`: 当前楼层已探索的房间数
 - `Player.StageCount`: 当前所处的楼层编号
 
 ## 房间行为
@@ -29,12 +27,13 @@ Room (res://room/Room.cs)
 - 显示 `Stage: {stageCount}    Room: {roomCount}` 于状态栏正中央
 - 加载存档
 
-### CountedRoom
-- 首次进入时该场景时, 将 Player.RoomCount 加 1
-- 使用场景路径(SceneFilePath)作为唯一标识, 防止重复计数
+### BattleRoom
+- 战斗房间
+- 继承自 Room，每次进入时会增加 roomCount
 
-### UncountedRoom
-- 不增加 RoomCount 的房间, 纯基类
+### EventRoom
+- 事件房间
+- 继承自 Room，每次进入时会增加 roomCount
 
 ### StageRoom
 - 管理 7 列 × 14 行的地图网格(每个格子 96×96 像素)
@@ -56,12 +55,12 @@ Room (res://room/Room.cs)
 - 单击 EventRoomBn: 实例化 EventRoom 并跳转
 
 ### BattleRoom
-- 继承自 CountedRoom (计入房间数)
+- 继承自 Room，每次进入计入房间数
 - 通过 EnemyChart 生成敌人
 - 胜利(OnVictory)后回到 StageRoom (等待 1 秒)
 
 ### EventRoom
-- 继承自 CountedRoom (计入房间数)
+- 继承自 Room，每次进入计入房间数
 - 阶段 1: 显示 EventDesc + 2~4 个选项按钮
   - 按钮悬停时显示 Description Tooltip (支持颜色语法 [R]{}, [G]{}, [B]{}, [Y]{})
 - 阶段 2: 点击按钮 → 执行 FollowingAction → 显示 ResultDescription + 一个 "Continue" 按钮

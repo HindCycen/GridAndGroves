@@ -101,7 +101,7 @@ public partial class Block : Node2D {
     }
 
     private bool CheckPlacementConditions() {
-        return CheckConditionP() && CheckConditionQ() && CheckConditionR();
+        return AreAllPartsInGridBounds() && AreAllCellsFree() && IsCenterInGridBounds();
     }
 
     private void FinalizePlacement() {
@@ -135,11 +135,11 @@ public partial class Block : Node2D {
         IsPlaced = false;
     }
 
-    private bool CheckConditionP() {
+    private bool AreAllPartsInGridBounds() {
         return _parts.All(part => Glob.IsPointInGrid(part.GlobalPosition));
     }
 
-    private bool CheckConditionQ() {
+    private bool AreAllCellsFree() {
         foreach (var nearestGridPoint in _parts.Select(part => Glob.FindNearestGridPoint(part.GlobalPosition))) {
             if (!Glob.IsPointInGrid(nearestGridPoint)) {
                 return false;
@@ -159,7 +159,7 @@ public partial class Block : Node2D {
         return true;
     }
 
-    private bool CheckConditionR() {
+    private bool IsCenterInGridBounds() {
         return Glob.IsPointInGrid(GlobalPosition);
     }
 

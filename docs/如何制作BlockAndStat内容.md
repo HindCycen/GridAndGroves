@@ -1,6 +1,6 @@
 # Grid & Groves — Block / Stat 内容制作指南
 
-本文档介绍在 ActionQueue + 三段式 TicTac 管线体系下，如何创建完整的游戏内容：方块（Block）、方块部件（BlockPart）、属性（Stat）以及自定义动作（Action）。
+本文档介绍在 ActionManager + 三段式 TicTac 管线体系下，如何创建完整的游戏内容：方块（Block）、方块部件（BlockPart）、属性（Stat）以及自定义动作（Action）。
 
 ---
 
@@ -58,18 +58,17 @@
 | **BlockPartDef** | `resources/blockparts/` | 部件定义（伤害值、方向、绑定哪些行为） |
 | **BlockPartBehavior** | `resources/blockpart_behaviors/` | 部件被触发时的实际效果（C# 代码） |
 
-### ActionQueue — 中央调度器
+### ActionManager — 中央调度器
 
-所有效果不再同步执行，而是转为 `AbstractAction` 入队，由 `ActionQueue` 每帧推进。
+所有效果不再同步执行，而是转为 `AbstractGameAction` 入队，由 `ActionManager` 每帧推进。
 
 | 入队方式 | 方法 | 效果 |
 |----------|------|------|
-| 追加到队尾 | `ActionQueue.Instance.AddToBottom(action)` | 大多数效果使用 |
-| 插入到队首 | `ActionQueue.Instance.AddToTop(action)` | 紧急效果（如触发类反击） |
-| 回合前队列 | `ActionQueue.Instance.AddToTurnStart(action)` | 回合开始时消耗 |
+| 追加到队尾 | `ActionManager.Instance.AddToBottom(action)` | 大多数效果使用 |
+| 插入到队首 | `ActionManager.Instance.AddToTop(action)` | 紧急效果（如触发类反击） |
 
-> `BlockPartBehavior` 现在有 `CreateAction(block, part)` 方法替代 `Execute()`。
-> 默认实现将 `Execute()` 包装为 `CallbackAction`，子类可返回具体 Action 类型以支持时长和 VFX。
+> `BlockPartBehavior` 通过 `CreateAction(block, part)` 方法返回具体 Action 类型，
+> 支持动画时长和 VFX。返回 null 表示无需 Action 入队（如纯方向修改行为）。
 
 ---
 
@@ -122,11 +121,11 @@
 
 #### 关于 Behaviors
 
-`Behaviors` 是一个数组，按顺序执行。每个 Behavior 的 `CreateAction()` 返回的 Action 按数组顺序入队到 `ActionQueue`。
+`Behaviors` 是一个数组，按顺序执行。每个 Behavior 的 `CreateAction()` 返回的 Action 按数组顺序入队到 `ActionManager`。
 
 ```
 Behaviors = [MoveRightBehavior, DamageEnemyBehavior]
-入队顺序: CallbackAction(无效果), DamageAction(伤害)
+入队顺序: null (方向修改无 Action), DamageAction(伤害)
 ```
 
 > 用 Godot 编辑器添加时，点 `Behaviors` 右侧的箭头 → `Add Element` → 下拉选择 `New XxxBehavior` 或引用已存文件。
@@ -146,11 +145,11 @@ Behaviors = [MoveRightBehavior, DamageEnemyBehavior]
 
 ### 2.4 步骤四：注册方块
 
-大多数方块在 `OriginalBlockRegisterer.cs` 中使用 `Glob.RegisterBlockDef()` 注册。
+大多数方块在 `OriginalBlockRegisterer.cs` 中使用 `Glob.SubscribeBlockDef()` 注册。
 
 ```csharp
-// 在 InitializeBlockDefs() 中添加：
-Glob.RegisterBlockDef("MyBlock", "res://resources/blockdefs/MyBlock.tres");
+// 在 OriginalBlockRegisterer.Register() 中添加：
+Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://resources/blockdefs/MyBlock.tres"));
 ```
 
 注册后可通过 `Glob.CreateBlock("MyBlock")` 在代码中生成实例。
@@ -168,12 +167,7 @@ using Godot;
 
 [GlobalClass]
 public partial class MyBehavior : BlockPartBehavior {
-    public override void Execute(Block block, BlockPart part) {
-        // 旧接口（如果不需要时长，可以留在这里）
-        // 但新系统推荐用 CreateAction
-    }
-
-    public override AbstractAction CreateAction(Block block, BlockPart part) {
+    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
         // 返回一个具体的 Action，用来在队列中异步执行
         return new DamageAction(block, targetNode, part.Damage, 0.4f);
     }
@@ -185,28 +179,24 @@ public partial class MyBehavior : BlockPartBehavior {
 | Action 类型 | 构造参数 | 效果 |
 |-------------|----------|------|
 | `DamageAction` | `(Block source, Node target, int amount, float duration)` | 造成伤害，duration 期间播放 VFX |
-| `HealAction` | `(Block source, Node target, int amount, float duration)` | 治疗，duration 期间播放 VFX |
-| `ApplyStatusAction` | `(Block source, Node target, Stat stat, int value, float duration)` | 给目标施加/增减状态 |
-| `CallbackAction` | `(Action callback, ActionType type = Callback)` | 包装一个同步回调 |
+| `HealAction` | `(Node target, int amount, float duration)` | 治疗，duration 期间播放 VFX |
+| `ApplyStatusAction` | `(Node target, StatDef statDef, int initialValue, float duration)` | 给目标施加/增减状态 |
+| `CallbackAction` | `(Action callback, ActionType type = Callback, bool exhaustSourceBlock = false)` | 包装一个同步回调 |
 | `WaitAction` | `(float duration)` | 等待一段时间（停顿动作） |
-| `VFXAction` | `(Node2D vfxNode, float duration)` | 播放一个视觉效果后销毁 |
+| `VFXAction` | `(Node2D vfxNode, float duration, Node parent = null)` | 播放一个视觉效果后销毁 |
 
 ### 3.3 示例：简洁的伤害行为
 
 ```csharp
 [GlobalClass]
 public partial class DamagePlayerBehavior : BlockPartBehavior {
-    public override void Execute(Block block, BlockPart part) {
-        // 保留同步执行（旧兼容）
-    }
-
-    public override AbstractAction CreateAction(Block block, BlockPart part) {
+    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
         var players = block.GetTree()?.GetNodesInGroup("Players");
         var target = players?.Count > 0 ? players[0] as Node2D : null;
-        if (target != null) {
+        if (target != null && part.Damage > 0) {
             return new DamageAction(block, target, part.Damage, 0.4f);
         }
-        return base.CreateAction(block, part); // fallback
+        return null;
     }
 }
 ```
@@ -216,9 +206,9 @@ public partial class DamagePlayerBehavior : BlockPartBehavior {
 如果效果无法用单个内置 Action 表达，可以用多个 Action 组合：
 
 ```csharp
-public override AbstractAction CreateAction(Block block, BlockPart part) {
+public override AbstractGameAction CreateAction(Block block, BlockPart part) {
     // 先用一个 WaitAction 等待 0.3s
-    ActionQueue.Instance.AddToBottom(new WaitAction(0.3f));
+    ActionManager.Instance.AddToBottom(new WaitAction(0.3f));
     // 再用 CallbackAction 执行复杂逻辑
     return new CallbackAction(() => {
         // 你的复杂逻辑...
@@ -229,8 +219,10 @@ public override AbstractAction CreateAction(Block block, BlockPart part) {
 或直接返回 `CallbackAction` 完成全部操作（无动画延时）：
 
 ```csharp
-public override AbstractAction CreateAction(Block block, BlockPart part) {
-    return new CallbackAction(() => Execute(block, part));
+public override AbstractGameAction CreateAction(Block block, BlockPart part) {
+    return new CallbackAction(() => {
+        // 复杂逻辑直接在这里写
+    });
 }
 ```
 
@@ -262,7 +254,7 @@ public partial class MyStatBehavior : StatBehavior {
     [StatusBehavior(Period = Glob.StatExecuteAt.OnTurnEnded)]
     public void OnTurnEnd() {
         var stat = BelongingStat;
-        if (stat == null || stat.Value <= 0) return;
+        if (stat == null || stat.CurrentValue <= 0) return;
 
         var players = stat.GetTree().GetNodesInGroup("Players");
         foreach (var node in players) {
@@ -270,7 +262,7 @@ public partial class MyStatBehavior : StatBehavior {
             var health = player.GetNode<HealthComponent>(
                 "RenderingComponent/HealthComponent"
             );
-            health?.TakeDamage(stat.Value);
+            health?.TakeDamage(stat.CurrentValue);
         }
     }
 }
@@ -313,7 +305,7 @@ public partial class MyStatBehavior : StatBehavior {
 
 在 Inspector 中：
 1. 设置 `StatName`、`MaxValue`
-2. `Behavior` → 下拉选择 **New ShhotingStatBehavior**（或从文件加载）
+2. `Behavior` → 下拉选择 **New ShootingStatBehavior**（或从文件加载）
 3. 设置 `Icon` 贴图
 
 ### 4.5 在代码中施加状态
@@ -322,7 +314,7 @@ public partial class MyStatBehavior : StatBehavior {
 var statDef = GD.Load<StatDef>("res://resources/stat_defs/MyStat.tres");
 if (statDef != null) {
     var stat = new Stat { Definition = statDef };
-    playerStatsComponent.AddStatus(stat);
+    statsComponent.AddStatus(stat);
     stat.AddValue(amount); // 设置数值
 }
 ```
@@ -334,27 +326,30 @@ if (statDef != null) {
 
 ## 5. 制作一个自定义动作
 
-如果内置 Action 无法满足需求，可以继承 `AbstractAction`。
+如果内置 Action 无法满足需求，可以继承 `AbstractGameAction`。
 
 ### 5.1 基类 API
 
 ```csharp
-public abstract class AbstractAction {
-    protected float Duration { get; set; }     // 总时长（秒）
-    protected float StartDuration { get; set; } // 起始时长
-    public bool IsDone { get; protected set; } // 是否已完成
-    public int Amount { get; set; }            // 数值
+public abstract class AbstractGameAction {
+    public float Duration { get; set; }         // 总时长（秒）
+    public float StartDuration { get; protected set; } // 起始时长
+    public bool IsDone { get; protected set; }  // 是否已完成
+    public int Amount { get; set; }             // 数值
+    public Node Source { get; set; }            // 动作发出者
+    public Node Target { get; set; }            // 动作目标
     public Glob.ActionType ActionType { get; set; }  // 动作类型
+    public virtual bool ExhaustSourceBlock => false; // 是否耗尽来源方块
 
     // 每帧推进，子类重写
-    public virtual void Update(float delta);
+    public abstract void Update(float delta);
 
     // 推进 Duration，归零时标记 IsDone
     protected void TickDuration(float delta);
 
     // 快捷入队
-    protected void AddToBot(AbstractAction action);
-    protected void AddToTop(AbstractAction action);
+    protected void AddToBot(AbstractGameAction action);
+    protected void AddToTop(AbstractGameAction action);
 }
 ```
 
@@ -363,12 +358,12 @@ public abstract class AbstractAction {
 ```csharp
 using Godot;
 
-public class MyCustomAction : AbstractAction {
+public class MyCustomAction : AbstractGameAction {
     private Node _target;
     private bool _hasExecuted;
 
     public MyCustomAction(Node target, int amount, float duration) {
-        _target = target;
+        Target = target;
         Amount = amount;
         Duration = duration;
         StartDuration = duration;
@@ -378,17 +373,13 @@ public class MyCustomAction : AbstractAction {
     public override void Update(float delta) {
         if (IsDone) return;
 
-        // duration > 0 时播放动画或等待
-        if (Duration > 0) {
-            Duration -= delta;
-            if (Duration <= 0) {
-                // duration 归零 → 执行逻辑
-                if (!_hasExecuted && GodotObject.IsInstanceValid(_target)) {
-                    // 在这里做实际效果
-                    _hasExecuted = true;
-                }
-                IsDone = true;
-            }
+        TickDuration(delta);
+        if (!IsDone) return;
+
+        // duration 归零 → 执行逻辑
+        if (!_hasExecuted && GodotObject.IsInstanceValid(Target)) {
+            // 在这里做实际效果
+            _hasExecuted = true;
         }
     }
 }
@@ -399,9 +390,9 @@ public class MyCustomAction : AbstractAction {
 ```csharp
 // 在 Behavior.CreateAction 或任何代码中：
 var action = new MyCustomAction(target, amount, 0.5f);
-ActionQueue.Instance.AddToBottom(action); // 追加到队尾
+ActionManager.Instance.AddToBottom(action); // 追加到队尾
 // 或
-ActionQueue.Instance.AddToTop(action);    // 插入到队首
+ActionManager.Instance.AddToTop(action);    // 插入到队首
 ```
 
 ---
@@ -414,9 +405,9 @@ ActionQueue.Instance.AddToTop(action);    // 插入到队首
 // 在 Behavior.CreateAction 或 Action 代码中：
 var vfxNode = new MyCoolVFX();
 vfxNode.GlobalPosition = target.GlobalPosition;
-AddChild(vfxNode); // 添加到场景树
+GetTree().CurrentScene.AddChild(vfxNode); // 添加到场景树
 var vfxAction = new VFXAction(vfxNode, 0.5f); // 0.5s 后自动销毁
-ActionQueue.Instance.AddToBottom(vfxAction);
+ActionManager.Instance.AddToBottom(vfxAction);
 ```
 
 ### 6.2 自定义 VFX 节点
@@ -565,8 +556,8 @@ resources/
 
 ```
 actions/                     # Action 系统
-├── AbstractAction.cs        # 动作基类
-├── ActionQueue.cs           # 中央调度器
+├── AbstractGameAction.cs    # 动作基类
+├── ActionManager.cs         # 中央调度器
 ├── DamageAction.cs          # 伤害动作（含 VFX）
 ├── HealAction.cs            # 治疗动作
 ├── ApplyStatusAction.cs     # 施加状态动作
@@ -583,12 +574,20 @@ vfx/                         # 视觉效果
 room/
 ├── Bot.cs                   # 巡逻机器人（三段式执行）
 ├── BattleRoom.cs            # 战斗房间管理
+├── EventRoom.cs             # 事件房间
+├── StageRoom.cs             # 楼层地图
+├── BlockPilesHere.cs        # 方块堆管理
 └── ...
 
 global/
 ├── BattleTime.cs            # 信号中枢（三段式 TicTac）
 ├── GlobConstants.cs         # 枚举定义（StatExecuteAt / TicTacPhase）
-└── ...
+├── Glob.cs                  # Autoload 入口
+├── GlobBlockInitializer.cs  # 方块工厂
+├── GlobGridControlling.cs   # 网格控制
+├── GlobRandSetter.cs        # 随机数管理
+├── GlobRegistererExecuter.cs# 自动注册
+└── SaveLoad.cs              # 存档系统
 
 blocks/
 ├── Block.cs                 # 方块实例

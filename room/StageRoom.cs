@@ -1,20 +1,18 @@
-#region
-
+using System.Collections.Generic;
 using Godot;
 
-#endregion
-
 public partial class StageRoom : Room {
-    public const int MapCols = 14;
-    public const int MapRows = 7;
-    private const int Cols = 14;
-    private const int Rows = 7;
+    public const int Cols = 14;      // 地图列数
+    public const int Rows = 7;       // 地图行数
     private const int CellSize = 96;
 
-    public static bool[,] Clickable;
-    public static bool[,] Left;
-    public static bool[,] IsBattleCell;
-    public static bool MapGenerated;
+    /// <summary>当前活跃的 StageRoom 实例，供 SaveLoad 访问地图数据。</summary>
+    public static StageRoom Current { get; private set; }
+
+    public bool[,] Clickable;
+    public bool[,] Left;
+    public bool[,] IsBattleCell;
+    public bool MapGenerated;
     private Sprite2D[,] _cells;
     private Tween _flashTween;
 
@@ -22,11 +20,13 @@ public partial class StageRoom : Room {
 
     private bool _initialized;
     private float _pulseTime;
+    private readonly List<(int col, int row)> _pulsingCells = new();
 
     [Export] public StageDef StageDef;
 
     public override void _Ready() {
         base._Ready();
+        Current = this;
 
         if (!MapGenerated) {
             var loadedFromSave = TryRestoreMapFromSave();
@@ -36,6 +36,7 @@ public partial class StageRoom : Room {
                 IsBattleCell = new bool[Cols, Rows];
                 GenerateMap();
                 Clickable[0, Rows - 1] = true;
+                RebuildPulsingCells();
                 MapGenerated = true;
             }
         }
@@ -167,6 +168,20 @@ public partial class StageRoom : Room {
         }
     }
 
+    /// <summary>
+    ///     重建脉冲动画格列表。每次 Clickable 状态变化后调用。
+    /// </summary>
+    private void RebuildPulsingCells() {
+        _pulsingCells.Clear();
+        for (var col = 0; col < Cols; col++) {
+            for (var row = 0; row < Rows; row++) {
+                if (Clickable[col, row] && !Left[col, row]) {
+                    _pulsingCells.Add((col, row));
+                }
+            }
+        }
+    }
+
     public override void _Process(double delta) {
         if (!_initialized) {
             return;
@@ -225,6 +240,7 @@ public partial class StageRoom : Room {
             Clickable[col + 1, row] = true;
         }
 
+        RebuildPulsingCells();
 
         var isBattle = IsBattleCell[col, row];
 

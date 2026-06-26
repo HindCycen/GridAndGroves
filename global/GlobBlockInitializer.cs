@@ -10,12 +10,12 @@ public partial class Glob {
 
     public static bool SubscribeBlockDef(BlockDef blockDef) {
         if (blockDef == null) {
-            GD.PrintErr("ParseError: One blockdef is null");
+            GameLog.Err("ParseError: One blockdef is null");
             return false;
         }
 
         if (BlockDefs.ContainsKey(blockDef.BlockName)) {
-            GD.PrintErr($"ParseError: Blockdef with name {blockDef.BlockName} already exists");
+            GameLog.Err($"ParseError: Blockdef with name {blockDef.BlockName} already exists");
             return false;
         }
 

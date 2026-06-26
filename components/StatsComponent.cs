@@ -36,13 +36,13 @@ public partial class StatsComponent : Node {
     /// </summary>
     public void AddStatus(Stat stat) {
         if (stat == null) {
-            GD.PrintErr("尝试添加空状态");
+            GameLog.Err("尝试添加空状态");
             return;
         }
 
         var statusName = stat.Definition.StatName;
         if (_statusMap.ContainsKey(statusName)) {
-            GD.PrintErr($"状态 {statusName} 已存在");
+            GameLog.Err($"状态 {statusName} 已存在");
             return;
         }
 
@@ -62,7 +62,7 @@ public partial class StatsComponent : Node {
     /// </summary>
     public void RemoveStatus(string statusName) {
         if (!_statusMap.ContainsKey(statusName)) {
-            GD.PrintErr($"状态 {statusName} 不存在");
+            GameLog.Err($"状态 {statusName} 不存在");
             return;
         }
 

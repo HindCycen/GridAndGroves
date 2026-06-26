@@ -1,6 +1,6 @@
 public partial class Glob {
     /// <summary>
-    ///     动作类型枚举，用于 ActionQueue 的行为分类
+    ///     动作类型枚举，用于 ActionManager 的行为分类
     /// </summary>
     public enum ActionType {
         Damage,
@@ -23,7 +23,7 @@ public partial class Glob {
 
     /// <summary>
     ///     面向 StatBehavior 的触发时机枚举。
-    ///     每个值代表 ActionQueue 执行管线中的一个钩子点。
+    ///     每个值代表 ActionManager 执行管线中的一个钩子点。
     /// </summary>
     public enum StatExecuteAt {
         // === 房间级 ===
@@ -33,13 +33,13 @@ public partial class Glob {
         OnTurnEnded,
 
         // === TicTac 三段式 ===
-        /// Phase A: 在 BlockPart.Execute() 之前触发，可用于修饰数值
+        /// Phase A: 在 BlockPart 执行之前触发，可用于修饰数值
         OnPreBlockExecute,
 
-        /// Phase B: 在 BlockPart.Execute() 期间触发（由 Part 自己的 Behavior 产生 Action）
+        /// Phase B: 在 BlockPart 执行期间触发（由 Part 自己的 Behavior 产生 Action）
         OnBlockExecute,
 
-        /// Phase C: 在 BlockPart.Execute() 之后触发，可用于"造成伤害后"类效果
+        /// Phase C: 在 BlockPart 执行之后触发，可用于"造成伤害后"类效果
         OnPostBlockExecute,
 
         // === 伤害管线（由 DamageAction 在内部触发） ===
@@ -62,11 +62,11 @@ public partial class Glob {
     /// <summary>
     ///     对应于尖塔"打出一张牌"事件的三个阶段。
     ///     PreBlockExecute → BlockExecute → PostBlockExecute
-    ///     每个阶段产生的 Action 按序进入 ActionQueue。
+    ///     每个阶段产生的 Action 按序进入 ActionManager。
     /// </summary>
     public enum TicTacPhase {
         PreBlockExecute, // Phase A: 前置修饰、扣费、atDamageGive 类
-        BlockExecute, // Phase B: BlockPart 自身的 Execute()
+        BlockExecute, // Phase B: BlockPart 自身的执行
         PostBlockExecute // Phase C: 后置触发、onAttack、荆棘类
     }
 }

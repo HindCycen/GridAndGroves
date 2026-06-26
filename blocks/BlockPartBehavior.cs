@@ -6,7 +6,7 @@ using Godot;
 
 /// <summary>
 ///     BlockPart 行为基类。每个行为定义一个积木部件被 Bot 触发时的效果。
-///     子类必须覆写 CreateAction() 返回对应的 AbstractAction 类型。
+///     子类必须覆写 CreateAction() 返回对应的 AbstractGameAction 类型。
 /// </summary>
 [GlobalClass]
 public abstract partial class BlockPartBehavior : Resource {

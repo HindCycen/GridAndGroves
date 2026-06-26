@@ -14,9 +14,6 @@ public partial class Room : Node2D {
     public override void _Ready() {
         _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
         _saveLoad.Load();
-        if (_saveLoad?.Data != null) {
-            _saveLoad.Data.RoomCount++;
-        }
 
         if (ShowStatusBar) {
             CreateStatusBar();
@@ -32,9 +29,23 @@ public partial class Room : Node2D {
                 UpdateHealthDisplay(health.CurrentHealth, health.MaxHealth);
             }
         }
+
+        // Player 已就绪后刷新状态栏（因为此时 player.RoomCount / StageCount 已由 SaveLoad 设好）
+        UpdateStageRoomLabel();
     }
 
     public override void _ExitTree() {
+        // 断开信号连接，防止 Room 被释放后 Player 还持有对该 Room 方法的引用
+        if (IsInstanceValid(this)) {
+            var player = GetTree().GetFirstNodeInGroup("Players") as Player;
+            if (player != null) {
+                var health = player.GetNodeOrNull<HealthComponent>("RenderingComponent/HealthComponent");
+                if (health != null) {
+                    health.HealthChanged -= OnHealthChanged;
+                }
+            }
+        }
+
         _saveLoad?.Save();
     }
 
@@ -74,11 +85,14 @@ public partial class Room : Node2D {
     }
 
     protected void UpdateStageRoomLabel() {
-        if (_stageRoomLabel != null) {
-            var rc = _saveLoad?.Data?.RoomCount ?? 0;
-            var sc = _saveLoad?.Data?.StageCount ?? 0;
-            _stageRoomLabel.Text = $"Stage: {sc}    Room: {rc}";
-        }
+        if (_stageRoomLabel == null) return;
+
+        // 优先从 Player 节点读取（由 SaveLoad.SyncToGameState 设置），
+        // 兜底从 DataResource 读取
+        var player = GetTree().GetFirstNodeInGroup("Players") as Player;
+        var rc = player?.RoomCount ?? _saveLoad?.Data?.RoomCount ?? 0;
+        var sc = player?.StageCount ?? _saveLoad?.Data?.StageCount ?? 0;
+        _stageRoomLabel.Text = $"Stage: {sc}    Room: {rc}";
     }
 
     protected void OnHealthChanged(int current, int max) {
