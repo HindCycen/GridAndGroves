@@ -171,4 +171,38 @@ public partial class SaveLoad : Node {
     // StageRoom 地图恢复在其自身的 _Ready() 中通过 TryRestoreMapFromSave() 完成，
     // 不需要在这里额外处理。
     private static void RestoreStageMap() { }
+
+    // ──────────────── 新游戏 / 楼层推进 ────────────────
+
+    /// <summary>
+    ///     重置所有存档数据为初始状态（新游戏）。
+    /// </summary>
+    public void ResetForNewGame() {
+        Data = new DataResource();
+        Data.StageCount = 1;
+        Data.RoomCount = 0;
+        Data.PlayerCurrentHealth = 100;
+        Data.PlayerMaxHealth = 100;
+        Data.StageDefPath = "res://resources/EgStageDef.tres";
+        Glob.InitSeed(0);
+        Glob.InitRng();
+        Glob.InitGrids();
+    }
+
+    /// <summary>
+    ///     推进到下一层：清空地图数据、增加层数、重置房间数。
+    ///     在 Boss 战后、创建新 StageRoom 之前调用。
+    /// </summary>
+    public void AdvanceToNextFloor() {
+        Data.StageCount++;
+        Data.RoomCount = 0;
+        Data.GridClickable = [];
+        Data.GridLeft = [];
+        Data.GridIsBattleCell = [];
+        Glob.InitGrids();
+        // 重新播种，保证每层随机不同
+        Glob.InitSeed(Data.Seed + Data.StageCount * 7919);
+        Glob.InitRng();
+        Save();
+    }
 }

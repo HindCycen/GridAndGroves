@@ -244,6 +244,11 @@ public partial class StageRoom : Room {
 
         var isBattle = IsBattleCell[col, row];
 
+        // 保存当前 StageDef 路径，供 BattleRoom 读取初始牌组
+        if (_saveLoad?.Data != null && StageDef != null) {
+            _saveLoad.Data.StageDefPath = StageDef.ResourcePath;
+        }
+
         _saveLoad?.Save();
 
         if (isBattle) {

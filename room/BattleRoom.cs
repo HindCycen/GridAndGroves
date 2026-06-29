@@ -112,22 +112,44 @@ public partial class BattleRoom : Room {
             return;
         }
 
-        for (var i = 0; i < 3; i++) {
-            playerPile.AddBlock(Glob.CreateBlock("DamageBlock"));
+        // 优先从 StageDef.StartingDeck 读取初始牌组
+        var stageDef = GetStageDef();
+        var startingDeck = stageDef?.StartingDeck;
+        if (startingDeck is { Length: > 0 }) {
+            foreach (var blockName in startingDeck) {
+                var block = Glob.CreateBlock(blockName);
+                if (block != null) {
+                    playerPile.AddBlock(block);
+                }
+                else {
+                    GameLog.Err($"InitializePlayerDeck: 找不到方块 [{blockName}]");
+                }
+            }
         }
-
-        for (var i = 0; i < 2; i++) {
-            playerPile.AddBlock(Glob.CreateBlock("ExampleMoveRight"));
+        else {
+            // 兜底：硬编码默认牌组
+            for (var i = 0; i < 3; i++) playerPile.AddBlock(Glob.CreateBlock("DamageBlock"));
+            for (var i = 0; i < 2; i++) playerPile.AddBlock(Glob.CreateBlock("ExampleMoveRight"));
+            for (var i = 0; i < 2; i++) playerPile.AddBlock(Glob.CreateBlock("ExampleBlock"));
+            playerPile.AddBlock(Glob.CreateBlock("Growing"));
+            playerPile.AddBlock(Glob.CreateBlock("Shield"));
         }
-
-        for (var i = 0; i < 2; i++) {
-            playerPile.AddBlock(Glob.CreateBlock("ExampleBlock"));
-        }
-
-        playerPile.AddBlock(Glob.CreateBlock("Growing"));
-        playerPile.AddBlock(Glob.CreateBlock("Shield"));
 
         GameLog.Debug($"玩家牌组已初始化，共 {playerPile.Count} 张牌");
+    }
+
+    /// <summary>
+    ///     向上查找当前 StageDef。从 StageRoom 传入的 StageDef 存档中恢复。
+    /// </summary>
+    private StageDef GetStageDef() {
+        // 尝试从 SaveLoad 中的 StageDefPath 加载
+        var path = _saveLoad?.Data?.StageDefPath;
+        if (!string.IsNullOrEmpty(path)) {
+            var loaded = GD.Load<StageDef>(path);
+            if (loaded != null) return loaded;
+        }
+        // 兜底：加载示例 StageDef
+        return GD.Load<StageDef>("res://resources/EgStageDef.tres");
     }
 
     private void StartPlayerTurn() {
@@ -182,14 +204,25 @@ public partial class BattleRoom : Room {
     }
 
     private void OnVictory() {
-        GameLog.Debug("\n=== 胜利！所有敌人已被击败！===");
+        GameLog.Info("\n=== 胜利！所有敌人已被击败！===");
         _endTurnButton.Text = "Victory!";
         _endTurnButton.Disabled = true;
         _battleTime.SayBattleEnded();
+
+        // 判断是否 Boss 战（roomCount == 20），是则进入下一层
+        var isBoss = _saveLoad?.Data?.RoomCount >= 20;
+        if (isBoss) {
+            GameLog.Info("Boss 击杀！进入下一层");
+        }
+
         _saveLoad.Save();
 
         var timer = GetTree().CreateTimer(1.0);
         timer.Timeout += () => {
+            if (isBoss) {
+                _saveLoad.AdvanceToNextFloor();
+            }
+
             var stageScene = GD.Load<PackedScene>("res://room/StageRoom.tscn");
             var stage = stageScene.Instantiate<StageRoom>();
             GetTree().Root.AddChild(stage);
@@ -215,11 +248,20 @@ public partial class BattleRoom : Room {
     }
 
     private void OnDefeat() {
-        GameLog.Debug("\n=== 败北！玩家已被击败！===");
+        GameLog.Info("\n=== 败北！玩家已被击败！===");
         _endTurnButton.Text = "Defeat...";
         _endTurnButton.Disabled = true;
         _bot.StopPatrol();
         _battleTime.SayBattleEnded();
+
+        // 短暂延迟后显示 Game Over 画面
+        var timer = GetTree().CreateTimer(1.5);
+        timer.Timeout += () => {
+            var gameOverScene = GD.Load<PackedScene>("res://GameOver.tscn");
+            var gameOver = gameOverScene.Instantiate<GameOver>();
+            GetTree().Root.AddChild(gameOver);
+            QueueFree();
+        };
     }
 
     /// <summary>

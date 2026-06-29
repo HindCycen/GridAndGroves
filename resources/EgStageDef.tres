@@ -74,3 +74,4 @@ metadata/_custom_type_script = "res://resources/EventRand.cs"
 script = ExtResource("1")
 StageEnemyChart = ExtResource("2")
 StageEventRand = SubResource("SubResource_rand")
+StartingDeck = Array[String](["DamageBlock", "DamageBlock", "DamageBlock", "ExampleMoveRight", "ExampleMoveRight", "ExampleBlock", "ExampleBlock", "Growing", "Shield"])
