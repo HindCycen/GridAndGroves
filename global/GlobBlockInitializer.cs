@@ -26,7 +26,7 @@ public partial class Glob {
 
     public static Block GetBlock(string blockName, Vector2 globalPos, Node parent) {
         if (!BlockDefs.ContainsKey(blockName)) {
-            GD.PushError($"BlockFactory: No blockdef with name {blockName} found");
+            GameLog.Err($"BlockFactory: No blockdef with name {blockName} found");
             return null;
         }
 
@@ -39,7 +39,7 @@ public partial class Glob {
 
     public static Block CreateBlock(BlockDef blockDef) {
         if (blockDef == null) {
-            GD.PushError("BlockFactory: BlockDef is null");
+            GameLog.Err("BlockFactory: BlockDef is null");
             return null;
         }
 
@@ -50,7 +50,7 @@ public partial class Glob {
 
     public static Block CreateBlock(string blockName) {
         if (!BlockDefs.ContainsKey(blockName)) {
-            GD.PushError($"BlockFactory: No blockdef with name {blockName} found");
+            GameLog.Err($"BlockFactory: No blockdef with name {blockName} found");
             return null;
         }
 

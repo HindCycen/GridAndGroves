@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://components/PileViewer.cs" id="1"]
+
+[node name="PileViewer" type="ColorRect"]
+script = ExtResource("1")
+color = Color(0, 0, 0, 0.6)
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2

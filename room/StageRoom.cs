@@ -41,10 +41,7 @@ public partial class StageRoom : Room {
             }
         }
 
-        _gridContainer = new Node2D {
-            Name = "GridContainer"
-        };
-        AddChild(_gridContainer);
+        _gridContainer = GetNode<Node2D>("%GridContainer");
 
         var totalWidth = Cols * CellSize;
         var totalHeight = Rows * CellSize;

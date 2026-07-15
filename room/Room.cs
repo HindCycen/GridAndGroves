@@ -16,7 +16,14 @@ public partial class Room : Node2D {
         _saveLoad.Load();
 
         if (ShowStatusBar) {
-            CreateStatusBar();
+            // 场景中已预定义 StatusBar 节点，获取引用并显示
+            GetNode<TextureRect>("TopBar").Visible = true;
+            GetNode<TextureRect>("Heart").Visible = true;
+            _healthLabel = GetNode<Label>("%HealthLabel");
+            _healthLabel.Visible = true;
+            _stageRoomLabel = GetNode<Label>("%StageRoomLabel");
+            _stageRoomLabel.Visible = true;
+            UpdateStageRoomLabel();
         }
 
         UpdateHealthFromSaveLoad();
@@ -47,41 +54,6 @@ public partial class Room : Node2D {
         }
 
         _saveLoad?.Save();
-    }
-
-    private void CreateStatusBar() {
-        var topBar = new TextureRect {
-            Texture = GD.Load<Texture2D>("res://room/room_pictures/TopBar.png")
-        };
-        topBar.SetSize(new Vector2(1920, 60));
-        topBar.Position = new Vector2(0, 0);
-        topBar.StretchMode = TextureRect.StretchModeEnum.Tile;
-        AddChild(topBar);
-
-        var heart = new TextureRect {
-            Texture = GD.Load<Texture2D>("res://room/room_pictures/Heart.png")
-        };
-        heart.SetSize(new Vector2(32, 32));
-        heart.Position = new Vector2(20, 14);
-        heart.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
-        AddChild(heart);
-
-        _healthLabel = new Label {
-            Position = new Vector2(100, 12)
-        };
-        _healthLabel.SetSize(new Vector2(200, 36));
-        _healthLabel.AddThemeFontSizeOverride("font_size", 28);
-        AddChild(_healthLabel);
-
-        _stageRoomLabel = new Label {
-            Position = new Vector2(650, 12)
-        };
-        _stageRoomLabel.SetSize(new Vector2(620, 36));
-        _stageRoomLabel.AddThemeFontSizeOverride("font_size", 28);
-        _stageRoomLabel.HorizontalAlignment = HorizontalAlignment.Center;
-        AddChild(_stageRoomLabel);
-
-        UpdateStageRoomLabel();
     }
 
     protected void UpdateStageRoomLabel() {

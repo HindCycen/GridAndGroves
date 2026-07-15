@@ -170,7 +170,9 @@ public partial class SaveLoad : Node {
 
     // StageRoom 地图恢复在其自身的 _Ready() 中通过 TryRestoreMapFromSave() 完成，
     // 不需要在这里额外处理。
-    private static void RestoreStageMap() { }
+    private static void RestoreStageMap() {
+        GameLog.Debug("SaveLoad.RestoreStageMap: 地图恢复由 StageRoom.TryRestoreMapFromSave() 处理");
+    }
 
     // ──────────────── 新游戏 / 楼层推进 ────────────────
 

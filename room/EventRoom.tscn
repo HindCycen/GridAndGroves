@@ -6,3 +6,22 @@
 [node name="EventRoom" unique_id=2121149791 instance=ExtResource("2_room")]
 script = ExtResource("1")
 EventDef = null
+
+[node name="DescLabel" type="RichTextLabel" parent="."]
+visible = false
+unique_name_in_owner = true
+offset_left = 300.0
+offset_top = 200.0
+offset_right = 1620.0
+offset_bottom = 600.0
+theme_override_font_sizes/font_size = 24
+bbcode_enabled = true
+
+[node name="ButtonContainer" type="HBoxContainer" parent="."]
+visible = false
+unique_name_in_owner = true
+offset_left = 300.0
+offset_top = 700.0
+offset_right = 1620.0
+offset_bottom = 800.0
+theme_override_constants/separation = 20

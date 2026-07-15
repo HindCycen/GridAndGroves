@@ -7,3 +7,6 @@
 [node name="StageRoom" unique_id=1436153365 instance=ExtResource("2")]
 script = ExtResource("1")
 StageDef = ExtResource("3")
+
+[node name="GridContainer" type="Node2D" parent="."]
+unique_name_in_owner = true

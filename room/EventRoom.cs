@@ -28,20 +28,13 @@ public partial class EventRoom : Room {
     private void ShowEventPhase1() {
         _phase = 1;
 
-        _descLabel = new RichTextLabel {
-            Position = new Vector2(300, 200)
-        };
-        _descLabel.SetSize(new Vector2(1320, 400));
-        _descLabel.AddThemeFontSizeOverride("font_size", 24);
-        _descLabel.BbcodeEnabled = true;
+        // 场景中已预定义 DescLabel 和 ButtonContainer，获取引用并显示
+        _descLabel = GetNode<RichTextLabel>("%DescLabel");
+        _descLabel.Visible = true;
         _descLabel.Text = EventDef?.EventDesc ?? "";
-        AddChild(_descLabel);
 
-        _buttonContainer = new HBoxContainer();
-        _buttonContainer.SetPosition(new Vector2(300, 700));
-        _buttonContainer.SetSize(new Vector2(1320, 100));
-        _buttonContainer.AddThemeConstantOverride("separation", 20);
-        AddChild(_buttonContainer);
+        _buttonContainer = GetNode<HBoxContainer>("%ButtonContainer");
+        _buttonContainer.Visible = true;
 
         if (EventDef?.Choices == null) {
             return;

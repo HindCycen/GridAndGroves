@@ -404,64 +404,9 @@ public partial class BattleRoom : Room {
     }
 
     private void ShowPileViewer(string title, PileComponent pile) {
-        var overlay = new ColorRect {
-            Color = new Color(0, 0, 0, 0.6f)
-        };
-        overlay.SetSize(new Vector2I(1920, 1080));
-        overlay.SetPosition(Vector2I.Zero);
-        overlay.MouseFilter = Control.MouseFilterEnum.Stop;
-        AddChild(overlay);
-
-        var panel = new Panel();
-        panel.SetSize(new Vector2I(700, 800));
-        panel.SetPosition(new Vector2I(610, 140));
-        overlay.AddChild(panel);
-
-        var titleLabel = new Label {
-            Text = title
-        };
-        titleLabel.SetPosition(new Vector2I(20, 10));
-        titleLabel.AddThemeFontSizeOverride("font_size", 24);
-        panel.AddChild(titleLabel);
-
-        var closeBtn = new Button {
-            Text = "关闭"
-        };
-        closeBtn.SetPosition(new Vector2I(640, 10));
-        closeBtn.SetSize(new Vector2I(50, 30));
-        closeBtn.Pressed += overlay.QueueFree;
-        panel.AddChild(closeBtn);
-
-        var scroll = new ScrollContainer();
-        scroll.SetPosition(new Vector2I(20, 50));
-        scroll.SetSize(new Vector2I(660, 740));
-        panel.AddChild(scroll);
-
-        var vbox = new VBoxContainer();
-        scroll.AddChild(vbox);
-
-        if (pile.Count == 0) {
-            var empty = new Label {
-                Text = "（空）",
-                CustomMinimumSize = new Vector2I(0, 30)
-            };
-            vbox.AddChild(empty);
-        }
-        else {
-            foreach (var block in pile.Pile) {
-                var card = new Panel {
-                    CustomMinimumSize = new Vector2I(640, 36)
-                };
-
-                var nameLabel = new Label {
-                    Text = $"  {block.Definition.BlockName}    (Faction: {block.Faction})"
-                };
-                nameLabel.SetPosition(new Vector2I(10, 8));
-                card.AddChild(nameLabel);
-
-                vbox.AddChild(card);
-            }
-        }
+        var viewer = GD.Load<PackedScene>("res://components/PileViewer.tscn").Instantiate<PileViewer>();
+        viewer.Show(title, pile);
+        AddChild(viewer);
     }
 
     private void RenderUnableGridCells() {
