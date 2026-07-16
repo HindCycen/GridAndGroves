@@ -29,7 +29,7 @@ public partial class ShootingStatBehavior : StatBehavior {
             var healthComponent = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
             if (healthComponent != null) {
                 healthComponent.TakeDamage(10);
-                GameLog.Debug(
+                GD.Print(
                     $"ShootingStatBehavior: 对玩家造成 10 点伤害，剩余 HP: {healthComponent.CurrentHealth}/{healthComponent.MaxHealth}");
             }
         }

@@ -27,10 +27,10 @@ public partial class GrantShieldBehavior : BlockPartBehavior {
             var shieldComp = FindShieldComponent(player);
             if (shieldComp != null) {
                 shieldComp.AddShield(amount);
-                GameLog.Debug($"GrantShieldBehavior: 添加 {amount} 点护盾，当前 {shieldComp.CurrentShield}");
+                GD.Print($"GrantShieldBehavior: 添加 {amount} 点护盾，当前 {shieldComp.CurrentShield}");
             }
             else {
-                GameLog.Err("GrantShieldBehavior: 找不到 ShieldComponent！");
+                GD.PrintErr("GrantShieldBehavior: 找不到 ShieldComponent！");
             }
         }, Glob.ActionType.Block);
     }

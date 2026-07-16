@@ -10,7 +10,7 @@ using Godot;
 [GlobalClass]
 public partial class ExamplePartBehavior : BlockPartBehavior {
     public override AbstractGameAction CreateAction(Block block, BlockPart part) {
-        GameLog.Debug($"ExamplePartBehavior 执行: {part.PartDefinition?.PartId ?? "?"}");
+        GD.Print($"ExamplePartBehavior 执行: {part.PartDefinition?.PartId ?? "?"}");
         return null;
     }
 }

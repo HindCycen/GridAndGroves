@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="BlockPartDef" format=3]
+[gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://bmfff6u881cvw"]
 
-[ext_resource type="Script" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.cs" id="1_1864r"]
-[ext_resource type="Script" path="res://blocks/BlockPartDef.cs" id="1_k6qac"]
-[ext_resource type="Texture2D" path="res://resources/blockpart_picture/green/Attack-G.png" id="2_v0cyp"]
+[ext_resource type="Script" uid="uid://dqohndmx7jknh" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.cs" id="1_1864r"]
+[ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="1_k6qac"]
+[ext_resource type="Texture2D" uid="uid://bjpem86fh4nse" path="res://resources/blockpart_picture/green/Attack-G.png" id="2_v0cyp"]
 
 [sub_resource type="Resource" id="Resource_tyl07"]
 script = ExtResource("1_1864r")

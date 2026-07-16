@@ -29,7 +29,7 @@ public partial class GrowingStatBehavior : StatBehavior {
             var healthComponent = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
             if (healthComponent != null) {
                 healthComponent.Heal(12);
-                GameLog.Debug(
+                GD.Print(
                     $"GrowingStatBehavior: 回复 12 点生命，当前 HP: {healthComponent.CurrentHealth}/{healthComponent.MaxHealth}");
             }
         }
