@@ -10,7 +10,7 @@ public partial class BattleRoom : Room {
     private BlockPilesHere _blockPilesHere;
     private Bot _bot;
     private Button _endTurnButton;
-    private Enemy[] _enemies;
+    private EnemyManager _enemyManager;
     private bool _isGameOver;
     private Player _player;
     private HealthComponent _playerHealth;
@@ -30,6 +30,7 @@ public partial class BattleRoom : Room {
         _bot = GetNode<Bot>("Bot");
         _battleTime = GetTree().Root.GetNode<BattleTime>("BattleTime");
         _endTurnButton = GetNode<Button>("%Button");
+        _enemyManager = GetNode<EnemyManager>("%EnemyManager");
 
         // 初始化 ActionManager
         var actionManager = GetNodeOrNull<ActionManager>("%ActionManager");
@@ -39,20 +40,25 @@ public partial class BattleRoom : Room {
             actionManager.Owner = this;
         }
 
-        if (EnemyChart?.EnemyDefs != null) {
-            SpawnEnemiesFromChart();
-        }
-
-        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
         _player = GetNode<Player>("Player");
         _playerHealth = _player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
         _isGameOver = false;
 
         _playerHealth.Died += OnPlayerDied;
 
-        GameLog.Debug($"检测到 {_enemies.Length} 个敌人");
-        if (_enemies.Length == 0) {
-            GameLog.Err("没有敌人！请配置 EnemyChart 或在场景中放置 Enemy 节点。");
+        // 初始化 EnemyManager
+        _enemyManager.Initialize(_player, _blockPilesHere);
+        _enemyManager.EnemyDied += OnEnemyDiedWrapper;
+        _enemyManager.AllEnemiesDefeated += OnAllEnemiesDefeated;
+
+        if (EnemyChart?.EnemyDefs != null) {
+            _enemyManager.SpawnFromChart(EnemyChart);
+        }
+
+        var enemyCount = _enemyManager.CountAlive();
+        GameLog.Debug($"检测到 {enemyCount} 个敌人");
+        if (enemyCount == 0) {
+            GameLog.Err("没有敌人！请配置 EnemyChart。");
             return;
         }
 
@@ -66,20 +72,29 @@ public partial class BattleRoom : Room {
 
         _blockPilesHere.InitializeDrawPile();
 
-        foreach (var enemy in _enemies) {
-            enemy.SetupAI(_blockPilesHere);
-            var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            if (hc != null) {
-                hc.Died += OnEnemyDied;
-            }
-        }
-
         RenderUnableGridCells();
 
         SetupPileViewerButtons();
 
         _roundNumber = 0;
         StartPlayerTurn();
+    }
+
+    /// <summary>
+    ///     敌人死亡时的包装方法，防止重复触发。
+    /// </summary>
+    private void OnEnemyDiedWrapper() {
+        if (_isGameOver) return;
+        // AllEnemiesDefeated 信号会在全部死亡时触发
+    }
+
+    /// <summary>
+    ///     所有敌人被击败时触发胜利流程。
+    /// </summary>
+    private void OnAllEnemiesDefeated() {
+        if (_isGameOver) return;
+        _bot.StopPatrol();
+        OnVictory();
     }
 
     public override void _ExitTree() {
@@ -98,6 +113,11 @@ public partial class BattleRoom : Room {
 
         if (_endTurnButton != null) {
             _endTurnButton.Pressed -= OnEndTurnPressed;
+        }
+
+        if (_enemyManager != null) {
+            _enemyManager.EnemyDied -= OnEnemyDiedWrapper;
+            _enemyManager.AllEnemiesDefeated -= OnAllEnemiesDefeated;
         }
 
         base._ExitTree();
@@ -158,8 +178,8 @@ public partial class BattleRoom : Room {
 
         Block.InputLocked = false;
 
-        MakeEnemiesClearOldBlocks();
-        MakeEnemiesExecuteTurn();
+        _enemyManager.ClearOldBlocks();
+        _enemyManager.ExecuteTurn();
 
         _blockPilesHere.ClearPlayerRound();
 
@@ -183,24 +203,8 @@ public partial class BattleRoom : Room {
     private void OnBotTurnEnded() {
         GameLog.Debug("Bot 执行结束");
 
-        // 将敌人攻击改为通过 ActionManager 入队（走 DamageAction，触发 Stat 钩子）
-        QueueEnemyAttacks();
-    }
-
-    private bool AreAllEnemiesDead() {
-        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
-        return _enemies.Length == 0 || _enemies.All(e => {
-            var hc = e.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            return hc == null || hc.IsDead;
-        });
-    }
-
-    private int CountAliveEnemies() {
-        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
-        return _enemies.Count(e => {
-            var hc = e.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            return hc != null && !hc.IsDead;
-        });
+        // 将敌人攻击通过 EnemyManager 入队（走 DamageAction，触发 Stat 钩子）
+        _enemyManager.QueueAttacks(this, OnAllEnemyAttacksResolved);
     }
 
     private void OnVictory() {
@@ -228,18 +232,6 @@ public partial class BattleRoom : Room {
             GetTree().Root.AddChild(stage);
             QueueFree();
         };
-    }
-
-    private void OnEnemyDied() {
-        if (_isGameOver) {
-            return;
-        }
-
-
-        if (AreAllEnemiesDead()) {
-            _bot.StopPatrol();
-            OnVictory();
-        }
     }
 
     private void OnPlayerDied() {
@@ -290,54 +282,6 @@ public partial class BattleRoom : Room {
         }
     }
 
-    private void MakeEnemiesClearOldBlocks() {
-        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
-        GameLog.Debug($"清理 {_enemies.Length} 个敌人的旧方块");
-        foreach (var enemy in _enemies) {
-            var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            if (hc == null || hc.IsDead) {
-                continue;
-            }
-
-            enemy.ClearBlocks();
-        }
-    }
-
-    private void MakeEnemiesExecuteTurn() {
-        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
-        GameLog.Debug($"执行 {_enemies.Length} 个敌人的 AI 意图");
-        foreach (var enemy in _enemies) {
-            var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            if (hc == null || hc.IsDead) {
-                continue;
-            }
-
-            enemy.ExecuteTurn();
-        }
-    }
-
-    /// <summary>
-    ///     将敌人的攻击转为 DamageAction 入队，走完整的 ActionManager 管线。
-    ///     每个敌人产生一个 DamageAction，全部入队后追加一个 CallbackAction
-    ///     等待所有攻击动作完成后再检查胜负。
-    /// </summary>
-    private void QueueEnemyAttacks() {
-        _enemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToArray();
-        foreach (var enemy in _enemies) {
-            var hc = enemy.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            if (hc == null || hc.IsDead) {
-                continue;
-            }
-
-            var damage = enemy.AttackDamage;
-            GameLog.Debug($"敌人 {enemy.Name} 对玩家造成 {damage} 点伤害");
-            ActionManager.Instance?.AddToBottom(new DamageAction(enemy, _player, damage, 0.2f));
-        }
-
-        // 所有攻击入队后，追加一个回调等待队列排空后检查胜负
-        ActionManager.Instance?.AddToBottom(new CallbackAction(OnAllEnemyAttacksResolved));
-    }
-
     /// <summary>
     ///     所有敌人攻击动作执行完毕后的回调。
     ///     检查玩家是否死亡、敌人是否全灭，然后开始下一回合或结束战斗。
@@ -347,42 +291,14 @@ public partial class BattleRoom : Room {
             return;
         }
 
-        if (AreAllEnemiesDead()) {
-            OnVictory();
+        if (_enemyManager.AreAllDead()) {
+            // OnAllEnemiesDefeated 信号会触发 OnVictory
             return;
         }
 
-        GameLog.Debug($"剩余敌人: {CountAliveEnemies()}");
+        GameLog.Debug($"剩余敌人: {_enemyManager.CountAlive()}");
 
         StartPlayerTurn();
-    }
-
-    private void SpawnEnemiesFromChart() {
-        var existingEnemies = GetTree().GetNodesInGroup("Enemies").OfType<Enemy>().ToList();
-        foreach (var enemy in existingEnemies) {
-            if (IsInstanceValid(enemy)) {
-                RemoveChild(enemy);
-                enemy.QueueFree();
-            }
-        }
-
-        var index = 0;
-        foreach (var enemyDef in EnemyChart.EnemyDefs) {
-            if (enemyDef == null) {
-                continue;
-            }
-
-
-            var enemyScene = GD.Load<PackedScene>("res://actors/enemy/Enemy.tscn");
-            var enemy = enemyScene.Instantiate<Enemy>();
-            enemy.Definition = enemyDef;
-            var x = 1300 + index * 200;
-            var y = 150 + index % 2 * 200;
-            enemy.Position = new Vector2(x, y);
-            AddChild(enemy);
-            GameLog.Debug($"SpawnEnemiesFromChart: 生成敌人 {enemyDef.EnemyName} 在 ({x}, {y})");
-            index++;
-        }
     }
 
     private void SetupPileViewerButtons() {
