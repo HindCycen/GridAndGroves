@@ -13,7 +13,9 @@ public partial class Room : Node2D {
 
     public override void _Ready() {
         _saveLoad = GetTree().Root.GetNode<SaveLoad>("SaveLoad");
-        _saveLoad.Load();
+        // 注意：不在此处调用 _saveLoad.Load()！
+        // 加载存档由 MainMenu.OnContinuePressed() 或自动恢复逻辑负责。
+        // 如果在 _Ready() 中加载，会覆盖 OnNewGamePressed() 刚设置的 ResetForNewGame 数据。
 
         if (ShowStatusBar) {
             // 场景中已预定义 StatusBar 节点，获取引用并显示
