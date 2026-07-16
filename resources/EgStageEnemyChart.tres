@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="StageEnemyChartDef" format=3 uid="uid://dw44f4w22fgp4"]
+[gd_resource type="Resource" script_class="StageEnemyChartDef" format=3]
 
-[ext_resource type="Script" uid="uid://d0403qta4f5dv" path="res://resources/StageEnemyChartDef.cs" id="1"]
-[ext_resource type="Script" uid="uid://bg63crehrnth1" path="res://resources/EnemyChartDef.cs" id="2_chart"]
+[ext_resource type="Script" path="res://resources/StageEnemyChartDef.cs" id="1"]
+[ext_resource type="Script" path="res://resources/EnemyChartDef.cs" id="2_chart"]
 
 [ext_resource type="Resource" path="res://resources/enemy_defs/Goblin.tres" id="3_goblin"]
 [ext_resource type="Resource" path="res://resources/enemy_defs/Slime.tres" id="4_slime"]

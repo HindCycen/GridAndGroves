@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="BlockPartDef" format=3 uid="uid://cne0evnm21bwa"]
+[gd_resource type="Resource" script_class="BlockPartDef" format=3]
 
-[ext_resource type="Texture2D" uid="uid://ernt7yx2pi0t" path="res://resources/blockpart_picture/green/Blank-G.png" id="1_2iloy"]
-[ext_resource type="Script" uid="uid://cxi0d1tnlamis" path="res://blocks/BlockPartDef.cs" id="1_enoqm"]
+[ext_resource type="Texture2D" path="res://resources/blockpart_picture/green/Blank-G.png" id="1_2iloy"]
+[ext_resource type="Script" path="res://blocks/BlockPartDef.cs" id="1_enoqm"]
 
 [resource]
 script = ExtResource("1_enoqm")

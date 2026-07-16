@@ -2,288 +2,288 @@ using System.Collections.Generic;
 using Godot;
 
 public partial class StageRoom : Room {
-    public const int Cols = 14;      // 地图列数
-    public const int Rows = 7;       // 地图行数
-    private const int CellSize = 96;
+	public const int Cols = 14;      // 地图列数
+	public const int Rows = 7;       // 地图行数
+	private const int CellSize = 96;
 
-    /// <summary>当前活跃的 StageRoom 实例，供 SaveLoad 访问地图数据。</summary>
-    public static StageRoom Current { get; private set; }
+	/// <summary>当前活跃的 StageRoom 实例，供 SaveLoad 访问地图数据。</summary>
+	public static StageRoom Current { get; private set; }
 
-    public bool[,] Clickable;
-    public bool[,] Left;
-    public bool[,] IsBattleCell;
-    public bool MapGenerated;
-    private Sprite2D[,] _cells;
-    private Tween _flashTween;
+	public bool[,] Clickable;
+	public bool[,] Left;
+	public bool[,] IsBattleCell;
+	public bool MapGenerated;
+	private Sprite2D[,] _cells;
+	private Tween _flashTween;
 
-    private Node2D _gridContainer;
+	private Node2D _gridContainer;
 
-    private bool _initialized;
-    private float _pulseTime;
-    private readonly List<(int col, int row)> _pulsingCells = new();
+	private bool _initialized;
+	private float _pulseTime;
+	private readonly List<(int col, int row)> _pulsingCells = new();
 
-    [Export] public StageDef StageDef;
+	[Export] public StageDef StageDef;
 
-    public override void _Ready() {
-        base._Ready();
-        Current = this;
+	public override void _Ready() {
+		base._Ready();
+		Current = this;
 
-        if (!MapGenerated) {
-            var loadedFromSave = TryRestoreMapFromSave();
-            if (!loadedFromSave) {
-                Clickable = new bool[Cols, Rows];
-                Left = new bool[Cols, Rows];
-                IsBattleCell = new bool[Cols, Rows];
-                GenerateMap();
-                Clickable[0, Rows - 1] = true;
-                RebuildPulsingCells();
-                MapGenerated = true;
-            }
-        }
+		if (!MapGenerated) {
+			var loadedFromSave = TryRestoreMapFromSave();
+			if (!loadedFromSave) {
+				Clickable = new bool[Cols, Rows];
+				Left = new bool[Cols, Rows];
+				IsBattleCell = new bool[Cols, Rows];
+				GenerateMap();
+				Clickable[0, Rows - 1] = true;
+				RebuildPulsingCells();
+				MapGenerated = true;
+			}
+		}
 
-        _gridContainer = GetNode<Node2D>("%GridContainer");
+		_gridContainer = GetNode<Node2D>("%GridContainer");
 
-        var totalWidth = Cols * CellSize;
-        var totalHeight = Rows * CellSize;
-        _gridContainer.Position = new Vector2(
-            (1920 - totalWidth) / 2,
-            (1080 - totalHeight) / 2
-        );
+		var totalWidth = Cols * CellSize;
+		var totalHeight = Rows * CellSize;
+		_gridContainer.Position = new Vector2(
+			(1920 - totalWidth) / 2,
+			(1080 - totalHeight) / 2
+		);
 
-        _cells = new Sprite2D[Cols, Rows];
-        BuildGridVisuals();
-        _initialized = true;
-    }
+		_cells = new Sprite2D[Cols, Rows];
+		BuildGridVisuals();
+		_initialized = true;
+	}
 
-    private void GenerateMap() {
-        _ = GD.Load<Texture2D>("res://room/room_pictures/BattleRoomBn.png");
-        _ = GD.Load<Texture2D>("res://room/room_pictures/EventRoomBn.png");
+	private void GenerateMap() {
+		_ = GD.Load<Texture2D>("res://room/room_pictures/BattleRoomBn.png");
+		_ = GD.Load<Texture2D>("res://room/room_pictures/EventRoomBn.png");
 
-        for (var col = 0; col < Cols; col++) {
-            for (var row = 0; row < Rows; row++) {
-                if ((col == 0 && row == Rows - 1) || (col == Cols - 1 && row == 0)) {
-                    IsBattleCell[col, row] = true;
-                }
-                else {
-                    IsBattleCell[col, row] = Glob.GetMapRand(2) == 0;
-                }
-            }
-        }
+		for (var col = 0; col < Cols; col++) {
+			for (var row = 0; row < Rows; row++) {
+				if ((col == 0 && row == Rows - 1) || (col == Cols - 1 && row == 0)) {
+					IsBattleCell[col, row] = true;
+				}
+				else {
+					IsBattleCell[col, row] = Glob.GetMapRand(2) == 0;
+				}
+			}
+		}
 
-        if (_saveLoad?.Data != null &&
-            (_saveLoad.Data.GridClickable == null || _saveLoad.Data.GridClickable.Length == 0)) {
-            _saveLoad.Data.StageCount++;
-        }
-    }
+		if (_saveLoad?.Data != null &&
+			(_saveLoad.Data.GridClickable == null || _saveLoad.Data.GridClickable.Length == 0)) {
+			_saveLoad.Data.StageCount++;
+		}
+	}
 
-    private bool TryRestoreMapFromSave() {
-        var data = _saveLoad?.Data;
-        if (data?.GridClickable == null || data.GridClickable.Length == 0) {
-            return false;
-        }
-
-
-        if (data.GridLeft == null || data.GridLeft.Length == 0) {
-            return false;
-        }
+	private bool TryRestoreMapFromSave() {
+		var data = _saveLoad?.Data;
+		if (data?.GridClickable == null || data.GridClickable.Length == 0) {
+			return false;
+		}
 
 
-        if (data.GridIsBattleCell == null || data.GridIsBattleCell.Length == 0) {
-            return false;
-        }
+		if (data.GridLeft == null || data.GridLeft.Length == 0) {
+			return false;
+		}
 
 
-        var totalCells = Cols * Rows;
-        if (data.GridClickable.Length != totalCells) {
-            return false;
-        }
+		if (data.GridIsBattleCell == null || data.GridIsBattleCell.Length == 0) {
+			return false;
+		}
 
 
-        Clickable = new bool[Cols, Rows];
-        Left = new bool[Cols, Rows];
-        IsBattleCell = new bool[Cols, Rows];
-
-        for (var col = 0; col < Cols; col++) {
-            for (var row = 0; row < Rows; row++) {
-                var index = row * Cols + col;
-                Clickable[col, row] = data.GridClickable[index] != 0;
-                Left[col, row] = data.GridLeft[index] != 0;
-                IsBattleCell[col, row] = data.GridIsBattleCell[index] != 0;
-            }
-        }
-
-        MapGenerated = true;
-        return true;
-    }
-
-    private void BuildGridVisuals() {
-        var battleTex = GD.Load<Texture2D>("res://room/room_pictures/BattleRoomBn.png");
-        var eventTex = GD.Load<Texture2D>("res://room/room_pictures/EventRoomBn.png");
-
-        for (var col = 0; col < Cols; col++) {
-            for (var row = 0; row < Rows; row++) {
-                var tex = IsBattleCell[col, row] ? battleTex : eventTex;
-
-                var sprite = new Sprite2D {
-                    Texture = tex,
-                    Position = new Vector2(col * CellSize + CellSize / 2, row * CellSize + CellSize / 2)
-                };
-
-                if (Left[col, row]) {
-                    sprite.Modulate = new Color(1, 1, 1, 0.5f);
-                }
-                else if (Clickable[col, row]) {
-                    sprite.Modulate = new Color(1, 1, 1, 0);
-                }
-                else {
-                    sprite.Modulate = new Color(1, 1, 1);
-                }
-
-                _gridContainer.AddChild(sprite);
-                _cells[col, row] = sprite;
-
-                var area = new Area2D {
-                    Name = $"Cell_{col}_{row}"
-                };
-                var shape = new CollisionShape2D();
-                var rect = new RectangleShape2D {
-                    Size = new Vector2(CellSize, CellSize)
-                };
-                shape.Shape = rect;
-                area.AddChild(shape);
-                area.Position = sprite.Position;
-
-                var capturedCol = col;
-                var capturedRow = row;
-                area.InputEvent += (_, @event, _) => {
-                    if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true }) {
-                        OnCellClicked(capturedCol, capturedRow);
-                    }
-                };
-                _gridContainer.AddChild(area);
-            }
-        }
-    }
-
-    /// <summary>
-    ///     重建脉冲动画格列表。每次 Clickable 状态变化后调用。
-    /// </summary>
-    private void RebuildPulsingCells() {
-        _pulsingCells.Clear();
-        for (var col = 0; col < Cols; col++) {
-            for (var row = 0; row < Rows; row++) {
-                if (Clickable[col, row] && !Left[col, row]) {
-                    _pulsingCells.Add((col, row));
-                }
-            }
-        }
-    }
-
-    public override void _Process(double delta) {
-        if (!_initialized) {
-            return;
-        }
+		var totalCells = Cols * Rows;
+		if (data.GridClickable.Length != totalCells) {
+			return false;
+		}
 
 
-        _pulseTime += (float) delta;
-        var alpha = (Mathf.Sin(_pulseTime * Mathf.Pi * 2) + 1) / 2;
+		Clickable = new bool[Cols, Rows];
+		Left = new bool[Cols, Rows];
+		IsBattleCell = new bool[Cols, Rows];
 
-        for (var col = 0; col < Cols; col++) {
-            for (var row = 0; row < Rows; row++) {
-                if (Clickable[col, row] && !Left[col, row]) {
-                    var c = _cells[col, row].Modulate;
-                    _cells[col, row].Modulate = new Color(c.R, c.G, c.B, alpha);
-                }
-            }
-        }
-    }
+		for (var col = 0; col < Cols; col++) {
+			for (var row = 0; row < Rows; row++) {
+				var index = row * Cols + col;
+				Clickable[col, row] = data.GridClickable[index] != 0;
+				Left[col, row] = data.GridLeft[index] != 0;
+				IsBattleCell[col, row] = data.GridIsBattleCell[index] != 0;
+			}
+		}
 
-    private void OnCellClicked(int col, int row) {
-        if (!Clickable[col, row] || Left[col, row]) {
-            return;
-        }
+		MapGenerated = true;
+		return true;
+	}
+
+	private void BuildGridVisuals() {
+		var battleTex = GD.Load<Texture2D>("res://room/room_pictures/BattleRoomBn.png");
+		var eventTex = GD.Load<Texture2D>("res://room/room_pictures/EventRoomBn.png");
+
+		for (var col = 0; col < Cols; col++) {
+			for (var row = 0; row < Rows; row++) {
+				var tex = IsBattleCell[col, row] ? battleTex : eventTex;
+
+				var sprite = new Sprite2D {
+					Texture = tex,
+					Position = new Vector2(col * CellSize + CellSize / 2, row * CellSize + CellSize / 2)
+				};
+
+				if (Left[col, row]) {
+					sprite.Modulate = new Color(1, 1, 1, 0.5f);
+				}
+				else if (Clickable[col, row]) {
+					sprite.Modulate = new Color(1, 1, 1, 0);
+				}
+				else {
+					sprite.Modulate = new Color(1, 1, 1);
+				}
+
+				_gridContainer.AddChild(sprite);
+				_cells[col, row] = sprite;
+
+				var area = new Area2D {
+					Name = $"Cell_{col}_{row}"
+				};
+				var shape = new CollisionShape2D();
+				var rect = new RectangleShape2D {
+					Size = new Vector2(CellSize, CellSize)
+				};
+				shape.Shape = rect;
+				area.AddChild(shape);
+				area.Position = sprite.Position;
+
+				var capturedCol = col;
+				var capturedRow = row;
+				area.InputEvent += (_, @event, _) => {
+					if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true }) {
+						OnCellClicked(capturedCol, capturedRow);
+					}
+				};
+				_gridContainer.AddChild(area);
+			}
+		}
+	}
+
+	/// <summary>
+	///     重建脉冲动画格列表。每次 Clickable 状态变化后调用。
+	/// </summary>
+	private void RebuildPulsingCells() {
+		_pulsingCells.Clear();
+		for (var col = 0; col < Cols; col++) {
+			for (var row = 0; row < Rows; row++) {
+				if (Clickable[col, row] && !Left[col, row]) {
+					_pulsingCells.Add((col, row));
+				}
+			}
+		}
+	}
+
+	public override void _Process(double delta) {
+		if (!_initialized) {
+			return;
+		}
 
 
-        if (_flashTween != null && _flashTween.IsRunning()) {
-            return;
-        }
+		_pulseTime += (float) delta;
+		var alpha = (Mathf.Sin(_pulseTime * Mathf.Pi * 2) + 1) / 2;
+
+		for (var col = 0; col < Cols; col++) {
+			for (var row = 0; row < Rows; row++) {
+				if (Clickable[col, row] && !Left[col, row]) {
+					var c = _cells[col, row].Modulate;
+					_cells[col, row].Modulate = new Color(c.R, c.G, c.B, alpha);
+				}
+			}
+		}
+	}
+
+	private void OnCellClicked(int col, int row) {
+		if (!Clickable[col, row] || Left[col, row]) {
+			return;
+		}
 
 
-        _flashTween = CreateTween();
-        for (var i = 0; i < 3; i++) {
-            _flashTween.TweenProperty(_cells[col, row], "modulate:a", 0.0, 0.15);
-            _flashTween.TweenProperty(_cells[col, row], "modulate:a", 1.0, 0.15);
-        }
-
-        _flashTween.TweenCallback(Callable.From(() => EnterRoom(col, row)));
-    }
-
-    private void EnterRoom(int col, int row) {
-        Left[col, row] = true;
-        _cells[col, row].Modulate = new Color(1, 1, 1, 0.5f);
-
-        for (var c = 0; c < Cols; c++) {
-            for (var r = 0; r < Rows; r++) {
-                Clickable[c, r] = false;
-            }
-        }
-
-        if (row > 0) {
-            Clickable[col, row - 1] = true;
-        }
+		if (_flashTween != null && _flashTween.IsRunning()) {
+			return;
+		}
 
 
-        if (col < Cols - 1) {
-            Clickable[col + 1, row] = true;
-        }
+		_flashTween = CreateTween();
+		for (var i = 0; i < 3; i++) {
+			_flashTween.TweenProperty(_cells[col, row], "modulate:a", 0.0, 0.15);
+			_flashTween.TweenProperty(_cells[col, row], "modulate:a", 1.0, 0.15);
+		}
 
-        RebuildPulsingCells();
+		_flashTween.TweenCallback(Callable.From(() => EnterRoom(col, row)));
+	}
 
-        var isBattle = IsBattleCell[col, row];
+	private void EnterRoom(int col, int row) {
+		Left[col, row] = true;
+		_cells[col, row].Modulate = new Color(1, 1, 1, 0.5f);
 
-        // 保存当前 StageDef 路径，供 BattleRoom 读取初始牌组
-        if (_saveLoad?.Data != null && StageDef != null) {
-            _saveLoad.Data.StageDefPath = StageDef.ResourcePath;
-        }
+		for (var c = 0; c < Cols; c++) {
+			for (var r = 0; r < Rows; r++) {
+				Clickable[c, r] = false;
+			}
+		}
 
-        _saveLoad?.Save();
+		if (row > 0) {
+			Clickable[col, row - 1] = true;
+		}
 
-        if (isBattle) {
-            var roomCount = _saveLoad?.Data?.RoomCount ?? 0;
-            var stageEnemyChart = GD.Load<StageEnemyChartDef>("res://resources/EgStageEnemyChart.tres");
-            EnemyChartDef chartDef;
-            if (roomCount == 20) {
-                chartDef = stageEnemyChart.BossChart[Glob.GetMonsterRand(stageEnemyChart.BossChart.Length)];
-            }
-            else if (roomCount > 6) {
-                chartDef = stageEnemyChart.StrongEnemyChart[
-                    Glob.GetMonsterRand(stageEnemyChart.StrongEnemyChart.Length)];
-            }
-            else {
-                chartDef = stageEnemyChart.WeakEnemyChart[Glob.GetMonsterRand(stageEnemyChart.WeakEnemyChart.Length)];
-            }
 
-            var battleScene = GD.Load<PackedScene>("res://room/BattleRoom.tscn");
-            var battle = battleScene.Instantiate<BattleRoom>();
-            battle.EnemyChart = chartDef;
-            GetTree().Root.AddChild(battle);
-            QueueFree();
-        }
-        else {
-            EventDef pickedEvent = null;
-            if (StageDef?.StageEventRand?.PossibleEvents != null && StageDef.StageEventRand.PossibleEvents.Length > 0) {
-                var idx = Glob.GetMapRand(StageDef.StageEventRand.PossibleEvents.Length);
-                pickedEvent = StageDef.StageEventRand.PossibleEvents[idx];
-            }
-            else {
-                pickedEvent = GD.Load<EventDef>("res://resources/EgHealEvent.tres");
-            }
+		if (col < Cols - 1) {
+			Clickable[col + 1, row] = true;
+		}
 
-            var eventScene = GD.Load<PackedScene>("res://room/EventRoom.tscn");
-            var eventRoom = eventScene.Instantiate<EventRoom>();
-            eventRoom.EventDef = pickedEvent;
-            GetTree().Root.AddChild(eventRoom);
-            QueueFree();
-        }
-    }
+		RebuildPulsingCells();
+
+		var isBattle = IsBattleCell[col, row];
+
+		// 保存当前 StageDef 路径，供 BattleRoom 读取初始牌组
+		if (_saveLoad?.Data != null && StageDef != null) {
+			_saveLoad.Data.StageDefPath = StageDef.ResourcePath;
+		}
+
+		_saveLoad?.Save();
+
+		if (isBattle) {
+			var roomCount = _saveLoad?.Data?.RoomCount ?? 0;
+			var stageEnemyChart = GD.Load<StageEnemyChartDef>("res://resources/EgStageEnemyChart.tres");
+			EnemyChartDef chartDef;
+			if (roomCount == 20) {
+				chartDef = stageEnemyChart.BossChart[Glob.GetMonsterRand(stageEnemyChart.BossChart.Length)];
+			}
+			else if (roomCount > 6) {
+				chartDef = stageEnemyChart.StrongEnemyChart[
+					Glob.GetMonsterRand(stageEnemyChart.StrongEnemyChart.Length)];
+			}
+			else {
+				chartDef = stageEnemyChart.WeakEnemyChart[Glob.GetMonsterRand(stageEnemyChart.WeakEnemyChart.Length)];
+			}
+
+			var battleScene = GD.Load<PackedScene>("res://room/BattleRoom.tscn");
+			var battle = battleScene.Instantiate<BattleRoom>();
+			battle.EnemyChart = chartDef;
+			GetTree().Root.AddChild(battle);
+			QueueFree();
+		}
+		else {
+			EventDef pickedEvent = null;
+			if (StageDef?.StageEventRand?.PossibleEvents != null && StageDef.StageEventRand.PossibleEvents.Length > 0) {
+				var idx = Glob.GetMapRand(StageDef.StageEventRand.PossibleEvents.Length);
+				pickedEvent = StageDef.StageEventRand.PossibleEvents[idx];
+			}
+			else {
+				pickedEvent = GD.Load<EventDef>("res://resources/EgHealEvent.tres");
+			}
+
+			var eventScene = GD.Load<PackedScene>("res://room/EventRoom.tscn");
+			var eventRoom = eventScene.Instantiate<EventRoom>();
+			eventRoom.EventDef = pickedEvent;
+			GetTree().Root.AddChild(eventRoom);
+			QueueFree();
+		}
+	}
 }

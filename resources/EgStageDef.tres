@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="StageDef" format=3 uid="uid://88gs1aj6p221"]
+[gd_resource type="Resource" script_class="StageDef" format=3]
 
-[ext_resource type="Script" uid="uid://djosigrbyog20" path="res://resources/StageDef.cs" id="1"]
-[ext_resource type="Resource" uid="uid://dw44f4w22fgp4" path="res://resources/EgStageEnemyChart.tres" id="2"]
-[ext_resource type="Script" uid="uid://dbh8tdsvcvdc1" path="res://resources/EventRand.cs" id="3"]
-[ext_resource type="Script" uid="uid://ce8i8obfyk81b" path="res://resources/EventDef.cs" id="4"]
-[ext_resource type="Script" uid="uid://vko50f351v7p" path="res://resources/EventChoiceDef.cs" id="5"]
+[ext_resource type="Script" path="res://resources/StageDef.cs" id="1"]
+[ext_resource type="Resource" path="res://resources/EgStageEnemyChart.tres" id="2"]
+[ext_resource type="Script" path="res://resources/EventRand.cs" id="3"]
+[ext_resource type="Script" path="res://resources/EventDef.cs" id="4"]
+[ext_resource type="Script" path="res://resources/EventChoiceDef.cs" id="5"]
 
 [sub_resource type="Resource" id="SubResource_choice1"]
 script = ExtResource("5")

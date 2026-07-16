@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b47iaj6kvlo3h"]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://components/AIComponent.cs" id="1_ai"]
 
