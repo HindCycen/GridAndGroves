@@ -176,3 +176,16 @@ bool isValid = Glob.CurrentCardPool.Contains("ExampleBlock");
 - `docs/如何制作BlockAndStat内容.md` — Block/Stat 内容制作完整指南
 - `docs/StageRoom.md` — 楼层内循环系统文档
 - `stats/STAT_BEHAVIOR_SYSTEM.md` — StatBehavior 自动执行系统文档
+- `.github/instructions/card-pack-design.instructions.md` — 卡包设计核心原则（三个主包的设计差异、特性标签、设计禁忌）
+- `planning/card_pack_design/` — 完整卡包设计示例（包含每个包的 Block 列表、新增 Behavior/Stat 建议）
+
+### 卡包设计文件索引
+
+| 文件 | 内容 |
+|------|------|
+| `planning/card_pack_design/README.md` | 部件位置系统、Block 稀有度、特性标签总览 |
+| `planning/card_pack_design/pack_ranger.md` | 铁锈游侠 — 松动/过载/锈蚀 |
+| `planning/card_pack_design/pack_weaver.md` | 星语术士 — 共鸣/星涌/法阵 |
+| `planning/card_pack_design/pack_sentinel.md` | 翠绿哨兵 — 扎根/藤蔓/共生 |
+| `planning/card_pack_design/minipacks.md` | 5 个小卡包 Block 列表 |
+| `planning/card_pack_design/technical.md` | Behavior/Stat 技术实现细节 |

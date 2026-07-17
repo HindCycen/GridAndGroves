@@ -10,6 +10,7 @@ You are a content creation specialist for the Grid and Groves Godot 4.6 C# game 
 ## Constraints
 - DO read `docs/如何编写Resource文件.md` before creating any Resource type
 - DO read `docs/如何制作BlockAndStat内容.md` before creating blocks or stats
+- DO read `.github/instructions/card-pack-design.instructions.md` before designing new blocks for a specific pack
 - DO follow the existing code patterns exactly — naming, structure, conventions
 - DO register new blocks in `OriginalBlockRegisterer.cs` after creating them
 - DO NOT modify core systems (ActionManager, BattleTime, Glob) when adding content
