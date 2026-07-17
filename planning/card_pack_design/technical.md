@@ -26,8 +26,8 @@
 | StatDef | 触发时机 | 效果 |
 |---------|----------|------|
 | `OverloadStat` | `OnPostBlockExecute` 递增；被 SpendOverloadBehavior 消耗时归零；`OnTurnEnded` 清零 | 本回合触发次数计数（仅计入带过载标签的 Block） |
-| `RustStat` | `OnBeforeDamageApply` | 每层减少敌人造成的伤害 2 点 |
-| `VineStat` | `OnTurnEnded` | 每层对敌人造成 3 伤害，层数 -1 |
+| `RustStat` | `OnBeforeDamageApply` | 每层减少敌人造成的伤害 1 点 |
+| `VineStat` | `OnTurnEnded` | 每层对敌人造成 1 伤害，层数 -1 |
 | `SymbiosisStat` | `OnPostBlockExecute` | 统计场上己方 Block 数，每有 1 个获得护盾 |
 
 ---

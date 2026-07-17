@@ -27,10 +27,10 @@
 
 | StatDef | 类型 | 效果 |
 |---------|------|------|
-| `Rust` | `OnBeforeDamageApply` | 每层减少敌人造成的伤害 2 点 |
+| `Rust` | `OnBeforeDamageApply` | 每层减少敌人造成的伤害 1 点 |
 | `OverloadCounter` | `OnPostBlockExecute` 计数，`OnTurnEnded` 归零 | 记录触发次数，特定值触发 |
 | `Starburst` | `OnTurnEnded` | 按层数造成额外伤害 |
-| `Vine` | `OnTurnEnded` | 每层对敌人造成 3 伤害，层数 -1 |
+| `Vine` | `OnTurnEnded` | 每层对敌人造成 1 伤害，层数 -1 |
 | `Symbiosis` | `OnPostBlockExecute` | 场上每有 1 个己方 Block 获得护盾 |
 
 ## 🔧 游戏循环修改建议

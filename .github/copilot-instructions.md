@@ -184,6 +184,7 @@ bool isValid = Glob.CurrentCardPool.Contains("ExampleBlock");
 | 文件 | 内容 |
 |------|------|
 | `planning/card_pack_design/README.md` | 部件位置系统、Block 稀有度、特性标签总览 |
+| `planning/card_pack_design/balance.md` | 数值平衡框架（StS 对照、形状效率、价值公式） |
 | `planning/card_pack_design/pack_ranger.md` | 铁锈游侠 — 松动/过载/锈蚀 |
 | `planning/card_pack_design/pack_weaver.md` | 星语术士 — 共鸣/星涌/法阵 |
 | `planning/card_pack_design/pack_sentinel.md` | 翠绿哨兵 — 扎根/藤蔓/共生 |
