@@ -17,7 +17,6 @@ Thumbs.db
 
 # ─── Godot Engine ───
 .godot/
-*.uid
 *.import
 *.reimport
 export_presets.cfg
