@@ -1,112 +1,38 @@
-# Build results
+# ─── Build / IDE / OS ───
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
-x86/
-build/
-bld/
 [Bb]in/
 [Oo]bj/
-.github/
-
-# Visual Studio
 .vs/
-*.userprefs
+.vscode/
+.idea/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-
-# Visual Studio Code
-.vscode/
-
-# Mono
-[Mm]onoDevelop/
-*.pidb
-*.userprefs
-
-# ReSharper
-_ReSharper*/
-*.[Rr]e[Ss]harper
-*.[Rr]e[Ss]harper.*
-
-# JetBrains Rider
-.idea/
-.lingma/
-
-# OS generated files
-ehthumbs.db
 Thumbs.db
 .DS_Store
 
-# Godot specific
+# ─── Godot Engine ───
 .godot/
 *.import
 *.reimport
-
-# Godot exported projects
 export_presets.cfg
-
-# Godot temporary files
 .autoload.gd
 .tmp/
 
-# Editor settings that are user specific
+# ─── Editor settings (user-specific) ───
 .editor_settings-4.tres
 
-# Godot project files that shouldn't be version controlled
-*.scn
-*.old
-*.gdns
-*.gdnlib
-*.import
-*.metadata
-*.tmp
+# ─── NuGet / packages ───
+packages/
+*.nupkg
 
-# Unity specific
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Aa]ssets/AssetStoreTools*
-[Oo]ut/
-
-# Unity crash reports
-Crashes/
-
-# Unity logs
+# ─── Logs ───
 *.log
-
-# Unity settings folders
-ProjectSettings/
-Packages/
-UserSettings/
-
-# Unity meta files
-*.meta
-
-# Unity serialization (if using text serialization)
-*.unity
-*.prefab
-*.mat
-*.asset
-*.anim
-*.controller
-*.mask
-*.physicsMaterial
-*.mat.meta
-*.unity.meta
-*.prefab.meta
-*.anim.meta
-*.controller.meta
-*.mask.meta
-*.physicsMaterial.meta
-
-# Unity cache
-/Library/Caches/*
+logs/
 
 # Unity Asset Store tools
 Assets/AssetStoreTools*
@@ -126,3 +52,27 @@ Editor.log
 
 # Unity Player.log
 Player.log
+
+# Slay the Spire Code
+foreign-influence/
+memory/
+
+# Python / AI tools
+tools/venv/
+tools/output/
+tools/models/
+__pycache__/
+*.pyc
+*.pyo
+
+# AI model files (large .safetensors checkpoints)
+*.safetensors
+*.bin
+*.ckpt
+*.pt
+*.pth
+
+# HuggingFace / torch cache
+.cache/
+.huggingface_cache/
+*.h5
