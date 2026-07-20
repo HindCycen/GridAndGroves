@@ -11,10 +11,17 @@ config_version=5
 [application]
 
 config/name="Grid And Groves"
+run/main_scene="res://test/test_grid.tscn"
 config/features=PackedStringArray("4.7")
+
+[autoload]
+
+GridLibrary="*uid://7k45h13ip18r"
 
 [display]
 
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

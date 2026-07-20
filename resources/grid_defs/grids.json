@@ -1,0 +1,106 @@
+{
+	"pictures": {
+		"attack_g": "res://resources/blockpart_picture/green/Attack-G.png",
+		"shield_g": "res://resources/blockpart_picture/green/Shield-G.png",
+		"blank_g":  "res://resources/blockpart_picture/green/Blank-G.png",
+		"right_g":  "res://resources/blockpart_picture/green/Right-G.png",
+		"grey_atk": "res://resources/blockpart_picture/grey/GreyAttack.png",
+		"grey_plain": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+		"shield_b": "res://resources/blockpart_picture/blue/Shield.png"
+	},
+
+	"grids": [
+		{
+			"id": "strike",
+			"display_name": "打击",
+			"special_tag": "",
+			"parts": [
+				{
+					"position": [0, 0],
+					"picture_id": "attack_g",
+					"damage": 6,
+					"shield": 0,
+					"magic_number": 0,
+					"behavior": "DamageBehavior"
+				},
+				{
+					"position": [1, 0],
+					"picture_id": "attack_g",
+					"damage": 6,
+					"shield": 0,
+					"magic_number": 0,
+					"behavior": "DamageBehavior"
+				}
+			]
+		},
+		{
+			"id": "defend",
+			"display_name": "防御",
+			"special_tag": "",
+			"parts": [
+				{
+					"position": [0, 0],
+					"picture_id": "shield_b",
+					"damage": 0,
+					"shield": 5,
+					"magic_number": 0,
+					"behavior": "ShieldBehavior"
+				}
+			]
+		},
+		{
+			"id": "strong_strike",
+			"display_name": "重击",
+			"special_tag": "",
+			"parts": [
+				{
+					"position": [0, 0],
+					"picture_id": "attack_g",
+					"damage": 10,
+					"shield": 0,
+					"magic_number": 0,
+					"behavior": "DamageBehavior"
+				},
+				{
+					"position": [0, 1],
+					"picture_id": "attack_g",
+					"damage": 10,
+					"shield": 0,
+					"magic_number": 0,
+					"behavior": "DamageBehavior"
+				}
+			]
+		},
+		{
+			"id": "fortify",
+			"display_name": "强化",
+			"special_tag": "",
+			"parts": [
+				{
+					"position": [0, 0],
+					"picture_id": "shield_b",
+					"damage": 0,
+					"shield": 3,
+					"magic_number": 0,
+					"behavior": "ShieldBehavior"
+				},
+				{
+					"position": [1, 0],
+					"picture_id": "shield_b",
+					"damage": 0,
+					"shield": 3,
+					"magic_number": 0,
+					"behavior": "ShieldBehavior"
+				},
+				{
+					"position": [2, 0],
+					"picture_id": "shield_b",
+					"damage": 0,
+					"shield": 3,
+					"magic_number": 0,
+					"behavior": "ShieldBehavior"
+				}
+			]
+		}
+	]
+}
