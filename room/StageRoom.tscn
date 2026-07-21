@@ -1,12 +1,12 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://room/StageRoom.cs" id="1"]
+[ext_resource type="Script" path="res://room/StageRoom.gd" id="1"]
 [ext_resource type="PackedScene" path="res://room/Room.tscn" id="2"]
 [ext_resource type="Resource" path="res://resources/EgStageDef.tres" id="3"]
 
 [node name="StageRoom" unique_id=1436153365 instance=ExtResource("2")]
 script = ExtResource("1")
-StageDef = ExtResource("3")
+StageDefRef = ExtResource("3")
 
 [node name="GridContainer" type="Node2D" parent="."]
 unique_name_in_owner = true

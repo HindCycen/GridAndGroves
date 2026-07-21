@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://components/ShieldComponent.cs" id="1_a01ic"]
+[ext_resource type="Script" path="res://components/ShieldComponent.gd" id="1_a01ic"]
 
 [node name="ShieldComponent" type="Node" unique_id=892839064]
 script = ExtResource("1_a01ic")

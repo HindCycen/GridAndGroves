@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3]
 
 [ext_resource type="Texture2D" path="res://resources/blockpart_picture/green/Attack-G.png" id="2_ijprj"]
-[ext_resource type="Script" path="res://blocks/BlockPartDef.cs" id="2_kqin3"]
-[ext_resource type="Script" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.cs" id="3_dmgbh"]
+[ext_resource type="Script" path="res://blocks/BlockPartDef.gd" id="2_kqin3"]
+[ext_resource type="Script" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" id="3_dmgbh"]
 
 [sub_resource type="Resource" id="Resource_dmgbh"]
 script = ExtResource("3_dmgbh")
-metadata/_custom_type_script = "res://resources/blockpart_behaviors/DamageEnemyBehavior.cs"
+metadata/_custom_type_script = "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
 
 [resource]
 script = ExtResource("2_kqin3")
@@ -16,4 +16,4 @@ Description = "Deal %D% damage to the enemy."
 MovingDirection = Vector2i(0, 1)
 PartId = "DamagePart"
 SpriteTexture = ExtResource("2_ijprj")
-metadata/_custom_type_script = "uid://cxi0d1tnlamis"
+metadata/_custom_type_script = "uid://cwfcoh68fk0qt"

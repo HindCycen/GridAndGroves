@@ -1,14 +1,13 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c2s7w52q7tixu"]
 
-[ext_resource type="Script" path="res://room/BattleRoom.cs" id="1_2ckr4"]
+[ext_resource type="Script" uid="uid://bnwjd6qnbp5y5" path="res://room/BattleRoom.gd" id="1_2ckr4"]
 [ext_resource type="PackedScene" path="res://room/Room.tscn" id="2_room"]
 [ext_resource type="PackedScene" path="res://actors/player/Player.tscn" id="5_v3re7"]
 [ext_resource type="PackedScene" path="res://components/PileComponent.tscn" id="6_dgjnm"]
-[ext_resource type="Script" path="res://actors/player/Player.cs" id="6_r8nfv"]
-[ext_resource type="Script" path="res://room/BlockPilesHere.cs" id="6_wuq8c"]
-[ext_resource type="Script" path="res://room/Bot.cs" id="8_pfxs1"]
-[ext_resource type="Texture2D" path="res://room/bot_frames/BotFrames.png" id="9_q5nyf"]
-[ext_resource type="Texture2D" path="res://room/battle_background/UpperLayer.png" id="11_pk84k"]
+[ext_resource type="Script" uid="uid://umgo0sx8874p" path="res://room/BlockPilesHere.gd" id="6_wuq8c"]
+[ext_resource type="Script" uid="uid://cc4m0c4m2j5a4" path="res://room/Bot.gd" id="8_pfxs1"]
+[ext_resource type="Texture2D" uid="uid://c2bl4tcrb250p" path="res://room/bot_frames/BotFrames.png" id="9_q5nyf"]
+[ext_resource type="Texture2D" uid="uid://dbnuq7l4502ms" path="res://room/battle_background/UpperLayer.png" id="11_pk84k"]
 [ext_resource type="PackedScene" path="res://actors/enemy/Enemy.tscn" id="12_fn3my"]
 [ext_resource type="Resource" path="res://resources/enemy_defs/Gonh.tres" id="13_enemydef"]
 [ext_resource type="PackedScene" path="res://room/EnemyManager.tscn" id="14_enemymgr"]
@@ -131,7 +130,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_g052k")
 }],
-"loop": true,
+"loop": 1,
 "name": &"bot_animation",
 "speed": 16.0
 }]
@@ -180,14 +179,13 @@ offset = Vector2(480, 540)
 [node name="Player" parent="." index="4" unique_id=1603292337 instance=ExtResource("5_v3re7")]
 unique_name_in_owner = true
 position = Vector2(300, 200)
-script = ExtResource("6_r8nfv")
 
-[node name="BlockPilesHere" type="Node2D" parent="." index="5" unique_id=327451874 node_paths=PackedStringArray("DiscardedPile", "DrawPile", "PlacedPile", "Player", "ShowingPile")]
+[node name="BlockPilesHere" type="Node2D" parent="." index="5" unique_id=327451874 node_paths=PackedStringArray("DiscardedPile", "DrawPile", "PlacedPile", "PlayerCharacter", "ShowingPile")]
 script = ExtResource("6_wuq8c")
 DiscardedPile = NodePath("DiscardedPileComponent")
 DrawPile = NodePath("DrawPileComponent")
 PlacedPile = NodePath("PlacedPileComponent")
-Player = NodePath("../Player")
+PlayerCharacter = NodePath("../Player")
 ShowingPile = NodePath("ShowingPileComponent")
 
 [node name="DrawPileComponent" parent="BlockPilesHere" index="0" unique_id=1999516964 instance=ExtResource("6_dgjnm")]
@@ -203,5 +201,9 @@ unique_name_in_owner = true
 [node name="PlacedPileComponent" parent="BlockPilesHere" index="3" unique_id=1641088121 instance=ExtResource("6_dgjnm")]
 unique_name_in_owner = true
 
-[node name="EnemyManager" parent="." index="6" instance=ExtResource("14_enemymgr")]
+[node name="EnemyManager" parent="." index="6" unique_id=33798329 instance=ExtResource("14_enemymgr")]
 unique_name_in_owner = true
+
+[node name="TopBar" parent="." index="7"]
+offset_left = 0.0
+offset_top = 0.0

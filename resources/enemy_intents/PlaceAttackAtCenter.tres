@@ -1,18 +1,18 @@
-[gd_resource type="Resource" script_class="IntentDefinition" format=3]
+[gd_resource type="Resource" script_class="IntentDefinition" format=3 uid="uid://cvywj5jvyqpt8"]
 
-[ext_resource type="Resource" path="res://resources/blockdefs/EnemyAttackBlock.tres" id="1_blockdef"]
-[ext_resource type="Script" path="res://resources/IntentDefinition.cs" id="2_intent"]
-[ext_resource type="Script" path="res://resources/BlockPlacementDef.cs" id="3_placement"]
+[ext_resource type="Script" uid="uid://c6a1ei6vxrdap" path="res://resources/IntentDefinition.gd" id="2_intent"]
+[ext_resource type="Script" uid="uid://nwj2ve2ilvcv" path="res://resources/BlockPlacementDef.gd" id="3_placement"]
+[ext_resource type="Resource" path="res://resources/blockdefs/EnemyAttackBlock.tres" id="4_block"]
 
 [sub_resource type="Resource" id="Place_1"]
 script = ExtResource("3_placement")
-Block = ExtResource("1_blockdef")
+BlockRef = ExtResource("4_block")
 GridPosition = Vector2i(2, 2)
-metadata/_custom_type_script = "res://resources/BlockPlacementDef.cs"
+metadata/_custom_type_script = "res://resources/BlockPlacementDef.gd"
 
 [resource]
 script = ExtResource("2_intent")
-BlockPlacements = Array[Object]([SubResource("Place_1")])
+BlockPlacements = [SubResource("Place_1")]
 IntentName = "PlaceAttackAtCenter"
 RepeatCount = 2
-metadata/_custom_type_script = "res://resources/IntentDefinition.cs"
+metadata/_custom_type_script = "res://resources/IntentDefinition.gd"

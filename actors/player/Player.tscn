@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" path="res://actors/Actor.tscn" id="1_jx5ha"]
 [ext_resource type="Texture2D" path="res://actors/player/Player-export.png" id="2_dthho"]
 [ext_resource type="Script" path="res://actors/player/ActorSprite.gd" id="3_flecp"]
+[ext_resource type="Script" path="res://actors/player/Player.gd" id="5_player"]
 [ext_resource type="PackedScene" path="res://components/PileComponent.tscn" id="4_flecp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jg3c0"]
@@ -28,6 +29,7 @@ animations = [{
 }]
 
 [node name="Player" unique_id=1603292337 instance=ExtResource("1_jx5ha")]
+script = ExtResource("5_player")
 
 [node name="RenderingComponent" parent="." index="0" unique_id=1479359479]
 offset_left = -150.0

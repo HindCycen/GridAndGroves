@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3]
 
-[ext_resource type="Script" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.cs" id="1_1864r"]
-[ext_resource type="Script" path="res://blocks/BlockPartDef.cs" id="1_k6qac"]
+[ext_resource type="Script" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" id="1_1864r"]
+[ext_resource type="Script" path="res://blocks/BlockPartDef.gd" id="1_k6qac"]
 [ext_resource type="Texture2D" path="res://resources/blockpart_picture/green/Attack-G.png" id="2_v0cyp"]
 
 [sub_resource type="Resource" id="Resource_tyl07"]

@@ -76,3 +76,5 @@ __pycache__/
 .cache/
 .huggingface_cache/
 *.h5
+
+addons/

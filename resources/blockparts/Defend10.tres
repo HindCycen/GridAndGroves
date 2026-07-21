@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3]
 
-[ext_resource type="Script" path="res://blocks/BlockPartDef.cs" id="1_hm48b"]
+[ext_resource type="Script" path="res://blocks/BlockPartDef.gd" id="1_hm48b"]
 
 [resource]
 script = ExtResource("1_hm48b")
@@ -10,4 +10,4 @@ Description = "Give yourself  %S% Shield."
 MovingDirection = Vector2i(0, 1)
 PartialPosition = Vector2(1, 0)
 PartId = "Defend10"
-metadata/_custom_type_script = "uid://cxi0d1tnlamis"
+metadata/_custom_type_script = "uid://cwfcoh68fk0qt"

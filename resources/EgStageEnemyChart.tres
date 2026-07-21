@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="StageEnemyChartDef" format=3]
 
-[ext_resource type="Script" path="res://resources/StageEnemyChartDef.cs" id="1"]
+[ext_resource type="Script" path="res://resources/StageEnemyChartDef.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/enemy_defs/Gonh.tres" id="2_gonh"]
-[ext_resource type="Script" path="res://resources/EnemyChartDef.cs" id="3_chart"]
+[ext_resource type="Script" path="res://resources/EnemyChartDef.gd" id="3_chart"]
 
 [sub_resource type="Resource" id="SubResource_enemy_chart"]
 script = ExtResource("3_chart")
 EnemyDefs = Array[Object]([ExtResource("2_gonh")])
-metadata/_custom_type_script = "res://resources/EnemyChartDef.cs"
+metadata/_custom_type_script = "res://resources/EnemyChartDef.gd"
 
 [resource]
 script = ExtResource("1")

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyDefinition" format=3]
 
-[ext_resource type="Script" path="res://resources/EnemyDefinition.cs" id="1_define"]
+[ext_resource type="Script" path="res://resources/EnemyDefinition.gd" id="1_define"]
 [ext_resource type="Resource" path="res://resources/enemy_intents/PlaceAttackAtCenter.tres" id="2_intent1"]
 [ext_resource type="Resource" path="res://resources/enemy_intents/PlaceAttackRight.tres" id="3_intent2"]
 [ext_resource type="Texture2D" path="res://resources/enemy_images/Gonh.png" id="4_image"]
@@ -10,7 +10,7 @@
 script = ExtResource("1_define")
 AttackDamage = 5
 EnemyName = "Gonh"
-Image = ExtResource("4_image")
+EnemyImage = ExtResource("4_image")
 IntentCycle = Array[Object]([ExtResource("2_intent1"), ExtResource("3_intent2")])
 InitialStats = Array[Object]([ExtResource("5_shooting")])
 MaxHealth = 30

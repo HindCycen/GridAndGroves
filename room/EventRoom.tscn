@@ -1,11 +1,11 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://room/EventRoom.cs" id="1"]
+[ext_resource type="Script" path="res://room/EventRoom.gd" id="1"]
 [ext_resource type="PackedScene" path="res://room/Room.tscn" id="2_room"]
 
 [node name="EventRoom" unique_id=2121149791 instance=ExtResource("2_room")]
 script = ExtResource("1")
-EventDef = null
+EventDefRef = null
 
 [node name="DescLabel" type="RichTextLabel" parent="."]
 visible = false

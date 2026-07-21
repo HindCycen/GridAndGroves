@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="EventDef" format=3]
 
-[ext_resource type="Script" path="res://resources/EventDef.cs" id="1"]
-[ext_resource type="Script" path="res://resources/EventChoiceDef.cs" id="2"]
+[ext_resource type="Script" path="res://resources/EventDef.gd" id="1"]
+[ext_resource type="Script" path="res://resources/EventChoiceDef.gd" id="2"]
 
 [sub_resource type="Resource" id="SubResource_choice1"]
 resource_local_to_scene = false
@@ -11,7 +11,7 @@ Description = "[G]{Heal 20 HP}[/G]"
 ResultDescription = "You feel refreshed."
 ActionType = 1
 ActionValue = 20
-metadata/_custom_type_script = "res://resources/EventChoiceDef.cs"
+metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
 
 [sub_resource type="Resource" id="SubResource_choice2"]
 resource_local_to_scene = false
@@ -21,7 +21,7 @@ Description = "[R]{Take 10 damage but gain strength}[/R]"
 ResultDescription = "You pushed your limits."
 ActionType = 2
 ActionValue = 10
-metadata/_custom_type_script = "res://resources/EventChoiceDef.cs"
+metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
 
 [resource]
 script = ExtResource("1")

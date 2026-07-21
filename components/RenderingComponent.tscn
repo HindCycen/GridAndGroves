@@ -1,11 +1,11 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://components/RenderingComponent.cs" id="1_p2qr1"]
+[ext_resource type="Script" path="res://components/RenderingComponent.gd" id="1_p2qr1"]
 [ext_resource type="PackedScene" path="res://components/ShieldComponent.tscn" id="2_r86ya"]
 [ext_resource type="PackedScene" path="res://components/HealthComponent.tscn" id="3_367sg"]
 [ext_resource type="PackedScene" path="res://components/StatsComponent.tscn" id="4_fls8u"]
-[ext_resource type="Script" path="res://components/HealthBar.cs" id="5_367sg"]
-[ext_resource type="Script" path="res://components/HealthLabel.cs" id="5_r86ya"]
+[ext_resource type="Script" path="res://components/HealthBar.gd" id="5_367sg"]
+[ext_resource type="Script" path="res://components/HealthLabel.gd" id="5_r86ya"]
 [ext_resource type="Texture2D" path="res://components/healthbar/HealthBarBG.png" id="5_wsmi8"]
 [ext_resource type="Texture2D" path="res://components/healthbar/HealthBarOver.png" id="6_xp7we"]
 [ext_resource type="Texture2D" path="res://components/healthbar/HealthBarMid.png" id="7_xsshl"]
@@ -44,7 +44,7 @@ script = ExtResource("5_367sg")
 _healthComponent = NodePath("../../HealthComponent")
 _shieldComponent = NodePath("../../ShieldComponent")
 
-[node name="Health" type="Label" parent="RenderThingsHere/HealthBar" unique_id=2073368500 node_paths=PackedStringArray("HealthBar", "HealthComponent", "_shieldComponent")]
+[node name="Health" type="Label" parent="RenderThingsHere/HealthBar" unique_id=2073368500 node_paths=PackedStringArray("HealthBarRef", "HealthComponentRef", "_shieldComponent")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
@@ -60,8 +60,8 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "50/100"
 script = ExtResource("5_r86ya")
-HealthBar = NodePath("..")
-HealthComponent = NodePath("../../../HealthComponent")
+HealthBarRef = NodePath("..")
+HealthComponentRef = NodePath("../../../HealthComponent")
 _shieldComponent = NodePath("../../../ShieldComponent")
 
 [node name="StatsContainer" type="HBoxContainer" parent="RenderThingsHere" unique_id=750939676]

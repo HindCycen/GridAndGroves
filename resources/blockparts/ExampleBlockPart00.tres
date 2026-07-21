@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3]
 
-[ext_resource type="Script" path="res://resources/blockpart_behaviors/ExamplePartBehavior.cs" id="1_vniui"]
+[ext_resource type="Script" path="res://resources/blockpart_behaviors/ExamplePartBehavior.gd" id="1_vniui"]
 [ext_resource type="Texture2D" path="res://resources/blockpart_picture/green/Blank-G.png" id="2_7bwt4"]
-[ext_resource type="Script" path="res://blocks/BlockPartDef.cs" id="2_j8gbw"]
+[ext_resource type="Script" path="res://blocks/BlockPartDef.gd" id="2_j8gbw"]
 
 [sub_resource type="Resource" id="Resource_j8gbw"]
 script = ExtResource("1_vniui")
-metadata/_custom_type_script = "uid://cvuhmr6a7300r"
+metadata/_custom_type_script = "uid://bvj8io0ggmarc"
 
 [resource]
 script = ExtResource("2_j8gbw")
@@ -15,4 +15,4 @@ MovingDirection = Vector2i(0, 1)
 PartId = "EgPart"
 Description = "Nothing."
 SpriteTexture = ExtResource("2_7bwt4")
-metadata/_custom_type_script = "uid://cxi0d1tnlamis"
+metadata/_custom_type_script = "uid://cwfcoh68fk0qt"

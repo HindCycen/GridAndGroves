@@ -12,14 +12,18 @@ config_version=5
 
 config/name="Grid and Groves"
 run/main_scene="res://MainMenu.tscn"
-config/features=PackedStringArray("4.7", "C#", "Forward Plus")
+config/features=PackedStringArray("4.7")
 config/icon="res://icon.svg"
 
 [autoload]
 
-Glob="*res://global/Glob.cs"
-BattleTime="*res://global/BattleTime.cs"
-SaveLoad="*res://global/SaveLoad.cs"
+GameLog="*res://global/GameLog.gd"
+GridState="*res://global/GridState.gd"
+RngManager="*res://global/RngManager.gd"
+BlockRegistry="*res://global/BlockRegistry.gd"
+PackManager="*res://global/PackManager.gd"
+BattleTime="*res://global/BattleTime.gd"
+SaveLoad="*res://global/SaveLoad.gd"
 
 [display]
 

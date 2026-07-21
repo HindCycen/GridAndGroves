@@ -1,17 +1,17 @@
 [gd_resource type="Resource" script_class="BlockPartDef" format=3]
 
-[ext_resource type="Script" path="res://resources/blockpart_behaviors/MoveRightBehavior.cs" id="1_2cu1m"]
-[ext_resource type="Script" path="res://blocks/BlockPartDef.cs" id="1_kq3in"]
+[ext_resource type="Script" path="res://resources/blockpart_behaviors/MoveRightBehavior.gd" id="1_2cu1m"]
+[ext_resource type="Script" path="res://blocks/BlockPartDef.gd" id="1_kq3in"]
 [ext_resource type="Texture2D" path="res://resources/blockpart_picture/green/Right-G.png" id="2_pc027"]
-[ext_resource type="Script" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.cs" id="3_dmgbh"]
+[ext_resource type="Script" path="res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" id="3_dmgbh"]
 
 [sub_resource type="Resource" id="Resource_r386g"]
 script = ExtResource("1_2cu1m")
-metadata/_custom_type_script = "uid://tdr43fbm6use"
+metadata/_custom_type_script = "uid://ciog2m2hjtjox"
 
 [sub_resource type="Resource" id="Resource_dmgbh2"]
 script = ExtResource("3_dmgbh")
-metadata/_custom_type_script = "res://resources/blockpart_behaviors/DamageEnemyBehavior.cs"
+metadata/_custom_type_script = "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
 
 [resource]
 script = ExtResource("1_kq3in")
@@ -20,4 +20,4 @@ Behaviors = Array[Object]([SubResource("Resource_r386g"), SubResource("Resource_
 Description = "Make [Y]{Bot} move [G]{Right} before meeting other blockparts. Meanwhile deal %D% damage."
 MovingDirection = Vector2i(1, 0)
 SpriteTexture = ExtResource("2_pc027")
-metadata/_custom_type_script = "uid://cxi0d1tnlamis"
+metadata/_custom_type_script = "uid://cwfcoh68fk0qt"
