@@ -86,7 +86,7 @@ EnqueueBlockActions(block, chainDepth = 0):
 ```
 
 需要确保：
-- `Bot.cs` 在检查 PathStep 时能跳过已清理的格子
+- `Bot.gd` 在检查 PathStep 时能跳过已清理的格子
 - 驻留 Block 被触发后依然留在场上
 - 驻留 Block 占用网格位置（影响后续放置）
 - 驻留 Block 有数量上限（建议 2~3 个）

@@ -9,10 +9,10 @@
 ## 类层次结构
 
 ```
-Room (res://room/Room.cs)
-├── BattleRoom (res://room/BattleRoom.cs) — 战斗房间
-├── EventRoom (res://room/EventRoom.cs) — 事件房间
-└── StageRoom (res://room/StageRoom.cs) — 楼层地图
+Room (res://room/Room.gd)
+├── BattleRoom (res://room/BattleRoom.gd) — 战斗房间
+├── EventRoom (res://room/EventRoom.gd) — 事件房间
+└── StageRoom (res://room/StageRoom.gd) — 楼层地图
 ```
 
 ## 核心变量
@@ -68,27 +68,27 @@ Room (res://room/Room.cs)
 
 ## 资源数据结构
 
-### EventChoiceDef (res://resources/EventChoiceDef.cs)
+### EventChoiceDef (res://resources/EventChoiceDef.gd)
 - Name: 按钮显示名
 - Description: 悬停描述(支持颜色语法)
 - ResultDescription: 执行后显示的文本
 - ActionType: 执行动作类型(EventActionType 枚举)
 - ActionValue: 动作参数
 
-### EventDef (res://resources/EventDef.cs)
+### EventDef (res://resources/EventDef.gd)
 - EventDesc: 事件描述文本
 - Choices: EventChoiceDef 数组
 
-### EventRand (res://resources/EventRand.cs)
+### EventRand (res://resources/EventRand.gd)
 - PossibleEvents: EventDef 数组, 用于随机抽取
 
-### StageEnemyChartDef (res://resources/StageEnemyChartDef.cs)
+### StageEnemyChartDef (res://resources/StageEnemyChartDef.gd)
 - WeakEnemyChart: EnemyChartDef[] (roomCount ≤ 6)
 - StrongEnemyChart: EnemyChartDef[] (roomCount > 6)
 - EliteChart: EnemyChartDef[] (预留)
 - BossChart: EnemyChartDef[] (roomCount == 20)
 
-### StageDef (res://resources/StageDef.cs)
+### StageDef (res://resources/StageDef.gd)
 - StageEnemyChart: StageEnemyChartDef
 - StageEventRand: EventRand
 

@@ -43,7 +43,7 @@
 
 > `PartialPosition` 是**像素偏移坐标**而非网格索引。它定义了部件在 Block 内的渲染位置，而非"占据哪个格子"。部件之间可以重叠（同一个坐标），也可以使用小数坐标实现非对齐布局。
 
-**放置时的网格占位**：当 Block 被放置到战斗网格上时，每个部件通过 `Glob.FindNearestGridPoint(part.GlobalPosition)` 找到最近的网格点并标记为 Occupied。因此，部件的 `PartialPosition` 间接决定了 Block 在网格上占据哪些格子。
+**放置时的网格占位**：当 Block 被放置到战斗网格上时，每个部件通过 `GridState.find_nearest_grid_point(part.global_position)` 找到最近的网格点并标记为 Occupied。因此，部件的 `PartialPosition` 间接决定了 Block 在网格上占据哪些格子。
 
 ---
 

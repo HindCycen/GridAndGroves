@@ -1,6 +1,6 @@
 ---
 description: "Grid and Groves 卡包设计核心原则。Use when: 设计新 Block、创建 BlockPack/MiniPack、理解包间差异、实现新机制（松动/过载/共鸣/藤蔓等）"
-applyTo: "**/*.cs"
+applyTo: "**/*.gd"
 ---
 
 # 卡包设计核心原则
@@ -74,7 +74,7 @@ EnqueueBlockActions(block, depth):
 
 | 标签 | 代码入口 | 行为 |
 |------|---------|------|
-| 一次性 (Exhaust) | `AbstractGameAction.ExhaustSourceBlock = true` | 触发后 Block 移出战斗并销毁 |
+| 一次性 (Exhaust) | `action.exhaust_source_block = true` | 触发后 Block 移出战斗并销毁 |
 | 松动 (Loose) | `LooseBlockBehavior` | 触发后释放网格格子，Block 进入弃牌堆 |
 | 驻留 (Root/Glyph) | `BlockPartBehavior.PreventsClear = true` | 回合结束不清除，留在网格上 |
 | 共鸣 (Resonance) | `ResonanceTriggerBehavior` | 触发时传播到相邻 Block |

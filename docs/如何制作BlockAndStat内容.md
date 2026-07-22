@@ -52,11 +52,11 @@
 
 ### 三个关键概念
 
-| 概念 | 文件位置 | 作用 |
+| 概念 | 数据来源 | 作用 |
 |------|----------|------|
-| **BlockDef** | `resources/blockdefs/` | 方块的元数据（名称、包含哪些 Part） |
-| **BlockPartDef** | `resources/blockparts/` | 部件定义（伤害值、方向、绑定哪些行为） |
-| **BlockPartBehavior** | `resources/blockpart_behaviors/` | 部件被触发时的实际效果（C# 代码） |
+| **BlockDef** | `resources/block_defs.json` 中的 block 条目 | 方块的元数据（名称、包含哪些 Part） |
+| **BlockPartDef** | `resources/block_defs.json` 中的 parts 数组 | 部件定义（伤害值、方向、绑定哪些行为） |
+| **BlockPartBehavior** | `resources/blockpart_behaviors/*.gd` | 部件被触发时的实际效果（GDScript） |
 
 ### ActionManager — 中央调度器
 
@@ -64,114 +64,121 @@
 
 | 入队方式 | 方法 | 效果 |
 |----------|------|------|
-| 追加到队尾 | `ActionManager.Instance.AddToBottom(action)` | 大多数效果使用 |
-| 插入到队首 | `ActionManager.Instance.AddToTop(action)` | 紧急效果（如触发类反击） |
+| 追加到队尾 | `ActionManager.add_to_bottom(action)` | 大多数效果使用 |
+| 插入到队首 | `ActionManager.add_to_top(action)` | 紧急效果（如触发类反击） |
 
-> `BlockPartBehavior` 通过 `CreateAction(block, part)` 方法返回具体 Action 类型，
+> `BlockPartBehavior` 通过 `create_action(block, part)` 方法返回具体 Action 类型，
 > 支持动画时长和 VFX。返回 null 表示无需 Action 入队（如纯方向修改行为）。
 
 ---
 
 ## 2. 制作一个方块
 
-一个方块 = **BlockDef**（.tres）→ 引用若干个 **BlockPartDef**（.tres）→ 每个 Part 引用若干个 **BlockPartBehavior**（.cs）。
+一个方块 = **BlockDef JSON 条目** → 引用若干个 **BlockPartDef 数组条目** → 每个 Part 引用若干个 **BlockPartBehavior (.gd)**。
 
 ### 流程概览
 
 ```
-1. 编写 BlockPartBehavior 代码          → resources/blockpart_behaviors/XXXBehavior.cs
-2. 在 Godot 编辑器中创建 BlockPartDef    → resources/blockparts/XXXPart.tres
-   └→ 配置 Behaviors、BaseDamage、MovingDirection 等
-3. 在 Godot 编辑器中创建 BlockDef        → resources/blockdefs/XXXBlock.tres
-   └→ 配置 PartDefinitions 数组，引用上一步的 PartDef
-4. 在代码中注册该方块                   → 见 GlobBlockInitializer / OriginalBlockRegisterer
+1. 编写 BlockPartBehavior 代码          → resources/blockpart_behaviors/XXXBehavior.gd
+2. 在 block_defs.json 中添加 Block 条目 → resources/block_defs.json
+   └→ 在 parts 数组中配置 PartDef 数据
+3. 无需创建任何 .tres 文件
+4. 重启游戏即可自动注册               → BlockRegistry._ready() → JsonBlockScanner
 ```
 
 ### 2.1 步骤一：编写行为代码（如有需要）
 
 参见[第 3 章](#3-制作一个方块部件行为)。
 
-### 2.2 步骤二：创建 BlockPartDef (.tres)
+### 2.2 步骤二：在 JSON 中定义 BlockPartDef
 
-在 Godot 编辑器中右键 `resources/blockparts/` → **New Resource...** → 选择 `BlockPartDef`。
+在 `resources/block_defs.json` 的 block 条目的 `parts` 数组中定义部件。每个部件支持以下字段：
 
 | 字段 | 类型 | 用途 |
 |------|------|------|
-| `PartId` | string | 唯一标识（如 `"DamagePart"`） |
-| `Description` | string | 悬停描述，支持 `%D%`(伤害) `%S%`(护盾) `%M%`(魔数) 占位符 |
-| `BaseDamage` | int | 基础伤害值（运行时可通过 `part.Damage` 访问） |
-| `BaseShield` | int | 基础护盾值 |
-| `BaseMagicNum` | int | 基础魔法值 |
-| `MovingDirection` | Vector2I | **Bot 触碰到此部件后的巡逻方向** |
-| `PartialPosition` | Vector2 | 在方块内的相对位置（以 `96×96` 为单位） |
-| `SpriteTexture` | Texture2D | 部件显示的贴图 |
-| `Behaviors` | BlockPartBehavior[] | 绑定到此部件的**行为列表** |
+| `partId` | string | 唯一标识（如 `"DamagePart"`） |
+| `partId` | string | 唯一标识（如 `"DamagePart"`） |
+| `description` | string | 悬停描述，支持 `%D%`(伤害) `%S%`(护盾) `%M%`(魔数) 占位符 |
+| `baseDamage` | int | 基础伤害值 |
+| `baseShield` | int | 基础护盾值 |
+| `baseMagicNum` | int | 基础魔法值 |
+| `movingDirection` | int[] | **Bot 触碰到此部件后的巡逻方向**，如 `[0, 1]` |
+| `partialPosition` | float[] | 在方块内的相对位置，如 `[0, 1]`（以 96px 为单位） |
+| `spriteTexture` | string | 部件贴图的 res:// 路径 |
+| `behaviors` | object[] | 绑定到此部件的行为列表 |
 
-#### 关于 MovingDirection
+#### 关于 movingDirection
 
 | 值 | 含义 |
 |----|------|
-| `(0, 1)` (默认) | 恢复向下蛇行巡逻 |
-| `(1, 0)` | Bot 改为向右移动 |
-| `(0, -1)` | Bot 改为向上移动 |
-| `(-1, 0)` | Bot 改为向左移动 |
+| `[0, 1]` (默认) | 恢复向下蛇行巡逻 |
+| `[1, 0]` | Bot 改为向右移动 |
+| `[0, -1]` | Bot 改为向上移动 |
+| `[-1, 0]` | Bot 改为向左移动 |
 
-> 不附加转向要求的部件应保留 `MovingDirection = (0, 1)`（默认 Down）。
-> Bot 碰到后会恢复蛇形下降，不再继续原方向。
+> 不附加转向要求的部件应保留 `movingDirection = [0, 1]`（默认 Down）。
 
-#### 关于 Behaviors
+#### 关于 behaviors
 
-`Behaviors` 是一个数组，按顺序执行。每个 Behavior 的 `CreateAction()` 返回的 Action 按数组顺序入队到 `ActionManager`。
+`behaviors` 是一个数组，按顺序执行。每个 Behavior 的 `create_action()` 返回的 Action 按数组顺序入队到 `ActionManager`。
 
+```json
+"behaviors": [
+  { "script": "res://resources/blockpart_behaviors/MoveRightBehavior.gd" },
+  { "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" }
+]
 ```
-Behaviors = [MoveRightBehavior, DamageEnemyBehavior]
 入队顺序: null (方向修改无 Action), DamageAction(伤害)
+
+### 2.3 步骤三：在 JSON 中定义 BlockDef
+
+在 `resources/block_defs.json` 中添加 block 条目：
+
+```json
+{
+  "name": "MyBlock",
+  "description": "",
+  "parts": [
+    { "partId": "MyPart", "baseDamage": 6, ... }
+  ]
+}
 ```
 
-> 用 Godot 编辑器添加时，点 `Behaviors` 右侧的箭头 → `Add Element` → 下拉选择 `New XxxBehavior` 或引用已存文件。
+| JSON 字段 | 类型 | 用途 |
+|-----------|------|------|
+| `name` | string | 方块名称（唯一标识） |
+| `description` | string | 描述文字 |
+| `parts` | object[] | 组成此方块的所有部件定义 |
 
-### 2.3 步骤三：创建 BlockDef (.tres)
+> **注意**：同一个方块可以有多个 Part，每个 Part 的 `partialPosition` 决定了它在方块内的位置。
+> 例如 `[0, 0]` 是左上，`[1, 0]` 是右上。
 
-在 Godot 编辑器中右键 `resources/blockdefs/` → **New Resource...** → 选择 `BlockDef`。
+### 2.4 步骤四：自动注册
 
-| 字段 | 类型 | 用途 |
-|------|------|------|
-| `BlockName` | string | 方块名称（显示在 UI 中） |
-| `Description` | string | 描述文字 |
-| `PartDefinitions` | BlockPartDef[] | 组成此方块的所有部件 |
+**无需手动注册**。`BlockRegistry._ready()` 自动调用 `JsonBlockScanner.scan_and_register()`，从 `resources/block_defs.json` 读取所有 BlockDef。
 
-> **注意**：同一个方块可以有多个 Part，每个 Part 的 `PartialPosition` 决定了它在方块内的位置。
-> 例如 `(0, 0)` 是左上，`(1, 0)` 是右上。
+注册后可通过 `BlockRegistry.create_block_by_name("MyBlock")` 在代码中生成实例。
 
-### 2.4 步骤四：注册方块
-
-大多数方块在 `OriginalBlockRegisterer.cs` 中使用 `Glob.SubscribeBlockDef()` 注册。
-
-```csharp
-// 在 OriginalBlockRegisterer.Register() 中添加：
-Glob.SubscribeBlockDef(GD.Load<BlockDef>("res://resources/blockdefs/MyBlock.tres"));
-```
-
-注册后可通过 `Glob.CreateBlock("MyBlock")` 在代码中生成实例。
+> 如需在 JSON 中引用有参数的 Behavior（如 `GrantPlayerStatBehavior`），使用 `"params"` 字典：
+> ```json
+> { "script": "res://path/to/GrantPlayerStatBehavior.gd",
+>   "params": { "TargetStatDef": "res://path/to/StatDef.tres", "InitialValue": 1 } }
+> ```
 
 ---
 
 ## 3. 制作一个方块部件行为
 
-### 3.1 基本行为（用 `CreateAction`）
+### 3.1 基本行为（用 `create_action`）
 
-在 `resources/blockpart_behaviors/` 下新建 `.cs` 文件：
+在 `resources/blockpart_behaviors/` 下新建 `.gd` 文件：
 
-```csharp
-using Godot;
+```gdscript
+class_name MyBehavior extends BlockPartBehavior
 
-[GlobalClass]
-public partial class MyBehavior : BlockPartBehavior {
-    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
-        // 返回一个具体的 Action，用来在队列中异步执行
-        return new DamageAction(block, targetNode, part.Damage, 0.4f);
-    }
-}
+func create_action(block, part):
+    # 返回一个具体的 Action，用来在队列中异步执行
+    return DamageAction.new(block, target_node, part.Damage, 0.4)
 ```
 
 ### 3.2 内置 Action 类型
@@ -181,49 +188,47 @@ public partial class MyBehavior : BlockPartBehavior {
 | `DamageAction` | `(Block source, Node target, int amount, float duration)` | 造成伤害，duration 期间播放 VFX |
 | `HealAction` | `(Node target, int amount, float duration)` | 治疗，duration 期间播放 VFX |
 | `ApplyStatusAction` | `(Node target, StatDef statDef, int initialValue, float duration)` | 给目标施加/增减状态 |
-| `CallbackAction` | `(Action callback, ActionType type = Callback, bool exhaustSourceBlock = false)` | 包装一个同步回调 |
+| `CallbackAction` | `(Callable callback, int type = Callback, bool exhaustSourceBlock = false)` | 包装一个同步回调 |
 | `WaitAction` | `(float duration)` | 等待一段时间（停顿动作） |
 | `VFXAction` | `(Node2D vfxNode, float duration, Node parent = null)` | 播放一个视觉效果后销毁 |
 
 ### 3.3 示例：简洁的伤害行为
 
-```csharp
-[GlobalClass]
-public partial class DamagePlayerBehavior : BlockPartBehavior {
-    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
-        var players = block.GetTree()?.GetNodesInGroup("Players");
-        var target = players?.Count > 0 ? players[0] as Node2D : null;
-        if (target != null && part.Damage > 0) {
-            return new DamageAction(block, target, part.Damage, 0.4f);
-        }
-        return null;
-    }
-}
+```gdscript
+class_name DamagePlayerBehavior extends BlockPartBehavior
+
+func create_action(block, part):
+    var tree: SceneTree = block.get_tree()
+    if tree == null:
+        return null
+    var players: Array[Node] = tree.get_nodes_in_group("Players")
+    var target: Node2D = players[0] as Node2D if players.size() > 0 else null
+    if target != null and part.Damage > 0:
+        return DamageAction.new(block, target, part.Damage, 0.4)
+    return null
 ```
 
 ### 3.4 示例：复合效果（用 CallbackAction 包装复杂逻辑）
 
 如果效果无法用单个内置 Action 表达，可以用多个 Action 组合：
 
-```csharp
-public override AbstractGameAction CreateAction(Block block, BlockPart part) {
-    // 先用一个 WaitAction 等待 0.3s
-    ActionManager.Instance.AddToBottom(new WaitAction(0.3f));
-    // 再用 CallbackAction 执行复杂逻辑
-    return new CallbackAction(() => {
-        // 你的复杂逻辑...
-    });
-}
+```gdscript
+func create_action(block, part):
+    # 先用一个 WaitAction 等待 0.3s
+    ActionManager.add_to_bottom(WaitAction.new(0.3))
+    # 再用 CallbackAction 执行复杂逻辑
+    return CallbackAction.new(func():
+        # 你的复杂逻辑...
+    )
 ```
 
 或直接返回 `CallbackAction` 完成全部操作（无动画延时）：
 
-```csharp
-public override AbstractGameAction CreateAction(Block block, BlockPart part) {
-    return new CallbackAction(() => {
-        // 复杂逻辑直接在这里写
-    });
-}
+```gdscript
+func create_action(block, part):
+    return CallbackAction.new(func():
+        # 复杂逻辑直接在这里写
+    )
 ```
 
 ---
@@ -236,8 +241,8 @@ public override AbstractGameAction CreateAction(Block block, BlockPart part) {
 
 ```
 StatDef (resources/stat_defs/) ──→ StatBehavior (resources/stat_behaviors/)
-  .tres 文件                      .cs 代码
-  ├─ StatName                     └─ [StatusBehavior(Period=...)] 标记的方法
+  .tres 文件                      .gd 代码
+  ├─ StatName                     └─ ## @period OnTurnEnded 标记的方法
   ├─ MaxValue
   ├─ Icon
   └─ Behavior ───→ StatBehavior
@@ -245,35 +250,27 @@ StatDef (resources/stat_defs/) ──→ StatBehavior (resources/stat_behaviors/
 
 ### 4.2 步骤一：编写 StatBehavior
 
-在 `resources/stat_behaviors/` 下新建 `.cs`：
+在 `resources/stat_behaviors/` 下新建 `.gd`：
 
-```csharp
-using Godot;
+```gdscript
+class_name MyStatBehavior extends StatBehavior
 
-public partial class MyStatBehavior : StatBehavior {
-    [StatusBehavior(Period = Glob.StatExecuteAt.OnTurnEnded)]
-    public void OnTurnEnd() {
-        var stat = BelongingStat;
-        if (stat == null || stat.CurrentValue <= 0) return;
-
-        var players = stat.GetTree().GetNodesInGroup("Players");
-        foreach (var node in players) {
-            if (node is not Node2D player) continue;
-            var health = player.GetNode<HealthComponent>(
-                "RenderingComponent/HealthComponent"
-            );
-            health?.TakeDamage(stat.CurrentValue);
-        }
-    }
-}
+## @period OnTurnEnded
+func on_turn_end() -> void:
+    var stat = belonging_stat
+    if stat == null or stat.CurrentValue <= 0:
+        return
+    var players: Array[Node] = stat.get_tree().get_nodes_in_group("Players")
+    if players.size() > 0:
+        var health: HealthComponent = players[0].get_node("RenderingComponent/HealthComponent")
+        if health != null:
+            health.take_damage(stat.CurrentValue)
 ```
 
 ### 4.3 支持的触发时机
 
-所有 `Glob.StatExecuteAt` 枚举值：
-
-| 枚举值 | 触发时机 | 对标 StS |
-|--------|----------|----------|
+| 时期 | 触发时机 | 对标 StS |
+|------|----------|----------|
 | `OnBattleStarted` | 战斗开始 | atBattleStart |
 | `OnBattleEnded` | 战斗结束 | — |
 | `OnTurnStarted` | 回合开始 | atTurnStart |
@@ -287,8 +284,8 @@ public partial class MyStatBehavior : StatBehavior {
 | `OnAfterBlockApply` | 获得格挡后 | — |
 | `OnStatusApplied` | 状态被施加时 | onApplyPower |
 
-> **注意**：`OnTurnEnded` 由 Bot.EndTurn() 触发，发生在敌人攻击之前。
-> `OnBattleEnded` 由 BattleRoom.OnDefeat() 或 OnVictory() 触发。
+> **注意**：`OnTurnEnded` 由 Bot.end_turn() 触发，发生在敌人攻击之前。
+> `OnBattleEnded` 由 BattleRoom._on_defeat() 或 _on_victory() 触发。
 
 ### 4.4 步骤二：创建 StatDef (.tres)
 
@@ -310,17 +307,17 @@ public partial class MyStatBehavior : StatBehavior {
 
 ### 4.5 在代码中施加状态
 
-```csharp
-var statDef = GD.Load<StatDef>("res://resources/stat_defs/MyStat.tres");
-if (statDef != null) {
-    var stat = new Stat { Definition = statDef };
-    statsComponent.AddStatus(stat);
-    stat.AddValue(amount); // 设置数值
-}
+```gdscript
+var stat_def = load("res://resources/stat_defs/MyStat.tres") as StatDef
+if stat_def != null:
+    var stat := Stat.new()
+    stat.Definition = stat_def
+    stats_component.add_status(stat)
+    stat.add_value(amount) # 设置数值
 ```
 
-> `StatsComponent.AddStatus(stat)` 会自动将 `Stat` 节点加入场景树、添加到 "stats" 组，
-> 并绑定 `StatBehavior.SetBelongingStat(stat)`。
+> `StatsComponent.add_status(stat)` 会自动将 `Stat` 节点加入场景树、添加到 "stats" 组，
+> 并绑定 `StatBehavior.belonging_stat = stat`。
 
 ---
 
@@ -330,121 +327,59 @@ if (statDef != null) {
 
 ### 5.1 基类 API
 
-```csharp
-public abstract class AbstractGameAction {
-    public float Duration { get; set; }         // 总时长（秒）
-    public float StartDuration { get; protected set; } // 起始时长
-    public bool IsDone { get; protected set; }  // 是否已完成
-    public int Amount { get; set; }             // 数值
-    public Node Source { get; set; }            // 动作发出者
-    public Node Target { get; set; }            // 动作目标
-    public Glob.ActionType ActionType { get; set; }  // 动作类型
-    public virtual bool ExhaustSourceBlock => false; // 是否耗尽来源方块
+```gdscript
+class_name AbstractGameAction extends RefCounted
 
-    // 每帧推进，子类重写
-    public abstract void Update(float delta);
+var duration: float           # 总时长（秒）
+var start_duration: float     # 起始时长
+var is_done: bool             # 是否已完成
+var amount: int               # 数值
+var source: Node              # 动作发出者
+var target: Node              # 动作目标
+var action_type: int          # 动作类型
+var exhaust_source_block: bool # 是否耗尽来源方块
 
-    // 推进 Duration，归零时标记 IsDone
-    protected void TickDuration(float delta);
+func _update(delta: float) -> void:  # 每帧推进，子类重写
+    pass
 
-    // 快捷入队
-    protected void AddToBot(AbstractGameAction action);
-    protected void AddToTop(AbstractGameAction action);
-}
+func tick_duration(delta: float) -> void:  # 推进 duration
+    pass
 ```
 
 ### 5.2 示例：自定义动作
 
-```csharp
-using Godot;
+```gdscript
+class_name MyCustomAction extends AbstractGameAction
 
-public class MyCustomAction : AbstractGameAction {
-    private Node _target;
-    private bool _hasExecuted;
+var _target: Node
+var _has_executed: bool
 
-    public MyCustomAction(Node target, int amount, float duration) {
-        Target = target;
-        Amount = amount;
-        Duration = duration;
-        StartDuration = duration;
-        ActionType = Glob.ActionType.Special;
-    }
+func _init(target: Node, amount: int, duration: float):
+    self.target = target
+    self.amount = amount
+    self.duration = duration
+    start_duration = duration
+    action_type = Enums.ActionType.Special
 
-    public override void Update(float delta) {
-        if (IsDone) return;
-
-        TickDuration(delta);
-        if (!IsDone) return;
-
-        // duration 归零 → 执行逻辑
-        if (!_hasExecuted && GodotObject.IsInstanceValid(Target)) {
-            // 在这里做实际效果
-            _hasExecuted = true;
-        }
-    }
-}
+func _update(delta: float) -> void:
+    if is_done:
+        return
+    tick_duration(delta)
+    if not is_done:
+        return
+    if not _has_executed and is_instance_valid(target):
+        # 在这里做实际效果
+        _has_executed = true
 ```
 
 ### 5.3 入队方式
 
-```csharp
-// 在 Behavior.CreateAction 或任何代码中：
-var action = new MyCustomAction(target, amount, 0.5f);
-ActionManager.Instance.AddToBottom(action); // 追加到队尾
-// 或
-ActionManager.Instance.AddToTop(action);    // 插入到队首
-```
-
----
-
-## 6. 制作一个自定义 VFX
-
-### 6.1 使用 VFXAction
-
-```csharp
-// 在 Behavior.CreateAction 或 Action 代码中：
-var vfxNode = new MyCoolVFX();
-vfxNode.GlobalPosition = target.GlobalPosition;
-GetTree().CurrentScene.AddChild(vfxNode); // 添加到场景树
-var vfxAction = new VFXAction(vfxNode, 0.5f); // 0.5s 后自动销毁
-ActionManager.Instance.AddToBottom(vfxAction);
-```
-
-### 6.2 自定义 VFX 节点
-
-继承 `Node2D`，在 `_Process` 中实现动画。
-
-```csharp
-using Godot;
-
-public partial class MyCoolVFX : Node2D {
-    private float _lifetime = 0.5f;
-
-    public override void _Process(double delta) {
-        // 每帧更新位置、透明度、缩放等
-        Scale += Vector2.One * (float)delta * 2f;
-        Modulate = new Color(1, 1, 1, Modulate.A - (float)delta * 2f);
-    }
-}
-```
-
-> `VFXAction` 会在 duration 结束后调用 `vfxNode.QueueFree()`。
-
-### 6.3 内置 VFX 参考
-
-| VFX | 用途 |
-|-----|------|
-| `DamageNumberVFX` | 红色浮动数字（上飘 + 淡出） |
-| `BlockNumberVFX` | 蓝色浮动数字 |
-
-用法（DamageAction 内部）：
-
-```csharp
-if (target is Node2D targetNode) {
-    var vfx = new DamageNumberVFX(targetNode.GlobalPosition, amount);
-    GetTree().Root.AddChild(vfx);
-    AddToBot(new VFXAction(vfx, 0.5f));
-}
+```gdscript
+# 在 Behavior.create_action 或任何代码中：
+var action = MyCustomAction.new(target, amount, 0.5)
+ActionManager.add_to_bottom(action) # 追加到队尾
+# 或
+ActionManager.add_to_top(action)    # 插入到队首
 ```
 
 ---
@@ -520,30 +455,26 @@ Bot 到达网格最右列 → EndTurn()
 
 ```
 resources/
-├── blockdefs/               # BlockDef .tres
-│   ├── DamageBlock.tres
-│   ├── ExampleMoveRight.tres
-│   ├── GrowingBlock.tres
-│   └── ...
-├── blockparts/              # BlockPartDef .tres
-│   ├── DamagePart00.tres
-│   ├── ExampleMoveRight00.tres
-│   ├── GrowingPart00.tres
-│   └── ...
-├── blockpart_behaviors/     # BlockPartBehavior .cs
-│   ├── DamageEnemyBehavior.cs
-│   ├── DamagePlayerBehavior.cs
-│   ├── MoveRightBehavior.cs
-│   ├── GiveGrowingStatBehavior.cs
-│   └── ...
+├── block_defs.json          # ★ 所有 BlockDef 的 JSON 描述（注册入口）
+├── blockdefs/               # BlockDef .tres（仅保留 EnemyAttackBlock）
+├── blockparts/              # BlockPartDef .tres（仅保留 EnemyAttackPart00）
+├── blockpart_behaviors/     # BlockPartBehavior .gd
+│   ├── DamageEnemyBehavior.gd
+│   ├── DamagePlayerBehavior.gd
+│   ├── GrantShieldBehavior.gd
+│   ├── GrantPlayerStatBehavior.gd   # 带参数的行为
+│   ├── GiveGrowingStatBehavior.gd
+│   ├── MoveRightBehavior.gd
+│   ├── DoNothing.gd
+│   └── ExamplePartBehavior.gd
 ├── blockpart_picture/       # 方块贴图
 ├── stat_defs/               # StatDef .tres
 │   ├── Growing.tres
 │   ├── Shooting.tres
 │   └── ...
-├── stat_behaviors/          # StatBehavior .cs
-│   ├── GrowingStatBehavior.cs
-│   ├── ShootingStatBehavior.cs
+├── stat_behaviors/          # StatBehavior .gd
+│   ├── GrowingStatBehavior.gd
+│   ├── ShootingStatBehavior.gd
 │   └── ...
 ├── stat_images/             # 属性图标
 ├── enemy_defs/              # EnemyDefinition .tres
@@ -556,13 +487,13 @@ resources/
 
 ```
 actions/                     # Action 系统
-├── AbstractGameAction.cs    # 动作基类
-├── ActionManager.cs         # 中央调度器
-├── DamageAction.cs          # 伤害动作（含 VFX）
-├── HealAction.cs            # 治疗动作
-├── ApplyStatusAction.cs     # 施加状态动作
-├── CallbackAction.cs        # 回调包装动作
-├── WaitAction.cs            # 等待动作
+├── AbstractGameAction.gd    # 动作基类
+├── ActionManager.gd         # 中央调度器
+├── DamageAction.gd          # 伤害动作（含 VFX）
+├── HealAction.gd            # 治疗动作
+├── ApplyStatusAction.gd     # 施加状态动作
+├── CallbackAction.gd        # 回调包装动作
+├── WaitAction.gd            # 等待动作
 └── ...
 
 vfx/                         # 视觉效果

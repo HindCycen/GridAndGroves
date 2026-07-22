@@ -1,6 +1,6 @@
 # Grid & Groves — Resource 文件编写指南
 
-本文档介绍项目中所有继承自 Godot `Resource` 的 C# 类型以及对应的 `.tres` 数据文件如何编写。
+本文档介绍项目中所有继承自 Godot `Resource` 的类型以及对应的 `.tres` 数据文件如何编写。
 
 ---
 
@@ -13,6 +13,8 @@
 5. [SubResource 与 ExtResource](#5-subresource-与-extresource)
 6. [编写 Behavior（行为）子类](#6-编写-behavior行为子类)
 7. [Enum 与 Resource 配合](#7-enum-与-resource-配合)
+8. [BlockDef 注册：JSON 扫描](#8-blockdef-注册json-扫描)
+9. [Behavior 参数支持](#9-behavior-参数支持)
 
 ---
 
@@ -20,20 +22,16 @@
 
 Godot 的 `Resource` 是引擎内置的数据容器，支持序列化（存为 `.tres`/`.res`）、在编辑器中可视化编辑、复制时独立实例化。
 
-在 C# 中定义一个 Resource 类：
+在 GDScript 中定义一个 Resource 类：
 
-```csharp
-using Godot;
+```gdscript
+class_name MyResource extends Resource
 
-[GlobalClass]
-public partial class MyResource : Resource {
-    [Export] public string MyField;
-}
+@export var my_field: String
 ```
 
-- **必须加 `[GlobalClass]`** 才能在编辑器「新建资源」对话框中看到。
-- **必须 `public partial class`**。
-- **字段用 `[Export]`** 暴露给编辑器。
+- **必须加 `class_name`** 才能在编辑器「新建资源」对话框中看到。
+- **字段用 `@export`** 暴露给编辑器。
 
 ---
 
@@ -41,20 +39,17 @@ public partial class MyResource : Resource {
 
 ### 步骤
 
-1. 在 `resources/` 下新建 `.cs` 文件（如 `MyNewDef.cs`）。
-2. 继承 `Resource`，加 `[GlobalClass]`，字段加 `[Export]`。
+1. 在合适的目录下新建 `.gd` 文件（如 `resources/MyNewDef.gd`）。
+2. 第一行 `class_name MyNewDef extends Resource`，字段加 `@export`。
 3. 引用其他 Resource 时直接声明类型：
 
-```csharp
-using Godot;
+```gdscript
+class_name MyNewDef extends Resource
 
-[GlobalClass]
-public partial class MyNewDef : Resource {
-    [Export] public string Name;
-    [Export] public int Value = 10;            // 默认值
-    [Export] public SomeOtherDef LinkedDef;    // 引用另一个 Resource
-    [Export] public SomeOtherDef[] DefList;    // 数组
-}
+@export var name: String
+@export var value: int = 10            # 默认值
+@export var linked_def: Resource       # 引用另一个 Resource
+@export var def_list: Array[Resource]  # 数组
 ```
 
 ---
@@ -63,18 +58,18 @@ public partial class MyNewDef : Resource {
 
 ### 3.1 数据持久化 — DataResource
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
 | `PlayerCurrentHealth` | `int` | 玩家当前血量 |
 | `PlayerMaxHealth` | `int` | 玩家最大血量 |
-| `PlayerDeckBlockNames` | `string[]` | 牌组中的 Block 名称列表 |
-| `PlayerStatNames` | `string[]` | 玩家属性名称 |
-| `PlayerStatValues` | `int[]` | 玩家属性值 |
+| `PlayerDeckBlockNames` | `Array[String]` | 牌组中的 Block 名称列表 |
+| `PlayerStatNames` | `Array[String]` | 玩家属性名称 |
+| `PlayerStatValues` | `Array[int]` | 玩家属性值 |
 | `StageCount` | `int` | 当前层数 |
 | `RoomCount` | `int` | 当前房间数 |
-| `GridClickable` | `int[]` | 可点击格子 |
-| `GridLeft` | `int[]` | 剩余格子 |
-| `StageDefPath` | `string` | 当前层的 StageDef 路径 |
+| `GridClickable` | `Array[int]` | 可点击格子 |
+| `GridLeft` | `Array[int]` | 剩余格子 |
+| `StageDefPath` | `String` | 当前层的 StageDef 路径 |
 | `Seed` | `int` | 随机种子 |
 | `各种 RandUsage` | `int` | 各随机流已使用次数 |
 
@@ -84,10 +79,11 @@ public partial class MyNewDef : Resource {
 
 ### 3.2 关卡定义 — StageDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `StageEnemyChart` | `StageEnemyChartDef` | 本层敌人配置表 |
+| `StageEnemyChart` | `Resource` | 本层敌人配置表 |
 | `StageEventRand` | `EventRand` | 本层随机事件池 |
+| `StartingDeck` | `Array[String]` | 初始牌组 Block 名称列表 |
 
 ```
 resources/
@@ -99,12 +95,12 @@ resources/
 
 ### 3.3 敌人配置表 — StageEnemyChartDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `WeakEnemyChart` | `EnemyChartDef[]` | 普通弱敌池 |
-| `StrongEnemyChart` | `EnemyChartDef[]` | 普通强敌池 |
-| `EliteChart` | `EnemyChartDef[]` | 精英敌池 |
-| `BossChart` | `EnemyChartDef[]` | BOSS 敌池 |
+| `WeakEnemyChart` | `Array` | 普通弱敌池 |
+| `StrongEnemyChart` | `Array` | 普通强敌池 |
+| `EliteChart` | `Array` | 精英敌池 |
+| `BossChart` | `Array` | BOSS 敌池 |
 
 > 每个 Chart 是一个 `EnemyChartDef`，里面是 `EnemyDefinition[]`。
 
@@ -112,69 +108,69 @@ resources/
 
 ### 3.4 敌人图鉴 — EnemyChartDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `EnemyDefs` | `EnemyDefinition[]` | 此 Chart 包含的敌人定义 |
+| `EnemyDefs` | `Array` | 此 Chart 包含的敌人定义 |
 
 ---
 
 ### 3.5 敌人定义 — EnemyDefinition
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `EnemyName` | `string` | 敌人名称 |
+| `EnemyName` | `String` | 敌人名称 |
 | `MaxHealth` | `int` | 最大血量（默认 50） |
 | `AttackDamage` | `int` | 攻击力（默认 10） |
-| `Image` | `Texture2D` | 敌人贴图 |
-| `IntentCycle` | `IntentDefinition[]` | 行动循环（每回合按顺序执行） |
-| `InitialStats` | `StatDef[]` | 初始属性 |
+| `EnemyImage` | `Texture2D` | 敌人贴图 |
+| `IntentCycle` | `Array` | 行动循环（每回合按顺序执行） |
+| `InitialStats` | `Array` | 初始属性 |
 
 **示例 `.tres`** (`resources/enemy_defs/Gonh.tres`)：
 
 ```
 [gd_resource type="Resource" script_class="EnemyDefinition" format=3]
 
-[ext_resource type="Script" path="res://resources/EnemyDefinition.cs" id="1"]
-[ext_resource type="Resource" path="res://resources/enemy_intents/PlaceAttackAtCenter.tres" id="2"]
-[ext_resource type="Texture2D" path="res://resources/enemy_images/Gonh.png" id="3"]
+[ext_resource type="Script" path="res://resources/EnemyDefinition.gd" id="1_define"]
+[ext_resource type="Resource" path="res://resources/enemy_intents/PlaceAttackAtCenter.tres" id="2_intent1"]
+[ext_resource type="Texture2D" path="res://resources/enemy_images/Gonh.png" id="4_image"]
 
 [resource]
-script = ExtResource("1")
-EnemyName = "Gonh"
-MaxHealth = 30
+script = ExtResource("1_define")
 AttackDamage = 5
-Image = ExtResource("3")
-IntentCycle = Array[Object]([ExtResource("2")])
-InitialStats = Array[Object]([/* StatDef 引用 */])
+EnemyName = "Gonh"
+EnemyImage = ExtResource("4_image")
+IntentCycle = Array[Object]([ExtResource("2_intent1")])
+InitialStats = Array[Object]([ExtResource("5_shooting")])
+MaxHealth = 30
 ```
 
 ---
 
 ### 3.6 行动意图 — IntentDefinition
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `IntentName` | `string` | 意图名称 |
+| `IntentName` | `String` | 意图名称 |
 | `RepeatCount` | `int` | 重复次数（默认 1） |
-| `BlockPlacements` | `BlockPlacementDef[]` | 要放置的方块组 |
+| `BlockPlacements` | `Array` | 要放置的方块组 |
 
 **示例 `.tres`** (`resources/enemy_intents/PlaceAttackAtCenter.tres`)：
 
 ```
 [gd_resource type="Resource" script_class="IntentDefinition" format=3]
 
-[ext_resource type="Resource" path="res://resources/blockdefs/EnemyAttackBlock.tres" id="1"]
-[ext_resource type="Script" path="res://resources/IntentDefinition.cs" id="2"]
-[ext_resource type="Script" path="res://resources/BlockPlacementDef.cs" id="3"]
+[ext_resource type="Script" path="res://resources/IntentDefinition.gd" id="2_intent"]
+[ext_resource type="Script" path="res://resources/BlockPlacementDef.gd" id="3_placement"]
+[ext_resource type="Resource" path="res://resources/blockdefs/EnemyAttackBlock.tres" id="4_block"]
 
 [sub_resource type="Resource" id="Place_1"]
-script = ExtResource("3")
-Block = ExtResource("1")
+script = ExtResource("3_placement")
+BlockRef = ExtResource("4_block")
 GridPosition = Vector2i(2, 2)
 
 [resource]
-script = ExtResource("2")
-BlockPlacements = Array[Object]([SubResource("Place_1")])
+script = ExtResource("2_intent")
+BlockPlacements = [SubResource("Place_1")]
 IntentName = "PlaceAttackAtCenter"
 RepeatCount = 2
 ```
@@ -183,115 +179,101 @@ RepeatCount = 2
 
 ### 3.7 方块放置点 — BlockPlacementDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `Block` | `BlockDef` | 要放置的方块 |
-| `GridPosition` | `Vector2I` | 网格位置 |
+| `BlockRef` | `BlockDef` | 要放置的方块的 BlockDef 引用 |
+| `GridPosition` | `Vector2i` | 网格位置 |
 | `RandomOffsetRange` | `int` | 随机偏移范围（默认 1） |
 
 ---
 
 ### 3.8 方块定义 — BlockDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `BlockName` | `string` | 方块名称 |
-| `Description` | `string` | 描述 |
-| `PartDefinitions` | `BlockPartDef[]` | 组成方块的部件 |
+| `BlockName` | `String` | 方块名称 |
+| `Description` | `String` | 描述 |
+| `PartDefinitions` | `Array` | 组成方块的部件 |
 
 ---
 
 ### 3.9 方块部件定义 — BlockPartDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `PartId` | `string` | 部件 ID |
-| `Description` | `string` | 描述 |
+| `PartId` | `String` | 部件 ID |
+| `Description` | `String` | 描述 |
 | `BaseDamage` | `int` | 基础伤害 |
 | `BaseShield` | `int` | 基础护盾 |
 | `BaseMagicNum` | `int` | 基础魔法值 |
-| `MovingDirection` | `Vector2I` | 移动方向 |
+| `MovingDirection` | `Vector2i` | 移动方向 |
 | `PartialPosition` | `Vector2` | 局部位置 |
 | `SpriteTexture` | `Texture2D` | 贴图 |
-| `Behaviors` | `BlockPartBehavior[]` | 行为列表 |
+| `Behaviors` | `Array` | 行为列表 |
 
 ---
 
-### 3.10 方块部件行为 — BlockPartBehavior（abstract）
+### 3.10 方块部件行为 — BlockPartBehavior
 
-```csharp
-[GlobalClass]
-public abstract partial class BlockPartBehavior : Resource {
-    public abstract AbstractGameAction CreateAction(Block block, BlockPart part);
-    public virtual bool PreventsClear => false;
-}
+```gdscript
+class_name BlockPartBehavior extends Resource
+
+func create_action(_block, _part):
+    return null
+
+func prevents_clear() -> bool:
+    return false
 ```
 
 **编写步骤：**
 
-1. 在 `resources/blockpart_behaviors/` 下新建 `.cs`。
-2. 继承 `BlockPartBehavior`。
-3. 覆写 `CreateAction` 方法，返回一个 `AbstractGameAction` 子类。
-4. 加 `[GlobalClass]`。
+1. 在 `resources/blockpart_behaviors/` 下新建 `.gd` 文件。
+2. 第一行 `class_name XxxBehavior extends BlockPartBehavior`。
+3. 覆写 `create_action` 方法，返回一个 `AbstractGameAction` 子类（或 `null`）。
 
-**示例** (`DamageEnemyBehavior.cs`)：
+**示例** (`resources/blockpart_behaviors/DamageEnemyBehavior.gd`)：
 
-```csharp
-[GlobalClass]
-public partial class DamageEnemyBehavior : BlockPartBehavior {
-    public override AbstractGameAction CreateAction(Block block, BlockPart part) {
-        var tree = block.GetTree();
-        if (tree == null) return null;
+```gdscript
+class_name DamageEnemyBehavior extends BlockPartBehavior
 
-        var targets = tree.GetNodesInGroup("Enemies")
-            .OfType<Node2D>()
-            .Where(e => {
-                var hc = e.GetNodeOrNull<HealthComponent>("RenderingComponent/HealthComponent");
-                return hc != null && !hc.IsDead;
-            })
-            .ToList();
-
-        if (targets.Count == 0) return null;
-
-        foreach (var target in targets.Skip(1)) {
-            ActionManager.Instance?.AddToBottom(
-                new DamageAction(block, target, part.Damage));
-        }
-        return new DamageAction(block, targets[0], part.Damage, 0.4f);
-    }
-}
+func create_action(block, part):
+    var tree: SceneTree = block.get_tree()
+    if tree == null:
+        return null
+    var targets: Array[Node2D] = []
+    for e in tree.get_nodes_in_group("Enemies"):
+        if e is Node2D:
+            var hc: HealthComponent = e.get_node_or_null("RenderingComponent/HealthComponent") as HealthComponent
+            if hc != null and not hc.is_dead:
+                targets.append(e)
+    if targets.size() == 0:
+        return null
+    for i in range(1, targets.size()):
+        ActionManager.add_to_bottom(DamageAction.new(block, targets[i], part.Damage))
+    return DamageAction.new(block, targets[0], part.Damage, 0.4)
 ```
 
-然后在 `.tres` 中以 SubResource 引用：
-
-```
-[sub_resource type="Resource" id="Resource_behavior"]
-script = ExtResource("_DamageEnemyBehaviorScript_")
-
-[resource]
-script = ExtResource("_BlockPartDefScript_")
-Behaviors = Array[Resource]([SubResource("Resource_behavior")])
-```
+**注意**：BlockPartBehavior 不需要单独创建 `.tres` 文件。在 JSON 扫描器中通过 `"script"` 路径引用即可自动实例化。
 
 ---
 
 ### 3.11 事件 — EventDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `EventDesc` | `string` | 事件描述（支持 BBCode） |
-| `Choices` | `EventChoiceDef[]` | 可选选项 |
+| `EventDesc` | `String` | 事件描述（支持 BBCode） |
+| `Choices` | `Array` | 可选选项 |
 
 ---
 
 ### 3.12 事件选项 — EventChoiceDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `Name` | `string` | 选项名称 |
-| `Description` | `string` | 选项描述 |
-| `ResultDescription` | `string` | 执行结果描述 |
-| `ActionType` | `EventActionType` | 动作类型（enum） |
+| `Name` | `String` | 选项名称 |
+| `Description` | `String` | 选项描述 |
+| `ResultDescription` | `String` | 执行结果描述 |
+| `ActionType` | `int (EventActionType)` | 动作类型（enum） |
 | `ActionValue` | `int` | 动作数值 |
 
 **EventActionType 枚举值：**
@@ -312,18 +294,19 @@ Behaviors = Array[Resource]([SubResource("Resource_behavior")])
 
 | 字段 | 类型 | 用途 |
 |---|---|---|
-| `PossibleEvents` | `EventDef[]` | 可能触发的随机事件列表 |
+| `PossibleEvents` | `Array` | 可能触发的随机事件列表 |
 
 ---
 
 ### 3.14 属性定义 — StatDef
 
-| 字段 | 类型 | 用途 |
+| 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `StatName` | `string` | 属性名称 |
-| `Description` | `string` | 描述 |
+| `StatName` | `String` | 属性名称 |
+| `Description` | `String` | 描述 |
 | `MaxValue` | `int` | 最大值 |
 | `CanGoNegative` | `bool` | 是否允许负数 |
+| `RemoveOnBattleEnd` | `bool` | 战斗结束是否移除 |
 | `Icon` | `Texture2D` | 图标 |
 | `Behavior` | `StatBehavior` | 绑定行为 |
 
@@ -332,18 +315,18 @@ Behaviors = Array[Resource]([SubResource("Resource_behavior")])
 ```
 [gd_resource type="Resource" script_class="StatDef" format=3]
 
-[ext_resource type="Script" path="res://stats/StatDef.cs" id="1"]
-[ext_resource type="Script" path="res://resources/stat_behaviors/GrowingStatBehavior.cs" id="2"]
-[ext_resource type="Texture2D" path="res://resources/stat_images/Growing.png" id="3"]
+[ext_resource type="Script" path="res://stats/StatDef.gd" id="1_statdef"]
+[ext_resource type="Script" path="res://resources/stat_behaviors/GrowingStatBehavior.gd" id="2_growing"]
+[ext_resource type="Texture2D" path="res://resources/stat_images/Growing.png" id="3_icon"]
 
-[sub_resource type="Resource" id="Resource_behavior"]
-script = ExtResource("2")
+[sub_resource type="Resource" id="Resource_growing"]
+script = ExtResource("2_growing")
 
 [resource]
-script = ExtResource("1")
-Behavior = SubResource("Resource_behavior")
+script = ExtResource("1_statdef")
+Behavior = SubResource("Resource_growing")
 Description = "战斗结束时回复 %N% 点生命"
-Icon = ExtResource("3")
+Icon = ExtResource("3_icon")
 MaxValue = 12
 StatName = "Growing"
 ```
@@ -352,41 +335,46 @@ StatName = "Growing"
 
 ### 3.15 属性行为 — StatBehavior
 
-```csharp
-[GlobalClass]
-public partial class StatBehavior : Resource {
-    // 通过反射调用带 [StatusBehavior] 特性的方法
-    public void ExecuteAt(Glob.StatExecuteAt period) { ... }
-}
+```gdscript
+class_name StatBehavior extends Resource
+
+## 使用 ## @period OnTurnEnded 标记触发时期
+func execute_at(_period: int) -> void:
+    pass
 ```
 
 **编写步骤：**
 
-1. 在 `resources/stat_behaviors/` 下新建 `.cs`。
+1. 在 `resources/stat_behaviors/` 下新建 `.gd` 文件。
 2. 继承 `StatBehavior`。
-3. 方法上加 `[StatusBehavior(Period = Glob.StatExecuteAt.XXX)]`。
+3. 在方法上加 `## @period OnXxx` 注释标记触发时机。
 
-**示例** (`GrowingStatBehavior.cs`)：
+**示例** (`GrowingStatBehavior.gd`)：
 
-```csharp
-public partial class GrowingStatBehavior : StatBehavior {
-    [StatusBehavior(Period = Glob.StatExecuteAt.OnBattleEnded)]
-    public void HealPlayer() {
-        var stat = BelongingStat;
-        var tree = stat.GetTree();
-        var players = tree.GetNodesInGroup("Players");
-        foreach (var node in players) {
-            if (node is not Node2D player) continue;
-            var health = player.GetNode<HealthComponent>("RenderingComponent/HealthComponent");
-            health?.Heal(12);
-        }
-    }
-}
+```gdscript
+class_name GrowingStatBehavior extends StatBehavior
+
+## @period OnBattleEnded
+func heal_player() -> void:
+    var tree: SceneTree = belonging_stat.get_tree()
+    var players: Array[Node] = tree.get_nodes_in_group("Players")
+    if players.size() > 0:
+        var health: HealthComponent = players[0].get_node("RenderingComponent/HealthComponent")
+        if health != null:
+            health.heal(12)
 ```
 
-**支持的执行时机** (`Glob.StatExecuteAt`)：
+**支持的执行时机**（`BattleTime` 信号触发）：
+- `OnBattleStarted` — 战斗开始
+- `OnTurnStarted` — 回合开始
+- `OnTicTac` — 每个 Bot tick
+- `OnPreBlockExecute` — Phase A
+- `OnBlockExecute` — Phase B
+- `OnPostBlockExecute` — Phase C
+- `OnTurnEnded` — 回合结束
 - `OnBattleEnded` — 战斗结束
-- 其他值见 `Glob.StatExecuteAt` 枚举定义。
+- `OnBeforeDamageApply` — 伤害计算前
+- `OnAfterDamageApply` — 伤害计算后
 
 ---
 
@@ -395,7 +383,7 @@ public partial class GrowingStatBehavior : StatBehavior {
 ### 方法一：Godot 编辑器（推荐）
 
 1. 在 `FileSystem` 面板右键 → `New Resource...`。
-2. 选择你的 `[GlobalClass]` 类型。
+2. 选择你的 `class_name` 类型。
 3. 保存到对应的子目录（如 `resources/enemy_defs/`）。
 4. 在 Inspector 中填充字段。
 
@@ -406,7 +394,7 @@ public partial class GrowingStatBehavior : StatBehavior {
 ```
 [gd_resource type="Resource" script_class="YourClassName" format=3]
 
-[ext_resource type="Script" path="res://path/to/YourClass.cs" id="1"]
+[ext_resource type="Script" path="res://path/to/YourClass.gd" id="1"]
 
 [resource]
 script = ExtResource("1")

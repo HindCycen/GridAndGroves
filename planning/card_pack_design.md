@@ -9,7 +9,7 @@
 
 ## 🔧 建议新增的 BlockPartBehavior
 
-以下是为支持上述设计需要新建的 Behavior 类（每个一个 `.cs` 文件）：
+以下是为支持上述设计需要新建的 Behavior 类（每个一个 `.gd` 文件）：
 
 | Behavior | 所属包 | 作用 |
 |----------|--------|------|
@@ -50,7 +50,7 @@ EnqueueBlockActions(block):
           limit recursion depth to 3
 ```
 
-这需要修改 `Bot.cs` 的触发流程，增加一个递归共鸣步。
+这需要修改 `Bot.gd` 的触发流程，增加一个递归共鸣步。
 
 ### 2. 驻留 Block（扎根/法阵）
 
@@ -62,7 +62,7 @@ EnqueueBlockActions(block):
 ```
 
 `PreventsClear` 已存在于 `BlockPartBehavior` 中，但需要确保：
-- `Bot.cs` 在检查 PathStep 时能跳过已清理的格子
+- `Bot.gd` 在检查 PathStep 时能跳过已清理的格子
 - 驻留 Block 被触发后依然留在场上
 - 驻留 Block 占用网格位置（影响后续放置）
 
