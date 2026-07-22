@@ -1,0 +1,142 @@
+{
+  "blocks": [
+    {
+      "name": "DamageBlock",
+      "description": "",
+      "parts": [
+        {
+          "partId": "DamagePart",
+          "baseDamage": 10,
+          "description": "Deal %D% damage to the enemy.",
+          "movingDirection": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EnemyAttackBlock",
+      "description": "",
+      "parts": [
+        {
+          "partId": "EnemyAttackPart",
+          "baseDamage": 5,
+          "description": "Deal %D% damage to the player.",
+          "movingDirection": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/grey/GreyAttack.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ExampleBlock",
+      "description": "",
+      "parts": [
+        {
+          "partId": "EgPart",
+          "description": "Nothing.",
+          "movingDirection": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/green/Blank-G.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/ExamplePartBehavior.gd" }
+          ]
+        },
+        {
+          "partId": "EgPart2",
+          "description": "Nothing.",
+          "movingDirection": [0, 1],
+          "partialPosition": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/green/Blank-G.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/ExamplePartBehavior.gd" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ExampleMoveRight",
+      "description": "",
+      "parts": [
+        {
+          "partId": "EgMoveRightPart",
+          "baseDamage": 5,
+          "description": "Make [Y]{Bot} move [G]{Right} before meeting other blockparts. Meanwhile deal %D% damage.",
+          "movingDirection": [1, 0],
+          "spriteTexture": "res://resources/blockpart_picture/green/Right-G.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/MoveRightBehavior.gd" },
+            { "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Growing",
+      "description": "",
+      "parts": [
+        {
+          "partId": "GrowingPart",
+          "description": "Give yourself a [G]{Growing}[/G] status: heal 12 HP when battle ends.",
+          "movingDirection": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/GiveGrowingStatBehavior.gd" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Shield",
+      "description": "",
+      "parts": [
+        {
+          "partId": "Shield00",
+          "description": "",
+          "movingDirection": [0, 1],
+          "partialPosition": [0, 0],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": []
+        },
+        {
+          "partId": "Shield01",
+          "baseShield": 5,
+          "description": "Gain %S% Shield.",
+          "movingDirection": [0, 1],
+          "partialPosition": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Strike",
+      "description": "",
+      "parts": [
+        {
+          "partId": "JustDoNothing",
+          "description": "Just do nothing.",
+          "movingDirection": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/green/Blank-G.png",
+          "behaviors": []
+        },
+        {
+          "partId": "Strike01",
+          "baseDamage": 6,
+          "description": "Deal %D% Damage.",
+          "movingDirection": [0, 1],
+          "partialPosition": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" }
+          ]
+        }
+      ]
+    }
+  ]
+}

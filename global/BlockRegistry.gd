@@ -41,10 +41,5 @@ func create_block_by_name(block_name: String) -> Block:
     return create_block(BlockDefs[block_name])
 
 func auto_register_blocks() -> void:
-    subscribe_block_def(load("res://resources/blockdefs/ExampleBlock.tres"))
-    subscribe_block_def(load("res://resources/blockdefs/ExampleMoveRight.tres"))
-    subscribe_block_def(load("res://resources/blockdefs/DamageBlock.tres"))
-    subscribe_block_def(load("res://resources/blockdefs/EnemyAttackBlock.tres"))
-    subscribe_block_def(load("res://resources/blockdefs/GrowingBlock.tres"))
-    subscribe_block_def(load("res://resources/blockdefs/Shield.tres"))
-    subscribe_block_def(load("res://resources/blockdefs/Strike.tres"))
+    var Scanner := preload("res://registerers/JsonBlockScanner.gd")
+    Scanner.scan_and_register()
