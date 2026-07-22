@@ -9,9 +9,9 @@
 
 | 文件 | 内容 |
 |------|------|
-| `pack_ranger.md` | 铁锈游侠（Rust Ranger）— 回收、锈蚀、过载 |
-| `pack_weaver.md` | 星语术士（Astral Weaver）— 共鸣、星涌、法阵 |
-| `pack_sentinel.md` | 翠绿哨兵（Verdant Sentinel）— 扎根、藤蔓、共生 |
+| `pack_ranger.md` | 铁锈游侠（Rust Ranger）— 松动、过载、锈蚀、废品回收、链式释放 |
+| `pack_weaver.md` | 星语术士（Astral Weaver）— 共鸣、星涌、法阵、星能回响、星辰聚焦 |
+| `pack_sentinel.md` | 翠绿哨兵（Verdant Sentinel）— 扎根、藤蔓、共生、孢子蔓延、丛林庇护、自然循环 |
 | `minipacks.md` | 5 个小卡包 |
 | `technical.md` | Behavior / Stat / 游戏循环修改建议 |
 
