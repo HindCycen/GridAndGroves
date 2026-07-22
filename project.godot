@@ -24,6 +24,7 @@ BlockRegistry="*res://global/BlockRegistry.gd"
 PackManager="*res://global/PackManager.gd"
 BattleTime="*res://global/BattleTime.gd"
 SaveLoad="*res://global/SaveLoad.gd"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
 
@@ -44,12 +45,20 @@ naming/default_signal_callback_to_self_name="_On{SignalName}"
 naming/scene_name_casing=1
 naming/script_name_casing=1
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")
+
 [global_group]
 
 Enemies="All enemies in one battle."
 Players="All players in this battle."
 Actors=""
 Blocks=""
+
+[plugins]
+
+godot_ai=true
 
 [rendering]
 
