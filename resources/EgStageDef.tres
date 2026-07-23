@@ -1,7 +1,6 @@
 [gd_resource type="Resource" script_class="StageDef" format=3]
 
 [ext_resource type="Script" path="res://resources/StageDef.gd" id="1"]
-[ext_resource type="Resource" path="res://resources/EgStageEnemyChart.tres" id="2"]
 [ext_resource type="Script" path="res://resources/EventRand.gd" id="3"]
 [ext_resource type="Script" path="res://resources/EventDef.gd" id="4"]
 [ext_resource type="Script" path="res://resources/EventChoiceDef.gd" id="5"]
@@ -72,5 +71,4 @@ metadata/_custom_type_script = "res://resources/EventRand.gd"
 
 [resource]
 script = ExtResource("1")
-StageEnemyChart = ExtResource("2")
 StageEventRand = SubResource("SubResource_rand")

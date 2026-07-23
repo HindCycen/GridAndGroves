@@ -176,14 +176,7 @@ func _enter_room(col: int, row: int) -> void:
 	_save_load.save()
 	if is_battle:
 		var room_count: int = _save_load.Data.RoomCount if _save_load != null and _save_load.Data != null else 0
-		var stage_enemy_chart := load("res://resources/EgStageEnemyChart.tres") as StageEnemyChartDef
-		var chart_def: EnemyChartDef
-		if room_count == 20:
-			chart_def = stage_enemy_chart.BossChart[RngManager.get_monster_rand(stage_enemy_chart.BossChart.size())]
-		elif room_count > 6:
-			chart_def = stage_enemy_chart.StrongEnemyChart[RngManager.get_monster_rand(stage_enemy_chart.StrongEnemyChart.size())]
-		else:
-			chart_def = stage_enemy_chart.WeakEnemyChart[RngManager.get_monster_rand(stage_enemy_chart.WeakEnemyChart.size())]
+		var chart_def := _build_enemy_chart_for_room(room_count)
 		var battle_scene := load("res://room/BattleRoom.tscn") as PackedScene
 		var battle := battle_scene.instantiate() as BattleRoom
 		battle.EnemyChart = chart_def
@@ -201,3 +194,44 @@ func _enter_room(col: int, row: int) -> void:
 		event_room.EventDefRef = picked_event
 		get_tree().root.add_child(event_room)
 		queue_free()
+
+## 从 JSON enemy_defs.json 中的 stageCharts 配置构建 EnemyChartDef
+##
+## 根据房间序号决定难度等级，从对应图表中随机选取一组敌人。
+## 回退策略: 若 JSON 中未配置对应图表，返回空 EnemyChartDef。
+func _build_enemy_chart_for_room(room_count: int) -> EnemyChartDef:
+	var chart_key: String
+	var stage_key: String = StageDefRef.resource_path.get_file().get_basename() if StageDefRef != null else "exampleStage"
+	
+	if room_count >= 20:
+		chart_key = "bossCharts"
+	elif room_count > 6:
+		chart_key = "strongCharts"
+	else:
+		chart_key = "weakCharts"
+	
+	var stage_config: Dictionary = BlockRegistry.get_stage_chart_config(stage_key)
+	var chart_list: Array = stage_config.get(chart_key, [])
+	
+	var chart_def := EnemyChartDef.new()
+	chart_def.EnemyDefs = []
+	
+	if chart_list.is_empty():
+		GameLog.warn("StageRoom: No chart entries found for key '" + stage_key + "/" + chart_key + "', returning empty chart")
+		return chart_def
+	
+	# 从该难度图表中随机选取一组
+	var selected: Dictionary = chart_list[RngManager.get_monster_rand(chart_list.size())]
+	var enemy_names: Array = selected.get("enemies", [])
+	
+	var defs: Array = []
+	for enemy_name in enemy_names:
+		var enemy_def: EnemyDefinition = BlockRegistry.get_enemy_def(enemy_name)
+		if enemy_def != null:
+			defs.append(enemy_def)
+		else:
+			GameLog.err("StageRoom: Enemy definition '" + str(enemy_name) + "' not found in registry")
+	
+	chart_def.EnemyDefs = defs
+	GameLog.info("StageRoom: Built chart for room " + str(room_count) + " (" + chart_key + ") with " + str(defs.size()) + " enemy(ies)")
+	return chart_def

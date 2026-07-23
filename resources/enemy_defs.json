@@ -1,0 +1,55 @@
+{
+  "enemies": [
+    {
+      "enemyName": "Gonh",
+      "maxHealth": 30,
+      "attackDamage": 5,
+      "enemyImage": "res://resources/enemy_images/Gonh.png",
+      "initialStats": [
+        "res://resources/stat_defs/Shooting.tres"
+      ],
+      "intentCycle": [
+        {
+          "intentName": "PlaceAttackAtCenter",
+          "repeatCount": 2,
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 2],
+              "randomOffsetRange": 1
+            }
+          ]
+        },
+        {
+          "intentName": "PlaceAttackRight",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [4, 1]
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [4, 2]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "stageCharts": {
+    "exampleStage": {
+      "weakCharts": [
+        { "enemies": ["Gonh"] }
+      ],
+      "strongCharts": [
+        { "enemies": ["Gonh"] }
+      ],
+      "eliteCharts": [
+        { "enemies": ["Gonh"] }
+      ],
+      "bossCharts": [
+        { "enemies": ["Gonh"] }
+      ]
+    }
+  }
+}

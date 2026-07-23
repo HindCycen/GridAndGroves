@@ -40,7 +40,15 @@ func execute_intent(definition) -> void:
 	if intent == null or intent.BlockPlacements == null or _block_piles_here == null:
 		return
 	for placement in intent.BlockPlacements:
-		if placement == null or placement.BlockRef == null:
+		if placement == null:
+			continue
+		# 兼容两种注册方式：Json方案用BlockName，旧tres方案用BlockRef
+		var block_name: String = ""
+		if not placement.BlockName.is_empty():
+			block_name = placement.BlockName
+		elif placement.BlockRef != null:
+			block_name = placement.BlockRef.BlockName
+		else:
 			continue
 		var pos: Vector2i = placement.GridPosition
 		if placement.RandomOffsetRange > 0:
@@ -52,7 +60,7 @@ func execute_intent(definition) -> void:
 		pos = _find_free_cell_near(pos)
 		if pos.x < 0:
 			continue
-		var block: Block = BlockRegistry.create_block_by_name(placement.BlockRef.BlockName)
+		var block: Block = BlockRegistry.create_block_by_name(block_name)
 		if block == null:
 			continue
 		block.Faction = Block.BlockFaction.Enemy

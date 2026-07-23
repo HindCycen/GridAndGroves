@@ -1,9 +1,14 @@
 extends Node
 
 var BlockDefs: Dictionary = {}
+var EnemyDefs: Dictionary = {}
+var StageChartConfigs: Dictionary = {}
 
 func _ready() -> void:
     auto_register_blocks()
+    auto_register_enemies()
+
+# ── Block 注册 ──
 
 func subscribe_block_def(block_def) -> bool:
     if block_def == null:
@@ -42,4 +47,37 @@ func create_block_by_name(block_name: String) -> Block:
 
 func auto_register_blocks() -> void:
     var Scanner := preload("res://registerers/JsonBlockScanner.gd")
+    Scanner.scan_and_register()
+
+# ── 敌人注册 ──
+
+func subscribe_enemy_def(enemy_def) -> bool:
+    if enemy_def == null:
+        GameLog.err("EnemyRegistry: EnemyDefinition is null")
+        return false
+    if enemy_def.EnemyName.is_empty():
+        GameLog.err("EnemyRegistry: EnemyDefinition.EnemyName is empty")
+        return false
+    if EnemyDefs.has(enemy_def.EnemyName):
+        GameLog.err("EnemyRegistry: EnemyDefinition '" + enemy_def.EnemyName + "' already registered")
+        return false
+    EnemyDefs[enemy_def.EnemyName] = enemy_def
+    return true
+
+func get_enemy_def(enemy_name: String) -> EnemyDefinition:
+    if not EnemyDefs.has(enemy_name):
+        GameLog.err("EnemyRegistry: No EnemyDefinition with name '" + enemy_name + "' found")
+        return null
+    return EnemyDefs[enemy_name]
+
+func subscribe_stage_chart(stage_key: String, chart_config: Dictionary) -> void:
+    if StageChartConfigs.has(stage_key):
+        GameLog.warn("EnemyRegistry: Stage chart config '" + stage_key + "' already registered, overwriting")
+    StageChartConfigs[stage_key] = chart_config
+
+func get_stage_chart_config(stage_key: String) -> Dictionary:
+    return StageChartConfigs.get(stage_key, {})
+
+func auto_register_enemies() -> void:
+    var Scanner := preload("res://registerers/JsonEnemyScanner.gd")
     Scanner.scan_and_register()

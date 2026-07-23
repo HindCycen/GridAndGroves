@@ -9,7 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://c2bl4tcrb250p" path="res://room/bot_frames/BotFrames.png" id="9_q5nyf"]
 [ext_resource type="Texture2D" uid="uid://dbnuq7l4502ms" path="res://room/battle_background/UpperLayer.png" id="11_pk84k"]
 [ext_resource type="PackedScene" path="res://actors/enemy/Enemy.tscn" id="12_fn3my"]
-[ext_resource type="Resource" path="res://resources/enemy_defs/Gonh.tres" id="13_enemydef"]
 [ext_resource type="PackedScene" path="res://room/EnemyManager.tscn" id="14_enemymgr"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_880dk"]
