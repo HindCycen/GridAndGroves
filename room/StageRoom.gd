@@ -37,8 +37,8 @@ func _ready() -> void:
 					IsBattleCell[i].append(false)
 			_generate_map()
 			Clickable[0][Rows - 1] = true
-			_rebuild_pulsing_cells()
 			MapGenerated = true
+		_rebuild_pulsing_cells()
 	_grid_container = %GridContainer as Node2D
 	var total_width := Cols * CellSize
 	var total_height := Rows * CellSize

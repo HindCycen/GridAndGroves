@@ -18,3 +18,6 @@ class_name DataResource extends Resource
 @export var Seed: int
 @export var StageCount: int
 @export var StageDefPath: String
+@export var LastNonStageRoomType: int = 0  # 0=None, 1=Battle, 2=Event
+@export var LastNonStageRoomEventDefPath: String = ""
+@export var LastNonStageRoomEnemyNames: Array[String] = []

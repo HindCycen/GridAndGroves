@@ -1,72 +1,72 @@
-[gd_resource type="Resource" script_class="StageDef" format=3]
+[gd_resource type="Resource" script_class="StageDef" format=3 uid="uid://dxx2k1rv4j6rk"]
 
-[ext_resource type="Script" path="res://resources/StageDef.gd" id="1"]
-[ext_resource type="Script" path="res://resources/EventRand.gd" id="3"]
-[ext_resource type="Script" path="res://resources/EventDef.gd" id="4"]
-[ext_resource type="Script" path="res://resources/EventChoiceDef.gd" id="5"]
+[ext_resource type="Script" uid="uid://b6fk0qxn3docs" path="res://resources/StageDef.gd" id="1"]
+[ext_resource type="Script" uid="uid://dkfbt38wbhp3" path="res://resources/EventRand.gd" id="3"]
+[ext_resource type="Script" uid="uid://cgc1lsp8i1jlp" path="res://resources/EventDef.gd" id="4"]
+[ext_resource type="Script" uid="uid://c7yb04up0jgvw" path="res://resources/EventChoiceDef.gd" id="5"]
 
 [sub_resource type="Resource" id="SubResource_choice1"]
 script = ExtResource("5")
-Name = "Heal"
-Description = "[G]{Heal 20 HP}[/G]"
-ResultDescription = "You rest by the fire and recover 20 HP."
 ActionType = 1
 ActionValue = 20
+Description = "[G]{Heal 20 HP}[/G]"
+Name = "Heal"
+ResultDescription = "You rest by the fire and recover 20 HP."
 metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
 
 [sub_resource type="Resource" id="SubResource_choice2"]
 script = ExtResource("5")
-Name = "Train"
-Description = "[R]{Take 10 damage}[/R]"
-ResultDescription = "You push your limits and take 10 damage."
 ActionType = 2
 ActionValue = 10
+Description = "[R]{Take 10 damage}[/R]"
+Name = "Train"
+ResultDescription = "You push your limits and take 10 damage."
 metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
 
 [sub_resource type="Resource" id="SubResource_evt1"]
 script = ExtResource("4")
+Choices = [SubResource("SubResource_choice1"), SubResource("SubResource_choice2")]
 EventDesc = "You found a mysterious campfire. What will you do?"
-Choices = Array[Object]([SubResource("SubResource_choice1"), SubResource("SubResource_choice2")])
 metadata/_custom_type_script = "res://resources/EventDef.gd"
 
 [sub_resource type="Resource" id="SubResource_choice3"]
 script = ExtResource("5")
-Name = "Open"
 Description = "[Y]{Find gold}[/Y]"
+Name = "Open"
 ResultDescription = "The chest contains gold!"
 metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
 
 [sub_resource type="Resource" id="SubResource_choice4"]
 script = ExtResource("5")
-Name = "Leave"
 Description = "[B]{Walk away}[/B]"
+Name = "Leave"
 ResultDescription = "You leave the chest alone."
 metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
 
 [sub_resource type="Resource" id="SubResource_evt2"]
 script = ExtResource("4")
+Choices = [SubResource("SubResource_choice3"), SubResource("SubResource_choice4")]
 EventDesc = "A locked chest sits in the corner."
-Choices = Array[Object]([SubResource("SubResource_choice3"), SubResource("SubResource_choice4")])
 metadata/_custom_type_script = "res://resources/EventDef.gd"
 
 [sub_resource type="Resource" id="SubResource_choice5"]
 script = ExtResource("5")
-Name = "Drink"
-Description = "[G]{Heal 50 HP}[/G]"
-ResultDescription = "The potion heals you for 50 HP."
 ActionType = 1
 ActionValue = 50
+Description = "[G]{Heal 50 HP}[/G]"
+Name = "Drink"
+ResultDescription = "The potion heals you for 50 HP."
 metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
 
 [sub_resource type="Resource" id="SubResource_evt3"]
 script = ExtResource("4")
+Choices = [SubResource("SubResource_choice5")]
 EventDesc = "An old hermit offers you a potion."
-Choices = Array[Object]([SubResource("SubResource_choice5")])
 metadata/_custom_type_script = "res://resources/EventDef.gd"
 
 [sub_resource type="Resource" id="SubResource_rand"]
 script = ExtResource("3")
-PossibleEvents = Array[Object]([SubResource("SubResource_evt1"), SubResource("SubResource_evt2"), SubResource("SubResource_evt3")])
+PossibleEvents = [SubResource("SubResource_evt1"), SubResource("SubResource_evt2"), SubResource("SubResource_evt3")]
 metadata/_custom_type_script = "res://resources/EventRand.gd"
 
 [resource]

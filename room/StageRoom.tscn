@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://7mkgsfv7kwng"]
 
-[ext_resource type="Script" path="res://room/StageRoom.gd" id="1"]
+[ext_resource type="Script" uid="uid://bc70nw8t52gn2" path="res://room/StageRoom.gd" id="1"]
 [ext_resource type="PackedScene" path="res://room/Room.tscn" id="2"]
 [ext_resource type="Resource" path="res://resources/EgStageDef.tres" id="3"]
 
@@ -8,5 +8,9 @@
 script = ExtResource("1")
 StageDefRef = ExtResource("3")
 
-[node name="GridContainer" type="Node2D" parent="."]
+[node name="TopBar" parent="." index="0"]
+offset_left = 0.0
+offset_top = 0.0
+
+[node name="GridContainer" type="Node2D" parent="." index="5" unique_id=1879274855]
 unique_name_in_owner = true

@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://room/Room.gd" id="1_room"]
 [ext_resource type="Texture2D" path="res://room/room_pictures/TopBar.png" id="2_topbar"]
 [ext_resource type="Texture2D" path="res://room/room_pictures/Heart.png" id="3_heart"]
+[ext_resource type="Texture2D" path="res://room/room_pictures/BackToStage.png" id="4_backtostage"]
 
 [node name="Room" type="Node2D"]
 script = ExtResource("1_room")
@@ -44,3 +45,13 @@ offset_right = 1270.0
 offset_bottom = 48.0
 theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
+
+[node name="BackToStageBtn" type="TextureButton" parent="."]
+unique_name_in_owner = true
+offset_left = 1850.0
+offset_top = 10.0
+offset_right = 1910.0
+offset_bottom = 70.0
+texture_normal = ExtResource("4_backtostage")
+expand_icon = true
+stretch_mode = 2

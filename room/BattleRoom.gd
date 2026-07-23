@@ -5,6 +5,7 @@ var _block_piles_here: BlockPilesHere
 var _bot: Bot
 var _end_turn_button: Button
 var _enemy_manager: EnemyManager
+var _battle_resolved: bool
 var _is_game_over: bool
 var _player: Player
 var _player_health: HealthComponent
@@ -32,6 +33,7 @@ func _ready() -> void:
 	_block_piles_here.PlayerCharacter = _player
 	if _player_health != null:
 		_player_health.died.connect(_on_player_died)
+	_battle_resolved = false
 	_is_game_over = false
 	_enemy_manager.initialize(_player, _block_piles_here)
 	_enemy_manager.enemy_died.connect(_on_enemy_died_wrapper)
@@ -83,6 +85,9 @@ func _exit_tree() -> void:
 			_enemy_manager.enemy_died.disconnect(_on_enemy_died_wrapper)
 		if _enemy_manager.all_enemies_defeated.is_connected(_on_all_enemies_defeated):
 			_enemy_manager.all_enemies_defeated.disconnect(_on_all_enemies_defeated)
+	# 战斗未结束时退出，回退 RoomCount 防止存档跳过战斗
+	if not _battle_resolved and _save_load != null and _save_load.Data != null:
+		_save_load.Data.RoomCount -= 1
 	super()
 
 func _initialize_player_deck() -> void:
@@ -143,6 +148,7 @@ func _on_bot_turn_ended() -> void:
 	_enemy_manager.queue_attacks(self, _on_all_enemy_attacks_resolved)
 
 func _on_victory() -> void:
+	_battle_resolved = true
 	GameLog.info("\n=== Victory! All enemies defeated! ===")
 	_end_turn_button.text = "Victory!"
 	_end_turn_button.disabled = true
@@ -168,6 +174,7 @@ func _on_player_died() -> void:
 	_on_defeat()
 
 func _on_defeat() -> void:
+	_battle_resolved = true
 	GameLog.info("\n=== Defeat! Player has been defeated! ===")
 	_end_turn_button.text = "Defeat..."
 	_end_turn_button.disabled = true
