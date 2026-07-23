@@ -37,6 +37,8 @@ func create_block(block_def) -> Block:
     var scene := preload("res://blocks/Block.tscn") as PackedScene
     var block: Block = scene.instantiate()
     block.Definition = block_def
+    # 根据 BlockDef 的 Faction 自动设置 Block 阵营
+    block.Faction = block_def.Faction
     return block
 
 func create_block_by_name(block_name: String) -> Block:

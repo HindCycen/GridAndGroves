@@ -18,10 +18,11 @@ func update(delta: float) -> void:
 	if not is_done:
 		return
 	_trigger_before_damage_hooks()
+	var final_damage: int = _apply_damage_modifiers(amount)
 	_play_damage_vfx()
 	var target_health: HealthComponent = _find_target_health()
 	if target_health != null:
-		target_health.take_damage(amount)
+		target_health.take_damage(final_damage)
 	_trigger_after_damage_hooks()
 
 func _play_damage_vfx() -> void:
@@ -35,6 +36,21 @@ func _play_damage_vfx() -> void:
 		var tree := target_node.get_tree()
 		if tree != null and tree.current_scene != null:
 			tree.current_scene.add_child(vfx)
+
+## 应用伤害修正（锈蚀减伤等）
+func _apply_damage_modifiers(base_damage: int) -> int:
+	var modified: int = base_damage
+	# 检查目标是否有 RustStat
+	if target is Node2D:
+		var rendering = target.get_node_or_null("RenderingComponent")
+		if rendering != null:
+			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
+			if stats_comp != null and stats_comp.has_status("Rust"):
+				var rust_stat: Stat = stats_comp.get_status("Rust")
+				var rust_layers: int = rust_stat.CurrentValue
+				modified = maxi(1, modified - rust_layers)
+				GameLog.debug("DamageAction: RustStat reduced damage from " + str(base_damage) + " to " + str(modified))
+	return modified
 
 func _trigger_before_damage_hooks() -> void:
 	_trigger_damage_hooks(Enums.StatExecuteAt.OnBeforeDamageApply)

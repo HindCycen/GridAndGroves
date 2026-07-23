@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="StatDef" format=3]
+
+[ext_resource type="Script" path="res://stats/StatDef.gd" id="1_statdef"]
+[ext_resource type="Script" path="res://resources/stat_behaviors/SymbiosisStatBehavior.gd" id="2_symbiosis"]
+
+[sub_resource type="Resource" id="Resource_symbiosis"]
+script = ExtResource("2_symbiosis")
+
+[resource]
+script = ExtResource("1_statdef")
+Behavior = SubResource("Resource_symbiosis")
+CanGoNegative = false
+Description = "场上每有 1 个己方 Block（含扎根），获得护盾。"
+Icon = null
+MaxValue = 5
+StatName = "Symbiosis"
+RemoveOnBattleEnd = true

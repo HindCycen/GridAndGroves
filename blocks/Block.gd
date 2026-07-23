@@ -76,6 +76,7 @@ func _finalize_placement() -> void:
 	_was_on_grid = false
 	OriginalPos = global_position
 	IsPlaced = true
+	add_to_group("placed_blocks")
 	placed.emit(self)
 
 func _occupy_all_part_grids() -> void:
@@ -92,6 +93,7 @@ func _lift_from_grid() -> void:
 		if grid_index.x >= 0 and grid_index.y >= 0:
 			GridState.set_grid_state(grid_index.x, grid_index.y, Enums.GridStateEnum.Free)
 	IsPlaced = false
+	remove_from_group("placed_blocks")
 
 func _are_all_parts_in_grid_bounds() -> bool:
 	for part in _parts:

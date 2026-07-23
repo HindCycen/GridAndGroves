@@ -38,6 +38,7 @@ static func _create_block_def(entry: Dictionary) -> BlockDef:
 	var block_def := BlockDef.new()
 	block_def.BlockName = entry.name
 	block_def.Description = entry.get("description", "")
+	block_def.Faction = entry.get("faction", BlockDef.BlockFactionDef.Player)
 	
 	if entry.has("parts"):
 		var parts: Array = []

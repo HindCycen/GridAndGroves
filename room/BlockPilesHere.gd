@@ -85,6 +85,7 @@ func _clear_placed_player_blocks() -> void:
 		if block.left_grid.is_connected(_on_block_left_grid):
 			block.left_grid.disconnect(_on_block_left_grid)
 		PlacedPile.remove_block(block)
+		block.remove_from_group("placed_blocks")
 		_free_block_grid_cells(block)
 		_unparent_block(block, null)
 		DiscardedPile.add_block(block)

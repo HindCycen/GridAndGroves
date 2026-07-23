@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="StatDef" format=3]
+
+[ext_resource type="Script" path="res://stats/StatDef.gd" id="1_statdef"]
+[ext_resource type="Script" path="res://resources/stat_behaviors/VineStatBehavior.gd" id="2_vine"]
+
+[sub_resource type="Resource" id="Resource_vine"]
+script = ExtResource("2_vine")
+
+[resource]
+script = ExtResource("1_statdef")
+Behavior = SubResource("Resource_vine")
+CanGoNegative = false
+Description = "每层对敌人造成 1 伤害，然后层数 -1。上限 20 层。"
+Icon = null
+MaxValue = 20
+StatName = "Vine"
+RemoveOnBattleEnd = true

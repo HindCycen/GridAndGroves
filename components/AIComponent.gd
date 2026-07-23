@@ -63,7 +63,7 @@ func execute_intent(definition) -> void:
 		var block: Block = BlockRegistry.create_block_by_name(block_name)
 		if block == null:
 			continue
-		block.Faction = Block.BlockFaction.Enemy
+		# Faction 已在 BlockRegistry.create_block() 中根据 BlockDef.Faction 自动设置
 		_block_piles_here.add_child(block)
 		block.place_at_grid(pos)
 		_block_piles_here.PlacedPile.add_block(block)

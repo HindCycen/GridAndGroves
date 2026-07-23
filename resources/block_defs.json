@@ -19,6 +19,7 @@
     {
       "name": "EnemyAttackBlock",
       "description": "",
+      "faction": 1,
       "parts": [
         {
           "partId": "EnemyAttackPart",
