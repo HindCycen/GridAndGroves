@@ -47,6 +47,27 @@ func my_method() -> void:
     pass
 ```
 
+## Godot MCP 连接
+
+在操作 Godot 相关功能前，先连接编辑器 MCP 会话：
+
+```
+# 1. 列出可用会话
+session_manage(op="list")
+
+# 2. 激活会话（用项目名模糊匹配即可）
+session_activate(session_id="GridAndGroves")
+
+# 3. 确认编辑器就绪
+editor_state()
+```
+
+**核心原则**：
+- 优先使用 MCP 工具，而非手动编辑 `.tscn`/`.tres`/`.gd` 文件
+- 修改后调用 `scene_save()` 保存场景更改
+- 添加 `class_name` 后调用 `filesystem_manage(op="scan")` 刷新
+- 详细命令列表见 `.github/instructions/godot-mcp.instructions.md`
+
 ## 核心架构
 
 ### 目录结构
@@ -217,12 +238,20 @@ PackManager.subscribe_block_pack(load("res://resources/block_packs/MyPack.tres")
 PackManager.subscribe_mini_pack(load("res://resources/mini_packs/MyMini.tres"))
 ```
 
+## Godot MCP 集成
+
+本项目已安装 `godot_ai` MCP 插件。**所有 Godot 相关操作（场景编辑、节点操作、脚本创建、资源管理、测试运行等）请优先使用 MCP 工具**，而非直接编辑 `.tscn`/`.tres` 文件。
+
+详见 `.github/instructions/godot-mcp.instructions.md`。
+
 ## 文档
 
 - `docs/如何编写Resource文件.md` — Resource 类型和 .tres 文件编写指南
 - `docs/如何制作BlockAndStat内容.md` — Block/Stat 内容制作完整指南（含 JSON 注册说明）
 - `docs/StageRoom.md` — 楼层内循环系统文档
 - `.github/instructions/card-pack-design.instructions.md` — 卡包设计核心原则（三个主包的设计差异、特性标签、设计禁忌）
+- `.github/instructions/godot-mcp.instructions.md` — Godot MCP 使用指南
+- `.github/instructions/architecture.instructions.md` — 架构详细说明
 - `planning/card_pack_design/` — 完整卡包设计示例（包含每个包的 Block 列表、新增 Behavior/Stat 建议）
 
 ### 卡包设计文件索引
