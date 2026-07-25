@@ -86,9 +86,9 @@ func _enqueue_block_actions_at(grid_pos: Vector2i, resonance_depth: int = 0) -> 
 				continue
 			GameLog.debug("Bot detected BlockPart at (" + str(grid_pos.x) + ", " + str(grid_pos.y) + ")")
 			_process_block_part(block, part, resonance_depth)
-			# 共鸣连锁：部件带 ResonanceTriggerBehavior 且深度 < 3 时递归触发相邻共鸣
+			# 共鸣连锁：部件带 ResonanceTriggerBehavior → 生成 ResonanceBot 处理
 			if _has_resonance_behavior(part) and resonance_depth < 3:
-				_trigger_resonance_chain(block, resonance_depth + 1)
+				_spawn_resonance_bot(block, resonance_depth + 1)
 			return
 
 func _is_part_at_grid(part: BlockPart, grid_pos: Vector2i) -> bool:
@@ -250,89 +250,55 @@ func _has_resonance_behavior(part: BlockPart) -> bool:
 			return true
 	return false
 
-## 递归触发相邻的共鸣 Block
-func _trigger_resonance_chain(source_block: Block, depth: int) -> void:
-	if depth > 3:
+## 生成 ResonanceBot 处理共鸣链
+func _spawn_resonance_bot(source_block: Block, start_depth: int) -> void:
+	# 停止巡逻
+	_stopped = true
+	visible = false
+	if _patrol_timer != null and is_instance_valid(_patrol_timer):
+		_patrol_timer.timeout.disconnect(_on_patrol_timer_timeout)
+
+	var scene := load("res://room/ResonanceBot.tscn") as PackedScene
+	if scene == null:
+		GameLog.err("Bot: Cannot load ResonanceBot.tscn")
+		_resume_after_resonance()
 		return
-	var tree := get_tree()
-	if tree == null:
+
+	var bot := scene.instantiate() as Node2D
+	if bot == null:
+		GameLog.err("Bot: ResonanceBot instantiation failed")
+		_resume_after_resonance()
 		return
-	# 获取 source_block 所有部件占用的单元格
-	var source_cells: Array[Vector2i] = []
-	for p in source_block.get_parts():
-		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
-		var coord: Vector2i = GridState.get_grid_coords(gp)
-		if coord.x >= 0 and coord.y >= 0:
-			source_cells.append(coord)
-	# 扫描邻格
-	var adjacent_offsets: Array[Vector2i] = [
-		Vector2i(0, 1), Vector2i(0, -1),
-		Vector2i(1, 0), Vector2i(-1, 0)
-	]
-	var triggered_blocks: Array = []
-	for cell in source_cells:
-		for offset in adjacent_offsets:
-			var neighbor_cell: Vector2i = cell + offset
-			if _is_out_of_bounds(neighbor_cell):
-				continue
-			if GridState.get_grid_state(neighbor_cell.x, neighbor_cell.y) != Enums.GridStateEnum.Occupied:
-				continue
-			# 查找该格子上的共鸣 Block
-			for block in _block_piles_here.PlacedPile.Pile:
-				if not is_instance_valid(block) or block == source_block:
-					continue
-				if triggered_blocks.has(block):
-					continue
-				if block.Faction != Block.BlockFaction.Player:
-					continue
-				if _is_block_at_grid_pos(block, neighbor_cell) and _block_has_any_resonance(block):
-					triggered_blocks.append(block)
-					GameLog.debug("Bot: Resonance chain triggered at depth " + str(depth) + " for " + str(block.Definition.BlockName if block.Definition != null else ""))
-					# 每次成功传播，给玩家增加回响（Echo）层数
-					_add_echo_to_player(tree, 1)
-					# 触发该 Block 的所有部件
-					for part in block.get_parts():
-						if _has_resonance_behavior(part):
-							_process_block_part(block, part, depth)
-							# 继续递归
-							_trigger_resonance_chain(block, depth + 1)
-					break
 
-## 检查 Block 是否有至少一个共鸣部件
-func _block_has_any_resonance(block: Block) -> bool:
-	for part in block.get_parts():
-		if _has_resonance_behavior(part):
-			return true
-	return false
+	get_parent().add_child(bot)
+	bot.owner = get_parent()
 
-## 检查 Block 是否占据指定网格坐标
-func _is_block_at_grid_pos(block: Block, grid_pos: Vector2i) -> bool:
-	for p in block.get_parts():
-		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
-		var coord: Vector2i = GridState.get_grid_coords(gp)
-		if coord == grid_pos:
-			return true
-	return false
+	# 连接信号
+	if bot.has_signal("resonance_completed"):
+		bot.resonance_completed.connect(_resume_after_resonance)
+	if bot.has_signal("summon_bot_requested"):
+		bot.summon_bot_requested.connect(_on_resonance_summon)
 
-## 给玩家增加回响层数（共鸣传播时调用）
-func _add_echo_to_player(tree: SceneTree, layers: int) -> void:
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var player := node as Node2D
-			var rendering = player.get_node("RenderingComponent")
-			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
-			if stats_comp == null:
-				return
-			if not stats_comp.has_status("Echo"):
-				var echo_def: Resource = load("res://resources/stat_defs/Echo.tres")
-				if echo_def == null:
-					return
-				var stat: Stat = Stat.new()
-				stat.Definition = echo_def
-				stats_comp.add_status(stat)
-				stat.add_value(layers)
-			else:
-				var echo_stat: Stat = stats_comp.get_status("Echo")
-				echo_stat.add_value(layers)
-			GameLog.debug("Bot: Added " + str(layers) + " Echo from resonance chain (total: " + str(stats_comp.get_status("Echo").CurrentValue) + ")")
-			return
+	# 启动
+	if bot.has_method("start_resonance"):
+		bot.start_resonance(source_block, start_depth, _block_piles_here, _battle_time)
+
+## 共鸣链正常完成 → 恢复巡逻
+func _resume_after_resonance() -> void:
+	_stopped = false
+	visible = true
+	_animated_sprite_2d.play("bot_animation")
+	_schedule_next_step()
+
+## 共鸣链遇到特殊方向 → 召唤主 Bot 到目标位置
+func _on_resonance_summon(target_pos: Vector2i, new_direction: Vector2i) -> void:
+	_release_cell_safely(_current_grid_pos)
+	_current_grid_pos = target_pos
+	_current_direction = new_direction
+	global_position = GridState.get_grid_pos(_current_grid_pos)
+	GridState.set_grid_state(_current_grid_pos.x, _current_grid_pos.y, Enums.GridStateEnum.Occupied)
+	GameLog.debug("Bot: Summoned to (" + str(target_pos.x) + ", " + str(target_pos.y) + ") dir=(" + str(new_direction.x) + ", " + str(new_direction.y) + ")")
+	# 检查目标位置是否有 Block
+	if GridState.get_grid_state(target_pos.x, target_pos.y) == Enums.GridStateEnum.Occupied:
+		_enqueue_block_actions_at(target_pos)
+	_resume_after_resonance()

@@ -2,18 +2,19 @@
 
 [ext_resource type="Script" uid="uid://c6a1ei6vxrdap" path="res://resources/IntentDefinition.gd" id="2_intent"]
 [ext_resource type="Script" uid="uid://nwj2ve2ilvcv" path="res://resources/BlockPlacementDef.gd" id="3_placement"]
-[ext_resource type="Resource" path="res://resources/blockdefs/EnemyAttackBlock.tres" id="4_block"]
 
 [sub_resource type="Resource" id="Place_1"]
 script = ExtResource("3_placement")
-BlockRef = ExtResource("4_block")
+BlockName = "EnemyAttackBlock"
 GridPosition = Vector2i(4, 1)
+RandomOffsetRange = 1
 metadata/_custom_type_script = "res://resources/BlockPlacementDef.gd"
 
 [sub_resource type="Resource" id="Place_2"]
 script = ExtResource("3_placement")
-BlockRef = ExtResource("4_block")
+BlockName = "EnemyAttackBlock"
 GridPosition = Vector2i(4, 2)
+RandomOffsetRange = 1
 metadata/_custom_type_script = "res://resources/BlockPlacementDef.gd"
 
 [resource]

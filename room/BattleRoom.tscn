@@ -166,7 +166,6 @@ text = "Start Turn"
 
 [node name="Enemy" parent="." index="2" unique_id=1956716062 instance=ExtResource("12_fn3my")]
 position = Vector2(1500, 200)
-Definition = ExtResource("13_enemydef")
 
 [node name="BackgroundAnimator" type="Node2D" parent="." index="3" unique_id=333254833]
 

@@ -37,7 +37,7 @@
     }
   ],
   "stageCharts": {
-    "exampleStage": {
+    "EgStageDef": {
       "weakCharts": [
         { "enemies": ["Gonh"] }
       ],
