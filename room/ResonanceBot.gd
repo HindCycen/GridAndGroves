@@ -107,7 +107,7 @@ func _find_resonance_parts_at_distance(source_cells: Array[Vector2i], distance: 
 				if GridState.get_grid_state(pos.x, pos.y) != Enums.GridStateEnum.Occupied:
 					continue
 
-				for block in _block_piles_here.PlacedPile.Pile:
+				for block in _block_piles_here.get_blocks_on_grid():
 					if not is_instance_valid(block):
 						continue
 					if _triggered_blocks.has(block):
@@ -248,7 +248,7 @@ func _exhaust_block(block: Block) -> void:
 		var coord: Vector2i = GridState.get_grid_coords(gp)
 		if coord.x >= 0 and coord.y >= 0:
 			GridState.restore_grid_state(coord.x, coord.y)
-	_block_piles_here.PlacedPile.remove_block(block)
+	_block_piles_here.remove_block_from_placed(block)
 	block.remove_from_group("placed_blocks")
 	if block.get_parent() != null and is_instance_valid(block.get_parent()):
 		block.get_parent().remove_child(block)
@@ -263,7 +263,7 @@ func _loose_block(block: Block) -> void:
 		var coord: Vector2i = GridState.get_grid_coords(gp)
 		if coord.x >= 0 and coord.y >= 0:
 			GridState.restore_grid_state(coord.x, coord.y)
-	_block_piles_here.PlacedPile.remove_block(block)
+	_block_piles_here.remove_block_from_placed(block)
 	block.remove_from_group("placed_blocks")
 	# 进弃牌堆
 	for node in tree.get_nodes_in_group("Players"):

@@ -66,20 +66,20 @@ func execute_intent(definition) -> void:
 		# Faction 已在 BlockRegistry.create_block() 中根据 BlockDef.Faction 自动设置
 		_block_piles_here.add_child(block)
 		block.place_at_grid(pos)
-		_block_piles_here.PlacedPile.add_block(block)
+		_block_piles_here.add_block_to_placed(block)
 	advance_turn(definition)
 
 func clear_existing_blocks() -> void:
 	if _block_piles_here == null:
 		return
 	var old_blocks: Array[Block] = []
-	for b in _block_piles_here.PlacedPile.Pile:
+	for b in _block_piles_here.get_blocks_on_grid():
 		if not is_instance_valid(b):
 			continue
 		if b.Faction == Block.BlockFaction.Enemy:
 			old_blocks.append(b)
 	for block in old_blocks:
-		_block_piles_here.PlacedPile.remove_block(block)
+		_block_piles_here.remove_block_from_placed(block)
 		for part in block.get_parts():
 			var grid_point: Vector2 = GridState.find_nearest_grid_point(part.global_position)
 			var coords: Vector2i = GridState.get_grid_coords(grid_point)

@@ -1,5 +1,9 @@
 class_name BlockPilesHere extends Node2D
 
+## 网格 Block 生命周期信号 — 供父节点（BattleRoom）监听，实现 signals up
+signal block_placed_on_grid(block: Block)  ## Block 被放置在网格上
+signal block_removed_from_grid(block: Block)  ## Block 从网格上移除
+
 const ShowingPileBaseX := 0.0
 const ShowingPileBaseY := 0.0
 const MaxShowingPileColumns := 4
@@ -13,6 +17,31 @@ var _pending_draws: int
 @export var PlacedPile: PileComponent
 @export var PlayerCharacter: Player
 @export var ShowingPile: PileComponent
+
+## 获取网格上所有已放置的 Block（公共 API，替代外部直接访问 PlacedPile.Pile）
+func get_blocks_on_grid() -> Array[Block]:
+	var result: Array[Block] = []
+	for b in PlacedPile.Pile:
+		if is_instance_valid(b):
+			result.append(b as Block)
+	return result
+
+## 将 Block 加入放置牌堆（公共 API，替代外部直接访问 PlacedPile.add_block）
+func add_block_to_placed(block: Block) -> void:
+	PlacedPile.add_block(block)
+	block_placed_on_grid.emit(block)
+
+## 从放置牌堆移除 Block（公共 API，替代外部直接访问 PlacedPile.remove_block）
+func remove_block_from_placed(block: Block) -> void:
+	PlacedPile.remove_block(block)
+	block_removed_from_grid.emit(block)
+
+## 断开 Block 与本牌堆的信号连接（公共 API，替代外部直接访问私有方法 _on_block_placed）
+func disconnect_block_signals(block: Block) -> void:
+	if block.placed.is_connected(_on_block_placed):
+		block.placed.disconnect(_on_block_placed)
+	if block.left_grid.is_connected(_on_block_left_grid):
+		block.left_grid.disconnect(_on_block_left_grid)
 
 func _ready() -> void:
 	ShowingPile.child_entered_tree.connect(_on_showing_pile_child_added)
@@ -176,7 +205,7 @@ func _show_one_block() -> void:
 
 func _on_block_left_grid(block: Block) -> void:
 	block.IsPlaced = false
-	PlacedPile.remove_block(block)
+	remove_block_from_placed(block)
 	if block.get_parent() != null and is_instance_valid(block.get_parent()):
 		block.get_parent().remove_child(block)
 	ShowingPile.add_block(block)
@@ -192,5 +221,5 @@ func _on_block_placed(block: Block) -> void:
 		add_child(block)
 		block.global_position = global_pos
 		ShowingPile.remove_block(block)
-		PlacedPile.add_block(block)
+		add_block_to_placed(block)
 		draw_cards(1)

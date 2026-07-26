@@ -78,7 +78,7 @@ func _is_out_of_bounds(pos: Vector2i) -> bool:
 	return pos.x < 0 or pos.x > 6 or pos.y < 0 or pos.y > 4
 
 func _enqueue_block_actions_at(grid_pos: Vector2i, resonance_depth: int = 0) -> void:
-	for block in _block_piles_here.PlacedPile.Pile:
+	for block in _block_piles_here.get_blocks_on_grid():
 		if not is_instance_valid(block):
 			continue
 		for part in block.get_parts():
@@ -139,7 +139,7 @@ func _exhaust_block(block: Block) -> void:
 		var coords: Vector2i = GridState.get_grid_coords(grid_point)
 		if coords.x >= 0 and coords.y >= 0:
 			GridState.restore_grid_state(coords.x, coords.y)
-	_block_piles_here.PlacedPile.remove_block(block)
+	_block_piles_here.remove_block_from_placed(block)
 	block.remove_from_group("placed_blocks")
 	if block.get_parent() != null and is_instance_valid(block.get_parent()):
 		block.get_parent().remove_child(block)
@@ -166,7 +166,7 @@ func _go_to_starter_point() -> void:
 	visible = false
 
 func _has_enemy_block_at(grid_pos: Vector2i) -> bool:
-	for block in _block_piles_here.PlacedPile.Pile:
+	for block in _block_piles_here.get_blocks_on_grid():
 		if not is_instance_valid(block):
 			continue
 		if block.Faction != Block.BlockFaction.Enemy:
@@ -191,7 +191,7 @@ func _loose_block(block: Block) -> void:
 		if coords.x >= 0 and coords.y >= 0:
 			GridState.restore_grid_state(coords.x, coords.y)
 	# 从放置堆中移除
-	_block_piles_here.PlacedPile.remove_block(block)
+	_block_piles_here.remove_block_from_placed(block)
 	block.remove_from_group("placed_blocks")
 	# 将 Block 移入弃牌堆
 	_enter_discard_pile(block, tree)
@@ -207,11 +207,8 @@ func _enter_discard_pile(block: Block, tree: SceneTree) -> void:
 			if pile_node != null and pile_node.has_method("DiscardedPile"):
 				var discard = pile_node.DiscardedPile
 				if discard != null and discard.has_method("add_block"):
-					# 断开信号连接防止残留
-					if block.placed.is_connected(_block_piles_here._on_block_placed):
-						block.placed.disconnect(_block_piles_here._on_block_placed)
-					if block.left_grid.is_connected(_block_piles_here._on_block_left_grid):
-						block.left_grid.disconnect(_block_piles_here._on_block_left_grid)
+					# 通过公共 API 断开信号连接（替代直接访问私有方法）
+					_block_piles_here.disconnect_block_signals(block)
 					# 重置 Block 状态
 					block.IsPlaced = false
 					block.global_position = block.OriginalPos
