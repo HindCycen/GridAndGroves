@@ -8,6 +8,7 @@ enum BlockFaction { Player, Enemy }
 static var InputLocked: bool
 
 var _parts: Array[BlockPart] = []
+var _ghost_sprites: Array[Sprite2D] = []
 var _was_on_grid: bool
 
 var BlockName: String
@@ -24,10 +25,12 @@ func get_parts() -> Array[BlockPart]:
 func _ready() -> void:
 	OriginalPos = global_position
 	_load_parts()
+	_create_ghost_sprites()
 
 func _process(_delta: float) -> void:
 	if IsPressed and not InputLocked and Faction == BlockFaction.Player:
 		global_position = get_global_mouse_position()
+		_update_ghost()
 
 func _load_parts() -> void:
 	if PartDatas.size() == 0:
@@ -71,6 +74,7 @@ func _on_part_released(n: Node) -> void:
 	if not _parts.has(n) or InputLocked or Faction != BlockFaction.Player:
 		return
 	IsPressed = false
+	_hide_ghost()
 	if _check_placement_conditions():
 		_finalize_placement()
 	elif _was_on_grid:
@@ -127,6 +131,36 @@ func _are_all_cells_free() -> bool:
 
 func _is_center_in_grid_bounds() -> bool:
 	return GridState.is_point_in_grid(global_position)
+
+func _create_ghost_sprites() -> void:
+	for part in _parts:
+		var ghost := Sprite2D.new()
+		if part.SpriteTexture != null:
+			ghost.texture = part.SpriteTexture
+		ghost.modulate = Color(1, 1, 1, 0.5)
+		ghost.z_index = -1
+		ghost.position = part.position
+		ghost.visible = false
+		add_child(ghost)
+		_ghost_sprites.append(ghost)
+
+func _update_ghost() -> void:
+	if _check_placement_conditions():
+		_show_ghost_at_snapped_position()
+	else:
+		_hide_ghost()
+
+func _show_ghost_at_snapped_position() -> void:
+	var snapped_center := GridState.find_nearest_grid_point(global_position)
+	for i in _ghost_sprites.size():
+		var ghost := _ghost_sprites[i]
+		var part := _parts[i]
+		ghost.global_position = snapped_center + part.PartialPosition * 96
+		ghost.visible = true
+
+func _hide_ghost() -> void:
+	for ghost in _ghost_sprites:
+		ghost.visible = false
 
 func place_at_grid(coords: Vector2i) -> void:
 	if coords.x < 0 or coords.x >= 7 or coords.y < 0 or coords.y >= 5:
