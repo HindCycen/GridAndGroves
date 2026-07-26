@@ -5,8 +5,8 @@ func _ready() -> void:
 
 var GridLeftUp := Vector2(2, 4) * 120
 var GridRightDown := Vector2(7.6, 8) * 120
-var UnlockedRows := [false, false, false, false, false]
-var UnlockedCols := [false, false, false, false, false, false, false]
+var UnlockedRows := [true, true, true, true, true]
+var UnlockedCols := [true, true, true, true, true, true, true]
 var GridPoints: Array[Array] = []
 var GridStates: Array[Array] = []
 
@@ -43,8 +43,8 @@ func is_col_unlocked(col: int) -> bool:
 	return col >= 0 and col < UnlockedCols.size() and UnlockedCols[col]
 
 func init_unlocked_state() -> void:
-	UnlockedRows = [false, true, true, true, false]
-	UnlockedCols = [false, true, true, true, true, true, false]
+	UnlockedRows = [true, true, true, true, true]
+	UnlockedCols = [true, true, true, true, true, true, true]
 
 func init_grids() -> void:
 	init_unlocked_state()
