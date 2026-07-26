@@ -10,19 +10,23 @@ func _ready() -> void:
 
 # ── Block 注册 ──
 
-func subscribe_block_def(block_def) -> bool:
-    if block_def == null:
-        GameLog.err("ParseError: One blockdef is null")
+func subscribe_block_def(block_data: Dictionary) -> bool:
+    if block_data == null or block_data.is_empty():
+        GameLog.err("ParseError: Block data is null or empty")
         return false
-    if BlockDefs.has(block_def.BlockName):
-        GameLog.err("ParseError: Blockdef with name " + block_def.BlockName + " already exists")
+    var block_name: String = block_data.get("name", "")
+    if block_name.is_empty():
+        GameLog.err("ParseError: Block data missing 'name'")
         return false
-    BlockDefs[block_def.BlockName] = block_def
+    if BlockDefs.has(block_name):
+        GameLog.err("ParseError: Block data with name " + block_name + " already exists")
+        return false
+    BlockDefs[block_name] = block_data
     return true
 
 func get_block(block_name: String, global_pos: Vector2, parent: Node) -> Block:
     if not BlockDefs.has(block_name):
-        GameLog.err("BlockFactory: No blockdef with name " + block_name + " found")
+        GameLog.err("BlockFactory: No block data with name " + block_name + " found")
         return null
     var block: Block = create_block(BlockDefs[block_name])
     if block != null:
@@ -30,20 +34,21 @@ func get_block(block_name: String, global_pos: Vector2, parent: Node) -> Block:
         parent.add_child(block)
     return block
 
-func create_block(block_def) -> Block:
-    if block_def == null:
-        GameLog.err("BlockFactory: BlockDef is null")
+func create_block(block_data: Dictionary) -> Block:
+    if block_data == null or block_data.is_empty():
+        GameLog.err("BlockFactory: Block data is null or empty")
         return null
     var scene := preload("res://blocks/Block.tscn") as PackedScene
     var block: Block = scene.instantiate()
-    block.Definition = block_def
-    # 根据 BlockDef 的 Faction 自动设置 Block 阵营
-    block.Faction = block_def.Faction
+    block.BlockName = block_data.get("name", "")
+    block.Description = block_data.get("description", "")
+    block.Faction = block_data.get("faction", Block.BlockFaction.Player)
+    block.PartDatas = block_data.get("parts", [])
     return block
 
 func create_block_by_name(block_name: String) -> Block:
     if not BlockDefs.has(block_name):
-        GameLog.err("BlockFactory: No blockdef with name " + block_name + " found")
+        GameLog.err("BlockFactory: No block data with name " + block_name + " found")
         return null
     return create_block(BlockDefs[block_name])
 

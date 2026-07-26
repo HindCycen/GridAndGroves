@@ -22,8 +22,8 @@ func initialize_draw_pile() -> void:
 	for b in player_pile.Pile:
 		if not is_instance_valid(b):
 			continue
-		if b.Definition != null:
-			DrawPile.add_block(BlockRegistry.create_block(b.Definition))
+		if not b.BlockName.is_empty():
+			DrawPile.add_block(BlockRegistry.create_block_by_name(b.BlockName))
 	GameLog.debug("Draw pile initialized, total " + str(DrawPile.Count) + " cards")
 
 func draw_cards(count: int) -> void:
@@ -70,15 +70,15 @@ func _clear_placed_player_blocks() -> void:
 	for block in placed:
 		var prevents := false
 		for part in block.get_parts():
-			if part.PartDefinition != null and part.PartDefinition.Behaviors != null:
-				for bh in part.PartDefinition.Behaviors:
+			if part.Behaviors.size() > 0:
+				for bh in part.Behaviors:
 					if bh != null and bh.prevents_clear():
 						prevents = true
 						break
 			if prevents:
 				break
 		if prevents:
-			GameLog.debug("Block " + str(block.Definition.BlockName if block.Definition != null else "") + " declares PreventsClear, staying on grid")
+			GameLog.debug("Block " + str(block.BlockName if not block.BlockName.is_empty() else "") + " declares PreventsClear, staying on grid")
 			continue
 		if block.placed.is_connected(_on_block_placed):
 			block.placed.disconnect(_on_block_placed)
@@ -128,9 +128,9 @@ func _on_showing_pile_child_added(node: Node) -> void:
 	block.OriginalPos = block.global_position
 
 func _find_available_position(block: Block) -> Vector2:
-	if block == null or block.Definition == null:
+	if block == null or block.PartDatas.size() == 0:
 		return Vector2(ShowingPileBaseX, ShowingPileBaseY)
-	var part_count := block.Definition.PartDefinitions.size()
+	var part_count := block.PartDatas.size()
 	var grid_cols := ceili(sqrt(part_count))
 	var grid_rows := ceili(float(part_count) / float(grid_cols))
 	var occupied := _collect_occupied_cells(block)
@@ -147,7 +147,7 @@ func _collect_occupied_cells(exclude_block: Block) -> Dictionary:
 	for key in _block_layout_positions.keys():
 		if key == exclude_block:
 			continue
-		var other_part_count: int = key.Definition.PartDefinitions.size()
+		var other_part_count: int = key.PartDatas.size()
 		var other_cols: int = ceili(sqrt(other_part_count))
 		var other_rows: int = ceili(float(other_part_count) / float(other_cols))
 		var pos := _block_layout_positions[key] as Vector2

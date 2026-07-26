@@ -24,54 +24,54 @@ static func scan_and_register() -> void:
 	
 	var blocks: Array = data["blocks"]
 	for block_entry in blocks:
-		var block_def: BlockDef = _create_block_def(block_entry)
-		if block_def != null:
-			BlockRegistry.subscribe_block_def(block_def)
+		var block_data: Dictionary = _create_block_data(block_entry)
+		if block_data.size() > 0 and block_data.has("name") and not block_data["name"].is_empty():
+			BlockRegistry.subscribe_block_def(block_data)
 	
-	GameLog.info("JsonBlockScanner: Registered " + str(blocks.size()) + " BlockDefs from JSON")
+	GameLog.info("JsonBlockScanner: Registered " + str(blocks.size()) + " blocks from JSON")
 
-static func _create_block_def(entry: Dictionary) -> BlockDef:
+static func _create_block_data(entry: Dictionary) -> Dictionary:
 	if not entry.has("name") or entry.name.is_empty():
 		GameLog.err("JsonBlockScanner: Block entry missing 'name'")
-		return null
+		return {}
 	
-	var block_def := BlockDef.new()
-	block_def.BlockName = entry.name
-	block_def.Description = entry.get("description", "")
-	block_def.Faction = entry.get("faction", BlockDef.BlockFactionDef.Player)
+	var block_data := {}
+	block_data["name"] = entry.name
+	block_data["description"] = entry.get("description", "")
+	block_data["faction"] = entry.get("faction", 0)
 	
 	if entry.has("parts"):
 		var parts: Array = []
 		for part_entry in entry["parts"]:
-			var part_def := _create_part_def(part_entry)
-			if part_def != null:
-				parts.append(part_def)
+			var part_data := _create_part_data(part_entry)
+			if part_data.size() > 0:
+				parts.append(part_data)
 			else:
-				GameLog.err("JsonBlockScanner: Failed to create part for block '" + entry.name + "'")
-		block_def.PartDefinitions = parts
+				GameLog.err("JsonBlockScanner: Failed to create part data for block '" + entry.name + "'")
+		block_data["parts"] = parts
 	
-	return block_def
+	return block_data
 
-static func _create_part_def(entry: Dictionary) -> BlockPartDef:
-	var part_def := BlockPartDef.new()
-	part_def.PartId = entry.get("partId", "")
-	part_def.BaseDamage = entry.get("baseDamage", 0)
-	part_def.BaseMagicNum = entry.get("baseMagicNum", 0)
-	part_def.BaseShield = entry.get("baseShield", 0)
-	part_def.Description = entry.get("description", "")
+static func _create_part_data(entry: Dictionary) -> Dictionary:
+	var part_data := {}
+	part_data["partId"] = entry.get("partId", "")
+	part_data["baseDamage"] = entry.get("baseDamage", 0)
+	part_data["baseMagicNum"] = entry.get("baseMagicNum", 0)
+	part_data["baseShield"] = entry.get("baseShield", 0)
+	part_data["description"] = entry.get("description", "")
 	
 	if entry.has("movingDirection"):
 		var dir: Array = entry["movingDirection"]
-		part_def.MovingDirection = Vector2i(dir[0], dir[1] if dir.size() > 1 else 0)
+		part_data["movingDirection"] = Vector2i(dir[0], dir[1] if dir.size() > 1 else 0)
 	
 	if entry.has("partialPosition"):
 		var pos: Array = entry["partialPosition"]
-		part_def.PartialPosition = Vector2(pos[0], pos[1] if pos.size() > 1 else 0)
+		part_data["partialPosition"] = Vector2(pos[0], pos[1] if pos.size() > 1 else 0)
 	
 	if entry.has("spriteTexture"):
 		var tex_path: String = entry["spriteTexture"]
 		if ResourceLoader.exists(tex_path):
-			part_def.SpriteTexture = load(tex_path)
+			part_data["spriteTexture"] = load(tex_path)
 	
 	if entry.has("behaviors"):
 		var behaviors: Array = []
@@ -79,9 +79,9 @@ static func _create_part_def(entry: Dictionary) -> BlockPartDef:
 			var behavior := _create_behavior(bhv_entry)
 			if behavior != null:
 				behaviors.append(behavior)
-		part_def.Behaviors = behaviors
+		part_data["behaviors"] = behaviors
 	
-	return part_def
+	return part_data
 
 static func _create_behavior(entry: Dictionary) -> BlockPartBehavior:
 	if not entry.has("script"):

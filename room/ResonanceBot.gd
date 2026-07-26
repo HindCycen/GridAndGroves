@@ -144,7 +144,7 @@ func _visit_part(block: Block, part: BlockPart, grid_pos: Vector2i, chain_depth:
 	# 移动到该位置（视觉反馈）
 	global_position = GridState.get_grid_pos(grid_pos)
 
-	var move_dir := part.PartDefinition.MovingDirection if part.PartDefinition != null else Vector2i.DOWN
+	var move_dir := part.MovingDirection if part.MovingDirection != Vector2i.ZERO else Vector2i.DOWN
 	GameLog.debug("ResonanceBot: Visit (" + str(grid_pos.x) + "," + str(grid_pos.y) + ") dir=(" + str(move_dir.x) + "," + str(move_dir.y) + ")")
 
 	# 特殊方向：非向下 → 中断并召唤主 Bot
@@ -172,11 +172,11 @@ func _visit_part(block: Block, part: BlockPart, grid_pos: Vector2i, chain_depth:
 func _process_block_part(block: Block, part: BlockPart, depth: int) -> void:
 	if _battle_time != null:
 		_battle_time.say_block_execute()
-	if part.PartDefinition == null or part.PartDefinition.Behaviors == null:
+	if part.Behaviors.size() == 0:
 		return
 	var should_exhaust := false
 	var has_loose := false
-	for behavior in part.PartDefinition.Behaviors:
+	for behavior in part.Behaviors:
 		if behavior == null:
 			continue
 		if behavior is LooseBlockBehavior:
@@ -229,9 +229,9 @@ func _is_part_at(part: BlockPart, grid_pos: Vector2i) -> bool:
 	return coord == grid_pos
 
 func _has_resonance_behavior(part: BlockPart) -> bool:
-	if part.PartDefinition == null or part.PartDefinition.Behaviors == null:
+	if part.Behaviors.size() == 0:
 		return false
-	for b in part.PartDefinition.Behaviors:
+	for b in part.Behaviors:
 		if b is ResonanceTriggerBehavior:
 			return true
 	return false

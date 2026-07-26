@@ -35,9 +35,9 @@ static func count_active_roots(tree: SceneTree) -> int:
 			continue
 		seen[block] = true
 		for part in block.get_parts():
-			if part.PartDefinition == null or part.PartDefinition.Behaviors == null:
+			if part.Behaviors.size() == 0:
 				continue
-			for behavior in part.PartDefinition.Behaviors:
+			for behavior in part.Behaviors:
 				if behavior is RootBehavior or (behavior is GlyphRootBehavior and (behavior as GlyphRootBehavior).IsVariant == "root"):
 					count += 1
 					break

@@ -98,15 +98,15 @@ func _is_part_at_grid(part: BlockPart, grid_pos: Vector2i) -> bool:
 
 func _process_block_part(block: Block, part: BlockPart, resonance_depth: int = 0) -> void:
 	_battle_time.say_block_execute()
-	var move_dir := part.PartDefinition.MovingDirection if part.PartDefinition != null else Vector2i.DOWN
+	var move_dir := part.MovingDirection if part.MovingDirection != Vector2i.ZERO else Vector2i.DOWN
 	_current_direction = move_dir
 	if move_dir != Vector2i.DOWN:
 		GameLog.debug("  Bot direction changed to (" + str(move_dir.x) + ", " + str(move_dir.y) + ")")
-	if part.PartDefinition == null or part.PartDefinition.Behaviors == null:
+	if part.Behaviors.size() == 0:
 		return
 	var should_exhaust := false
 	var has_loose := false
-	for behavior in part.PartDefinition.Behaviors:
+	for behavior in part.Behaviors:
 		if behavior == null:
 			continue
 		# 检测松动 Behavior
@@ -126,11 +126,11 @@ func _process_block_part(block: Block, part: BlockPart, resonance_depth: int = 0
 	# 处理 Block 生命周期：松动 > 耗尽 > 留在网格
 	if has_loose and block.Faction == Block.BlockFaction.Player:
 		# 松动：释放格子 + 进弃牌堆（不销毁）
-		GameLog.debug("  Block " + str(block.Definition.BlockName if block.Definition != null else "") + " loosened, entering discard pile")
+		GameLog.debug("  Block " + str(block.BlockName if not block.BlockName.is_empty() else "") + " loosened, entering discard pile")
 		_loose_block(block)
 	elif should_exhaust and block.Faction == Block.BlockFaction.Player:
 		# 耗尽：移出战斗并销毁
-		GameLog.debug("  Block " + str(block.Definition.BlockName if block.Definition != null else "") + " exhausted, removed from battle")
+		GameLog.debug("  Block " + str(block.BlockName if not block.BlockName.is_empty() else "") + " exhausted, removed from battle")
 		_exhaust_block(block)
 
 func _exhaust_block(block: Block) -> void:
@@ -228,24 +228,24 @@ func _enter_discard_pile(block: Block, tree: SceneTree) -> void:
 ## 触发废品回收：查找 Block 的 ScrapPayoffBehavior 并执行
 func _trigger_scrap_payoff(block: Block) -> void:
 	for part in block.get_parts():
-		if part.PartDefinition == null or part.PartDefinition.Behaviors == null:
+		if part.Behaviors.size() == 0:
 			continue
-		for behavior in part.PartDefinition.Behaviors:
+		for behavior in part.Behaviors:
 			if behavior is ScrapPayoffBehavior:
 				# ScrapPayoffBehavior 的触发靠其 create_action 返回的 CallbackAction
 				# 这里直接创建一个新的 Action 执行回收效果
 				var payoff_action: AbstractGameAction = behavior.create_action(block, part)
 				if payoff_action != null and ActionManager.Instance != null:
 					ActionManager.Instance.add_to_top(payoff_action)
-					GameLog.debug("Bot: ScrapPayoffBehavior triggered for " + str(block.Definition.BlockName if block.Definition != null else ""))
+					GameLog.debug("Bot: ScrapPayoffBehavior triggered for " + str(block.BlockName if not block.BlockName.is_empty() else ""))
 
 # ---- 共鸣 (Resonance) 连锁机制 ----
 
 ## 检查部件是否带 ResonanceTriggerBehavior
 func _has_resonance_behavior(part: BlockPart) -> bool:
-	if part.PartDefinition == null or part.PartDefinition.Behaviors == null:
+	if part.Behaviors.size() == 0:
 		return false
-	for behavior in part.PartDefinition.Behaviors:
+	for behavior in part.Behaviors:
 		if behavior is ResonanceTriggerBehavior:
 			return true
 	return false

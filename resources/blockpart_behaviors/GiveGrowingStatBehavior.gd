@@ -33,7 +33,7 @@ func _try_remove_growing_block(player: Node2D) -> void:
     for b in player_pile.Pile:
         if not is_instance_valid(b):
             continue
-        if b.Definition != null and b.Definition.BlockName == "Growing":
+        if not b.BlockName.is_empty() and b.BlockName == "Growing":
             player_pile.remove_block(b)
             if is_instance_valid(b) and b.get_parent() != null:
                 b.get_parent().remove_child(b)

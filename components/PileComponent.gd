@@ -45,6 +45,6 @@ func get_random_block_copy() -> Block:
     return _create_block_copy(_pile[random_index])
 
 func _create_block_copy(original: Block) -> Block:
-    if original.Definition == null:
+    if original.BlockName.is_empty():
         return null
-    return BlockRegistry.create_block(original.Definition)
+    return BlockRegistry.create_block_by_name(original.BlockName)

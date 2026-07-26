@@ -10,8 +10,9 @@ static var InputLocked: bool
 var _parts: Array[BlockPart] = []
 var _was_on_grid: bool
 
-@export var Definition: BlockDef
-
+var BlockName: String
+var Description: String
+var PartDatas: Array = []  # Array of Dictionaries (raw JSON part data)
 var Faction: int = BlockFaction.Player
 var IsPlaced: bool
 var IsPressed: bool
@@ -29,16 +30,27 @@ func _process(_delta: float) -> void:
 		global_position = get_global_mouse_position()
 
 func _load_parts() -> void:
-	if Definition == null:
+	if PartDatas.size() == 0:
 		return
-	for def in Definition.PartDefinitions:
-		var part := _create_part(def)
-		if part.PartDefinition != null:
-			_wire_part_press_events(part)
+	for data in PartDatas:
+		var part := _create_part(data)
+		_wire_part_press_events(part)
 
-func _create_part(defn) -> BlockPart:
+func _create_part(data: Dictionary) -> BlockPart:
 	var part := BlockPart.new()
-	part.PartDefinition = defn
+	part.PartId = data.get("partId", "")
+	part.Damage = data.get("baseDamage", 0)
+	part.MagicNum = data.get("baseMagicNum", 0)
+	part.Shield = data.get("baseShield", 0)
+	part.Description = data.get("description", "")
+	if data.has("movingDirection"):
+		part.MovingDirection = data["movingDirection"] as Vector2i
+	if data.has("partialPosition"):
+		part.PartialPosition = data["partialPosition"] as Vector2
+	if data.has("spriteTexture"):
+		part.SpriteTexture = data["spriteTexture"] as Texture2D
+	if data.has("behaviors"):
+		part.Behaviors = data["behaviors"]
 	_parts.append(part)
 	add_child(part)
 	return part

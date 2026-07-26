@@ -28,6 +28,8 @@ Godot 4.7+ GDScript Roguelike Deckbuilder（类 Slay the Spire）。玩家通过
 - **`extends`**: 每个 `.gd` 文件第一行必须是 `extends` 或 `class_name`
 - **注释**: 中文注释，公共方法加 `##` 文档注释
 - **文件编码**: UTF-8
+- **信号优先**: 不依赖函数调用处理所有逻辑交互，合理使用信号解耦，遵循 **"calls down, signals up"**（父节点调用子节点方法，子节点通过信号向上通信）原则
+- **静态验证**: 创建或修改 `.gd` 文件后，必须验证静态分析是否报错。必须消除所有报错（Error），仅关于命名风格的警告（Warning）可以忽略
 
 ### 典型文件结构
 

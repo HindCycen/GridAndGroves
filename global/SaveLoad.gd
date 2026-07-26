@@ -46,8 +46,8 @@ func sync_from_game_state() -> void:
         for b in pile.Pile:
             if not is_instance_valid(b):
                 continue
-            if b.Definition != null and b.Definition.BlockName != null:
-                names.append(b.Definition.BlockName)
+            if not b.BlockName.is_empty():
+                names.append(b.BlockName)
         Data.PlayerDeckBlockNames = names
     var rend := player.get_node("RenderingComponent")
     if rend != null and rend.StatsComponentRef != null:

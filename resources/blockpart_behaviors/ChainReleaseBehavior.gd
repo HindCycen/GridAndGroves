@@ -61,9 +61,9 @@ func _is_block_at_grid(block_node: Block, grid_pos: Vector2i) -> bool:
 
 func _has_loose_behavior(block_node: Block) -> bool:
 	for p in block_node.get_parts():
-		if p.PartDefinition == null or p.PartDefinition.Behaviors == null:
+		if p.Behaviors.size() == 0:
 			continue
-		for behavior in p.PartDefinition.Behaviors:
+		for behavior in p.Behaviors:
 			if behavior is LooseBlockBehavior:
 				return true
 	return false
@@ -88,7 +88,7 @@ func _release_loose_block(block_node: Block, tree: SceneTree, block_piles) -> vo
 					block_node.IsPlaced = false
 					block_node.global_position = block_node.OriginalPos
 					discard.add_block(block_node)
-					GameLog.debug("ChainReleaseBehavior: Released adjacent loose block " + str(block_node.Definition.BlockName if block_node.Definition != null else "") + " to discard")
+					GameLog.debug("ChainReleaseBehavior: Released adjacent loose block " + str(block_node.BlockName if not block_node.BlockName.is_empty() else "") + " to discard")
 					return
 	# 安全兜底
 	block_node.global_position = Vector2(9999, 9999)

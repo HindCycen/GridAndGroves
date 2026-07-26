@@ -37,9 +37,9 @@ static func count_active_glyphs(tree: SceneTree, variant: String) -> int:
 		if not is_instance_valid(block) or not block is Block:
 			continue
 		for part in block.get_parts():
-			if part.PartDefinition == null or part.PartDefinition.Behaviors == null:
+			if part.Behaviors.size() == 0:
 				continue
-			for behavior in part.PartDefinition.Behaviors:
+			for behavior in part.Behaviors:
 				if behavior is GlyphRootBehavior:
 					var gb: GlyphRootBehavior = behavior as GlyphRootBehavior
 					if gb.IsVariant == variant:

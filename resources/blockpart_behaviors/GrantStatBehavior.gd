@@ -44,7 +44,7 @@ func _apply_stat_to_group(block: Block, tree: SceneTree) -> void:
 					existing.add_value(InitialValue)
 					print("GrantStatBehavior: Stacked Stat [", TargetStatDef.StatName, "] +", InitialValue, " on ", target.name, " = ", existing.CurrentValue)
 			# 从牌组移除同名 Block（仅对玩家有效）
-			if RemoveBlockFromDeck and block.Definition != null:
+			if RemoveBlockFromDeck and not block.BlockName.is_empty():
 				_remove_block_from_deck(target, block)
 			return  # 只对 Group 中的第一个目标生效
 
@@ -63,10 +63,10 @@ func _remove_block_from_deck(target: Node2D, block: Block) -> void:
 	for b in player_pile.Pile:
 		if not is_instance_valid(b):
 			continue
-		if b.Definition != null and b.Definition.BlockName == block.Definition.BlockName:
+		if not b.BlockName.is_empty() and b.BlockName == block.BlockName:
 			player_pile.remove_block(b)
 			if is_instance_valid(b) and b.get_parent() != null:
 				b.get_parent().remove_child(b)
 			b.queue_free()
-			print("GrantStatBehavior: Removed [", block.Definition.BlockName, "] from deck")
+			print("GrantStatBehavior: Removed [", block.BlockName, "] from deck")
 			return

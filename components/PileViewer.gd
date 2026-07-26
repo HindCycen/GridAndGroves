@@ -47,7 +47,7 @@ func open(title: String, pile: PileComponent) -> void:
         var card := Panel.new()
         card.custom_minimum_size = Vector2i(640, 36)
         var name_label := Label.new()
-        name_label.text = "  " + block.Definition.BlockName + "    (Faction: " + str(block.Faction) + ")"
+        name_label.text = "  " + block.BlockName + "    (Faction: " + str(block.Faction) + ")"
         name_label.set_position(Vector2i(10, 8))
         card.add_child(name_label)
         _card_list.add_child(card)

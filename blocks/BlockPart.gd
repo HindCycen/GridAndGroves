@@ -8,8 +8,12 @@ var _detecting_collision_shape := CollisionShape2D.new()
 var _sprite2d := Sprite2D.new()
 var _tooltip_component: TooltipComponent
 
-@export var PartDefinition: BlockPartDef
-
+var PartId: String
+var Description: String
+var MovingDirection: Vector2i
+var PartialPosition: Vector2
+var Behaviors: Array = []
+var SpriteTexture: Texture2D
 var Damage: int
 var Shield: int
 var MagicNum: int
@@ -18,8 +22,8 @@ func _ready() -> void:
 	var shape2d := RectangleShape2D.new()
 	shape2d.size = Vector2(96, 96)
 	_detecting_collision_shape.shape = shape2d
-	if PartDefinition != null and PartDefinition.SpriteTexture != null:
-		_sprite2d.texture = PartDefinition.SpriteTexture
+	if SpriteTexture != null:
+		_sprite2d.texture = SpriteTexture
 	_detecting_area.add_child(_detecting_collision_shape)
 	_detecting_area.add_child(_sprite2d)
 	add_child(_detecting_area)
@@ -34,11 +38,7 @@ func _ready() -> void:
 	_detecting_area.mouse_exited.connect(_on_mouse_exited)
 	_tooltip_component = TooltipComponent.new()
 	add_child(_tooltip_component)
-	Damage = PartDefinition.BaseDamage if PartDefinition != null else 0
-	Shield = PartDefinition.BaseShield if PartDefinition != null else 0
-	MagicNum = PartDefinition.BaseMagicNum if PartDefinition != null else 0
-	if PartDefinition != null:
-		position = PartDefinition.PartialPosition * 96
+	position = PartialPosition * 96
 	set_process_input(true)
 
 func _on_mouse_entered() -> void:
@@ -46,13 +46,13 @@ func _on_mouse_entered() -> void:
 	if parent is not Block:
 		return
 	var block := parent as Block
-	if block.Definition == null or block.IsPressed:
+	if block.BlockName.is_empty() or block.IsPressed:
 		return
-	var text := block.Definition.BlockName
-	if not block.Definition.Description.is_empty():
-		text += "\n" + block.Definition.Description
-	if PartDefinition != null and not PartDefinition.Description.is_empty():
-		text += "\n" + PartDefinition.Description
+	var text := block.BlockName
+	if not block.Description.is_empty():
+		text += "\n" + block.Description
+	if not Description.is_empty():
+		text += "\n" + Description
 	if text.is_empty():
 		return
 	var placeholders := { "S": str(Shield), "D": str(Damage), "M": str(MagicNum) }
