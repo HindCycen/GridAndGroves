@@ -28,12 +28,14 @@ func update(delta: float) -> void:
 func _play_damage_vfx() -> void:
 	var target_node := target as Node2D
 	if target_node == null and source != null:
-		var enemies := source.get_tree().get_nodes_in_group("Enemies")
-		if enemies.size() > 0:
-			target_node = enemies[0] as Node2D
+		var tree := _get_source_tree()
+		if tree != null:
+			var enemies := tree.get_nodes_in_group("Enemies")
+			if enemies.size() > 0:
+				target_node = enemies[0] as Node2D
 	if target_node != null and is_instance_valid(target_node):
 		var vfx := DamageNumberVFX.new(target_node.global_position, amount)
-		var tree := target_node.get_tree()
+		var tree := target_node.get_tree() if target_node.is_inside_tree() else null
 		if tree != null and tree.current_scene != null:
 			tree.current_scene.add_child(vfx)
 
@@ -59,7 +61,7 @@ func _trigger_after_damage_hooks() -> void:
 	_trigger_damage_hooks(Enums.StatExecuteAt.OnAfterDamageApply)
 
 func _trigger_damage_hooks(period: int) -> void:
-	var tree := source.get_tree() if source != null else null
+	var tree := _get_source_tree()
 	if tree == null:
 		return
 	var stats_components := tree.get_nodes_in_group("stats_components")
@@ -69,6 +71,14 @@ func _trigger_damage_hooks(period: int) -> void:
 			for stat in sc.get_all_statuses():
 				if stat.Definition != null and stat.Definition.Behavior != null:
 					stat.Definition.Behavior.execute_at(period)
+
+## 获取可用的场景树：优先 source，其次 target，都不可用时返回 null
+func _get_source_tree() -> SceneTree:
+	if source != null and is_instance_valid(source) and source.is_inside_tree():
+		return source.get_tree()
+	if target != null and is_instance_valid(target) and target.is_inside_tree():
+		return target.get_tree()
+	return null
 
 func _find_target_health() -> HealthComponent:
 	if target is Node2D:
@@ -81,9 +91,7 @@ static func _get_health_component(node: Node2D) -> HealthComponent:
 	return node.get_node_or_null("RenderingComponent/HealthComponent") as HealthComponent
 
 func _find_first_alive_enemy_health() -> HealthComponent:
-	if source == null:
-		return null
-	var tree := source.get_tree()
+	var tree := _get_source_tree()
 	if tree == null:
 		return null
 	for enemy in tree.get_nodes_in_group("Enemies"):

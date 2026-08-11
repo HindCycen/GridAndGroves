@@ -50,7 +50,7 @@ func _exit_tree() -> void:
 		_patrol_timer.timeout.disconnect(_on_patrol_timer_timeout)
 
 func _move_to_next_cell() -> void:
-	var calc_result: Array = _try_calculate_next_cell2()
+	var calc_result: Array = _try_calculate_next_cell()
 	if calc_result[0] == false:
 		_end_turn()
 		return
@@ -63,7 +63,7 @@ func _move_to_next_cell() -> void:
 	if target_has_block:
 		_enqueue_block_actions_at(new_pos)
 
-func _try_calculate_next_cell2() -> Array:
+func _try_calculate_next_cell() -> Array:
 	var new_pos := _current_grid_pos + _current_direction
 	if _current_direction == Vector2i.DOWN:
 		if new_pos.y > 4:
@@ -120,18 +120,24 @@ func _process_block_part(block: Block, part: BlockPart, resonance_depth: int = 0
 				action.set_chain_bonus(resonance_depth)
 			if ActionManager.Instance != null:
 				ActionManager.Instance.add_to_bottom(action)
-			GameLog.debug("  Queued Action: " + action.get_class() + " (amount=" + str(action.amount) + ")")
+			GameLog.debug("  Queued Action: " + action.get_script().resource_path.get_file() + " (amount=" + str(action.amount) + ")")
 			if action.exhaust_source_block():
 				should_exhaust = true
 	# 处理 Block 生命周期：松动 > 耗尽 > 留在网格
+	# 延迟到该 Block 本 tick 的所有 Action 执行完毕后再处理，
+	# 避免已入队的 Action 引用已离开场景树的 Block 而报错/失效
 	if has_loose and block.Faction == Block.BlockFaction.Player:
-		# 松动：释放格子 + 进弃牌堆（不销毁）
 		GameLog.debug("  Block " + str(block.BlockName if not block.BlockName.is_empty() else "") + " loosened, entering discard pile")
-		_loose_block(block)
+		if ActionManager.Instance != null:
+			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _loose_block(block)))
+		else:
+			_loose_block(block)
 	elif should_exhaust and block.Faction == Block.BlockFaction.Player:
-		# 耗尽：移出战斗并销毁
 		GameLog.debug("  Block " + str(block.BlockName if not block.BlockName.is_empty() else "") + " exhausted, removed from battle")
-		_exhaust_block(block)
+		if ActionManager.Instance != null:
+			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _exhaust_block(block)))
+		else:
+			_exhaust_block(block)
 
 func _exhaust_block(block: Block) -> void:
 	for p in block.get_parts():
@@ -141,6 +147,8 @@ func _exhaust_block(block: Block) -> void:
 			GridState.restore_grid_state(coords.x, coords.y)
 	_block_piles_here.remove_block_from_placed(block)
 	block.remove_from_group("placed_blocks")
+	# 清除时触发自然循环（NatureCycleBehavior 回收效果）
+	_trigger_nature_cycle(block)
 	if block.get_parent() != null and is_instance_valid(block.get_parent()):
 		block.get_parent().remove_child(block)
 	block.queue_free()
@@ -199,28 +207,17 @@ func _loose_block(block: Block) -> void:
 	_trigger_scrap_payoff(block)
 
 ## 将 Block 放入玩家弃牌堆（不销毁节点，保留重用）
-func _enter_discard_pile(block: Block, tree: SceneTree) -> void:
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var player := node as Node2D
-			var pile_node = player.get_node("%PlayerPile")
-			if pile_node != null and pile_node.has_method("DiscardedPile"):
-				var discard = pile_node.DiscardedPile
-				if discard != null and discard.has_method("add_block"):
-					# 通过公共 API 断开信号连接（替代直接访问私有方法）
-					_block_piles_here.disconnect_block_signals(block)
-					# 重置 Block 状态
-					block.IsPlaced = false
-					block.global_position = block.OriginalPos
-					discard.add_block(block)
-					# 如果原父节点仍然持有，移除之
-					if block.get_parent() != null and is_instance_valid(block.get_parent()):
-						block.get_parent().remove_child(block)
-					return
-	# 安全兜底
-	if block.get_parent() != null and is_instance_valid(block.get_parent()):
-		block.get_parent().remove_child(block)
-	block.global_position = Vector2(9999, 9999)
+func _enter_discard_pile(block: Block, _tree: SceneTree) -> void:
+	_block_piles_here.send_block_to_discard(block)
+
+## 触发自然循环：Block 被清除（耗尽）时执行 NatureCycleBehavior 的回收效果
+func _trigger_nature_cycle(block: Block) -> void:
+	if block == null:
+		return
+	for part in block.get_parts():
+		for behavior in part.Behaviors:
+			if behavior is NatureCycleBehavior:
+				(behavior as NatureCycleBehavior).trigger_cycle(block)
 
 ## 触发废品回收：查找 Block 的 ScrapPayoffBehavior 并执行
 func _trigger_scrap_payoff(block: Block) -> void:
@@ -229,9 +226,9 @@ func _trigger_scrap_payoff(block: Block) -> void:
 			continue
 		for behavior in part.Behaviors:
 			if behavior is ScrapPayoffBehavior:
-				# ScrapPayoffBehavior 的触发靠其 create_action 返回的 CallbackAction
-				# 这里直接创建一个新的 Action 执行回收效果
-				var payoff_action: AbstractGameAction = behavior.create_action(block, part)
+				# ScrapPayoffBehavior.create_action 返回 null（标记类）
+				# 松动入弃牌堆时在此显式创建 Action 执行回收效果
+				var payoff_action: AbstractGameAction = (behavior as ScrapPayoffBehavior).create_payoff_action(block, part, _block_piles_here)
 				if payoff_action != null and ActionManager.Instance != null:
 					ActionManager.Instance.add_to_top(payoff_action)
 					GameLog.debug("Bot: ScrapPayoffBehavior triggered for " + str(block.BlockName if not block.BlockName.is_empty() else ""))
@@ -289,6 +286,7 @@ func _resume_after_resonance() -> void:
 
 ## 共鸣链遇到特殊方向 → 召唤主 Bot 到目标位置
 func _on_resonance_summon(target_pos: Vector2i, new_direction: Vector2i) -> void:
+	var target_has_block: bool = GridState.get_grid_state(target_pos.x, target_pos.y) == Enums.GridStateEnum.Occupied
 	_release_cell_safely(_current_grid_pos)
 	_current_grid_pos = target_pos
 	_current_direction = new_direction
@@ -296,6 +294,6 @@ func _on_resonance_summon(target_pos: Vector2i, new_direction: Vector2i) -> void
 	GridState.set_grid_state(_current_grid_pos.x, _current_grid_pos.y, Enums.GridStateEnum.Occupied)
 	GameLog.debug("Bot: Summoned to (" + str(target_pos.x) + ", " + str(target_pos.y) + ") dir=(" + str(new_direction.x) + ", " + str(new_direction.y) + ")")
 	# 检查目标位置是否有 Block
-	if GridState.get_grid_state(target_pos.x, target_pos.y) == Enums.GridStateEnum.Occupied:
+	if target_has_block:
 		_enqueue_block_actions_at(target_pos)
 	_resume_after_resonance()

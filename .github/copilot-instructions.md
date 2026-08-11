@@ -18,7 +18,7 @@ Godot 4.7+ GDScript Roguelike Deckbuilder（类 Slay the Spire）。玩家通过
 
 - **引擎**: Godot 4.7+ (GDScript)
 - **语言**: GDScript（`.gd` 文件）
-- **架构**: Autoload（BlockRegistry, PackManager, BattleTime, SaveLoad）+ 场景树节点
+- **架构**: Autoload（GameLog, GridState, RngManager, BlockRegistry, PackManager, BattleTime, SaveLoad）+ 场景树节点
 
 ## 代码规范
 
@@ -77,34 +77,38 @@ editor_state()
 | 目录 | 用途 |
 |------|------|
 | `actions/` | 动作系统（AbstractGameAction 及其子类） |
-| `blocks/` | 方块系统（Block, BlockPart, BlockDef, BlockPartBehavior） |
+| `actors/` | 玩家与敌人（Player, Enemy, ActorSprite） |
+| `blocks/` | 方块系统（Block, BlockPart, BlockPartBehavior） |
 | `components/` | 可复用组件（Health, Shield, Stats, Pile, Tooltip 等） |
-| `global/` | Autoload 单例（BlockRegistry, PackManager, BattleTime, SaveLoad） |
-| `packs/` | 卡包系统（BlockPack, MiniPack, CardPool） |
-| `registerers/` | 方块注册器（OriginalBlockRegisterer + JsonBlockScanner） |
-| `resources/` | Godot Resource 定义和 .tres 数据文件 |
+| `global/` | Autoload 单例（GameLog, GridState, RngManager, BlockRegistry, PackManager, BattleTime, SaveLoad） |
+| `packs/` | 卡包系统（BlockPack, MiniPack, CardPool）— 已实现但尚未接入主流程 |
+| `registerers/` | JSON 扫描注册器（JsonBlockScanner, JsonEnemyScanner） |
+| `resources/` | Godot Resource 定义、.tres 数据文件、block_defs.json / enemy_defs.json |
 | `room/` | 房间系统（StageRoom, BattleRoom, EventRoom, Bot 等） |
 | `stats/` | 属性系统（Stat, StatBehavior, StatDef） |
 | `vfx/` | 视觉特效 |
+| `planning/` | 设计文档（世界观、卡包设计、机制设计参考） |
 | `docs/` | 中文开发文档 |
 
 ### 关键类
 
 - **`BlockRegistry`** (Autoload): 方块注册与创建（`subscribe_block_def`, `create_block_by_name`）
-- **`PackManager`** (Autoload): 卡包注册与卡池构建（`subscribe_block_pack`, `build_card_pool`）
+- **`PackManager`** (Autoload): 卡包注册与卡池构建（`subscribe_block_pack`, `build_card_pool`）— 尚未接入游戏流程
 - **`BattleTime`** (Autoload): 战斗事件总线（信号系统），触发 StatBehavior 钩子
-- **`SaveLoad`** (Autoload): 存档读写
-- **`ActionManager`** (Autoload): 动作队列调度器，每帧推进
+- **`SaveLoad`** (Autoload): 存档读写与玩家状态恢复
+- **`GridState`** (Autoload): 网格状态管理
+- **`RngManager`** (Autoload): 多流随机数管理
+- **`GameLog`** (Autoload): 日志输出
+- **`ActionManager`**: 动作队列调度器（战斗场景内运行时节点，非 Autoload），每帧推进
 - **`Bot`**: 网格巡逻机器人，触发 BlockPart 效果
 - **`Block`**: 方块（Node2D），由多个 BlockPart 组成
 - **`BlockPart`**: 方块部件，包含伤害/护盾值和 Behavior
 - **`BlockPartBehavior`**: 部件行为基类，返回 AbstractGameAction
-- **`BlockDef`**: 方块定义 Resource（BlockName, PartDefinitions）
-- **`BlockPartDef`**: 部件定义 Resource（BaseDamage, Behaviors, MovingDirection 等）
+- **`BlockDef` / `BlockPartDef`**: 不再是 Resource 类，数据在 `resources/block_defs.json` 中由 JSON 扫描器构建
 - **`Stat`**: 属性节点，通过 StatBehavior 实现自动触发的状态效果
 - **`Room`**: 房间基类，被 StageRoom/BattleRoom/EventRoom 继承
-- **`BlockPack`**: 主卡包 Resource，含 30~35 个 BlockDef，对应角色核心卡池
-- **`MiniPack`**: 小卡包 Resource，含 10 个 BlockDef，为每局注入变化
+- **`BlockPack`**: 主卡包 Resource（`PackName` + `BlockNames`），对应角色核心卡池
+- **`MiniPack`**: 小卡包 Resource（`PackName` + `BlockNames`），为每局注入变化
 - **`CardPool`**: 运行时卡池，由 1 个 BlockPack + 4 个 MiniPack 合并去重而成
 
 ### 战斗管线（TicTac 三段式）
@@ -122,14 +126,18 @@ TurnStarted → 玩家放方块 → End Turn
 
 ### ActionManager 入队方式
 
-- `ActionManager.add_to_bottom(action)` — 追加到队尾（默认）
-- `ActionManager.add_to_top(action)` — 插入到队首（紧急效果）
+- `ActionManager.Instance.add_to_bottom(action)` — 追加到队尾（默认）
+- `ActionManager.Instance.add_to_top(action)` — 插入到队首（紧急效果）
+
+> `ActionManager` **不是 Autoload**，而是 BattleRoom 在战斗场景中创建的运行时节点，通过静态变量 `Instance` 访问，使用前判空。
 
 ### StatBehavior 系统
 
-- 继承 `StatBehavior`，在方法上加 `## @period OnTurnEnded` 标记触发时机
-- 所有继承 `StatBehavior` 的类在 `_ready()` 中被自动扫描注册
-- 支持时期: `OnBattleStarted`, `OnTurnStarted`, `OnTicTac`, `OnTurnEnded`, `OnBattleEnded`, `OnPreBlockExecute`, `OnBlockExecute`, `OnPostBlockExecute`, `OnBeforeDamageApply`, `OnAfterDamageApply`
+- 继承 `StatBehavior`，覆写 `get_execute_periods()` 声明时期，覆写 `execute_at(period)` 实现效果（内部 `match` 分发）
+- `Stat._ready()` 自动加入 "stats" 组；`BattleTime` 发出信号时遍历该组，调用 `Definition.Behavior.execute_at(period)`
+- `## @period OnXxx` 注释只是文档约定，**不参与分发**
+- 已接线时期: `OnBattleStarted`, `OnTurnStarted`, `OnPreBlockExecute`, `OnBlockExecute`, `OnPostBlockExecute`, `OnTurnEnded`, `OnBattleEnded`, `OnBeforeDamageApply`, `OnAfterDamageApply`
+- 枚举中 `OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied` 尚未接线
 
 ## 常用命令
 
@@ -141,15 +149,16 @@ TurnStarted → 玩家放方块 → End Turn
 
 - Resource 类使用 `class_name Xxx extends Resource` 定义
 - `.tres` 文件在 `resources/` 下按类型分目录
-- BlockDef → BlockPartDef → BlockPartBehavior 三级引用链
-- **不再使用单独的 `.tres` 注册 BlockDef**——改用 JSON 扫描（见下方注册机制）
+- **BlockDef/BlockPartDef 不再是 Resource 类**——数据集中在 `resources/block_defs.json`，运行时由 `JsonBlockScanner` 构建为 `Block`/`BlockPart` 实例（见下方注册机制）
 
 ## 注册机制
 
-### BlockDef 注册（JSON 扫描器）
+### BlockDef / EnemyDef 注册（JSON 扫描器）
 
-所有 BlockDef 及其 BlockPartDef 数据集中写在 `resources/block_defs.json` 中。
-`JsonBlockScanner` 在运行时读取该 JSON，构建 Resource 实例并注册到 `BlockRegistry`。
+- BlockDef 通过 `JsonBlockScanner.scan_and_register()` 从 `resources/block_defs.json` 注册
+- 敌人与楼层图表通过 `JsonEnemyScanner.scan_and_register()` 从 `resources/enemy_defs.json` 注册
+- `BlockRegistry._ready()` 自动调用 `auto_register_blocks()` / `auto_register_enemies()`
+- `registerers/` 下的 `AbstractBlockRegisterer` / `OriginalBlockRegisterer` 为历史遗留，`register()` 已无调用方
 
 ```json
 {
@@ -181,9 +190,11 @@ BlockPartBehavior 的 `.gd` 代码文件保持不变，JSON 中通过 `"script"`
 2. 如有新行为逻辑，在 `resources/blockpart_behaviors/` 新建 `.gd` 文件
 3. **无需创建任何 `.tres` 文件**
 
-### 卡包注册
+### 卡包注册（尚未接入主流程）
 
-在 `registerers/OriginalBlockRegisterer.gd` 的 `register()` 方法中：
+> ⚠️ 卡包系统（PackManager / BlockPack / MiniPack / CardPool）代码已实现，
+> 但**尚未接入游戏流程**：没有任何调用方，主菜单也没有卡包选择界面。
+> 以下为接入时参考的 API（注册入口建议放在游戏开局处，而非遗留的 registerer）：
 
 ```gdscript
 # 注册主卡包
@@ -199,24 +210,28 @@ PackManager.subscribe_mini_pack(load("res://resources/mini_packs/MyMini.tres"))
 # 构建卡池（在开局时调用）
 PackManager.build_card_pool("战士卡包")
 
-# 从卡池中随机获取 BlockDef（用于战利品奖励）
-var reward_block_def = PackManager.CurrentCardPool.get_random_block_def()
+# 从卡池中随机获取 Block 名称（用于战利品奖励）
+var reward_block_name: String = PackManager.CurrentCardPool.get_random_block_name()
+var reward_block: Block = BlockRegistry.create_block_by_name(reward_block_name)
 
 # 通过名称创建 Block 实例
 var block = BlockRegistry.create_block_by_name("DamageBlock")
 ```
 
-## 卡包系统 (packs/)
+## 卡包系统 (packs/) — 已实现但尚未接入
 
 ### 类体系
 
 | 类 | 类型 | 说明 |
 |------|------|------|
-| `BlockPack` | `class_name Resource` | 主卡包，含 30~35 个 BlockDef，对应角色核心卡池 |
-| `MiniPack` | `class_name Resource` | 小卡包，含 10 个 BlockDef，为每局注入变化 |
-| `CardPool` | 运行时类 | 由 1 个 BlockPack + 4 个随机 MiniPack 合并去重而成 |
+| `BlockPack` | `class_name Resource` | 主卡包，`PackName` + `BlockNames: Array[String]`，对应角色核心卡池 |
+| `MiniPack` | `class_name Resource` | 小卡包，`PackName` + `BlockNames: Array[String]`，为每局注入变化 |
+| `CardPool` | 运行时类 | 由 1 个 BlockPack + 4 个随机 MiniPack 合并去重而成（`AllBlockNames` / `Count` / `get_random_block_name()` / `get_random_block_names()`） |
 
-### 生命周期
+> 目前 `pack_ranger.md` / `pack_weaver.md` / `pack_sentinel.md` / `minipacks.md`
+> 中的卡包设计尚未落地为 `.tres` 资源，`block_defs.json` 目前只包含示例 Block。
+
+### 生命周期（目标设计）
 
 ```
 开局 → 玩家从注册的 BlockPacks 中选择一个主卡包
@@ -228,9 +243,17 @@ var block = BlockRegistry.create_block_by_name("DamageBlock")
      → 游戏结束 → PackManager.clear_card_pool()
 ```
 
-### 注册方式
+### 接入待办
 
-在 `OriginalBlockRegisterer`（或任何 `AbstractBlockRegisterer` 子类）的 `register()` 中：
+1. 创建主卡包与 4 个 MiniPack 的 `.tres` 资源（`resources/block_packs/`、`resources/mini_packs/`）
+2. 在开局时注册卡包并调用 `build_card_pool()`（主菜单卡包选择界面）
+3. 初始牌组 / 战利品奖励改为从 `CurrentCardPool` 生成
+4. 游戏结束时调用 `clear_card_pool()`
+
+### 注册方式（待接入后参考）
+
+> ⚠️ 以下代码块仅为接入时的参考示例，当前没有任何调用方；
+> 遗留的 `AbstractBlockRegisterer` / `OriginalBlockRegisterer` 的 `register()` 已无调用方，不建议继续使用。
 
 ```gdscript
 # 注册主卡包

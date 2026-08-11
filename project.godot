@@ -34,10 +34,6 @@ window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
 
-[dotnet]
-
-project/assembly_name="Grid and Groves"
-
 [editor]
 
 naming/default_signal_callback_name="_On{NodeName}{SignalName}"

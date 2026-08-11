@@ -18,29 +18,10 @@ func create_action(_block, _part):
 	# 实际效果由同部件的其他 Behavior 提供
 	return null
 
-## 检查是否可以再放置一个扎根 Block
+## 检查是否可以再放置一个扎根 Block（上限 3 个）
 static func can_place_root(tree: SceneTree) -> bool:
-	var max_roots: int = 3
-	var current: int = count_active_roots(tree)
-	return current < max_roots
+	return GlyphRootBehavior.can_place_glyph(tree, "root")
 
 ## 统计当前活跃的扎根 Block 数量
 static func count_active_roots(tree: SceneTree) -> int:
-	var count: int = 0
-	var seen: Dictionary = {}
-	for block in tree.get_nodes_in_group("placed_blocks"):
-		if not is_instance_valid(block) or not block is Block:
-			continue
-		if seen.has(block):
-			continue
-		seen[block] = true
-		for part in block.get_parts():
-			if part.Behaviors.size() == 0:
-				continue
-			for behavior in part.Behaviors:
-				if behavior is RootBehavior or (behavior is GlyphRootBehavior and (behavior as GlyphRootBehavior).IsVariant == "root"):
-					count += 1
-					break
-			if count > 0:
-				break
-	return count
+	return GlyphRootBehavior.count_active_glyphs(tree, "root")

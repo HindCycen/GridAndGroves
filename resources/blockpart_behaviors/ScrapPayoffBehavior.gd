@@ -4,21 +4,31 @@ class_name ScrapPayoffBehavior extends BlockPartBehavior
 ## 松动 Block 进入弃牌堆时触发额外效果：
 ## - 增加过载层数
 ## - 给敌人上锈蚀
-## - 获得护盾等
+## - 获得护盾
+## - 抽 Block
 ## 是铁锈游侠资源循环的"奖励"端
+##
+## 注意：create_action 返回 null（标记类，普通触发时不产生 Action），
+## 松动入弃牌堆时由 Bot / ResonanceBot 调用 create_payoff_action 显式触发，
+## 避免与普通触发路径重复执行。
 
 @export var PayoffType: String = "overload"  # "overload" / "rust" / "shield" / "draw"
 @export var PayoffAmount: int = 1
 
-func create_action(block, part):
+func create_action(_block, _part):
+	# 回收效果由松动路径（Bot._trigger_scrap_payoff）显式触发
+	return null
+
+## 创建回收效果 Action（由 Bot / ResonanceBot 在松动入弃牌堆时调用）
+func create_payoff_action(block: Block, part, block_piles: BlockPilesHere) -> AbstractGameAction:
 	if block == null:
 		return null
 	return CallbackAction.new(func():
-		_trigger_payoff(block, part)
+		_trigger_payoff(block, part, block_piles)
 	, Enums.ActionType.Callback)
 
-func _trigger_payoff(block: Block, part) -> void:
-	var tree := block.get_tree()
+func _trigger_payoff(block: Block, part, block_piles: BlockPilesHere) -> void:
+	var tree := block_piles.get_tree() if block_piles != null and block_piles.is_inside_tree() else null
 	if tree == null:
 		return
 	match PayoffType:
@@ -29,7 +39,7 @@ func _trigger_payoff(block: Block, part) -> void:
 		"shield":
 			_grant_shield(tree, block)
 		"draw":
-			_draw_block(tree)
+			_draw_block(block_piles)
 
 func _add_player_overload(tree: SceneTree, block: Block) -> void:
 	for node in tree.get_nodes_in_group("Players"):
@@ -85,15 +95,11 @@ func _grant_shield(tree: SceneTree, block: Block) -> void:
 				GameLog.debug("ScrapPayoffBehavior: Gained " + str(PayoffAmount) + " shield from scrap recovery")
 			return
 
-func _draw_block(tree: SceneTree) -> void:
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var player := node as Node2D
-			var pile_node = player.get_node("%PlayerPile")
-			if pile_node != null and pile_node.has_method("draw_block"):
-				pile_node.draw_block()
-				GameLog.debug("ScrapPayoffBehavior: Drew a block from scrap recovery")
-			return
+func _draw_block(block_piles: BlockPilesHere) -> void:
+	if block_piles == null:
+		return
+	block_piles.draw_cards(PayoffAmount)
+	GameLog.debug("ScrapPayoffBehavior: Drew " + str(PayoffAmount) + " block(s) from scrap recovery")
 
 func _find_shield_component(root: Node) -> ShieldComponent:
 	if root is ShieldComponent:

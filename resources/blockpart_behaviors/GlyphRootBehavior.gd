@@ -4,14 +4,11 @@ class_name GlyphRootBehavior extends BlockPartBehavior
 ## 星语术士法阵 / 翠绿哨兵扎根 的通用驻留 Behavior
 ## 使用 PreventsClear = true 阻止回合结束清除
 ## Block 驻留在网格上，每回合可持续提供效果
-## 最多允许的驻留 Block 数量由 MaxGlyphCount 控制
-
-## 通过设置 IsVariant 来区分：
-## - is_variant = "glyph"：星语术士法阵，最多 2 个
-## - is_variant = "root"：翠绿哨兵扎根，最多 3 个（升到 4 需初始能力）
+## 最多允许的驻留 Block 数量由 variant 决定：
+## - "glyph"：星语术士法阵，最多 2 个
+## - "root"：翠绿哨兵扎根，最多 3 个（升到 4 需初始能力）
 
 @export var IsVariant: String = "root"  # "glyph" 或 "root"
-@export var MaxGlyphCount: int = 2      # 全局最大驻留数（法阵2 / 扎根3）
 
 func prevents_clear() -> bool:
 	return true
@@ -30,21 +27,26 @@ static func can_place_glyph(tree: SceneTree, variant: String) -> bool:
 	var current_count: int = count_active_glyphs(tree, variant)
 	return current_count < max_count
 
-## 统计当前活跃的驻留 Block 数量
+## 统计当前活跃的驻留 Block 数量（variant: "glyph" / "root"）
+## 含 RootBehavior 标记的 Block（视为 "root" variant）
 static func count_active_glyphs(tree: SceneTree, variant: String) -> int:
 	var count: int = 0
+	var seen: Dictionary = {}
 	for block in tree.get_nodes_in_group("placed_blocks"):
-		if not is_instance_valid(block) or not block is Block:
+		if not is_instance_valid(block) or not block is Block or seen.has(block):
 			continue
+		seen[block] = true
+		var is_active := false
 		for part in block.get_parts():
-			if part.Behaviors.size() == 0:
-				continue
 			for behavior in part.Behaviors:
-				if behavior is GlyphRootBehavior:
-					var gb: GlyphRootBehavior = behavior as GlyphRootBehavior
-					if gb.IsVariant == variant:
-						count += 1
-						break
-			if count > 0:
+				if behavior is RootBehavior:
+					is_active = variant == "root"
+				elif behavior is GlyphRootBehavior:
+					is_active = (behavior as GlyphRootBehavior).IsVariant == variant
+				if is_active:
+					break
+			if is_active:
 				break
+		if is_active:
+			count += 1
 	return count

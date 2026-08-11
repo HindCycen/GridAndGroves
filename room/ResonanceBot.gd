@@ -187,13 +187,20 @@ func _process_block_part(block: Block, part: BlockPart, depth: int) -> void:
 				action.set_chain_bonus(depth)
 			if ActionManager.Instance != null:
 				ActionManager.Instance.add_to_bottom(action)
-			GameLog.debug("  ResonanceBot Queued: " + action.get_class() + " amt=" + str(action.amount))
+			GameLog.debug("  ResonanceBot Queued: " + action.get_script().resource_path.get_file() + " amt=" + str(action.amount))
 			if action.exhaust_source_block():
 				should_exhaust = true
 	if has_loose and block.Faction == Block.BlockFaction.Player:
-		_loose_block(block)
+		# 延迟到该 Block 的所有 Action 执行完毕后再松动，避免 Action 引用已离场的 Block
+		if ActionManager.Instance != null:
+			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _loose_block(block)))
+		else:
+			_loose_block(block)
 	elif should_exhaust and block.Faction == Block.BlockFaction.Player:
-		_exhaust_block(block)
+		if ActionManager.Instance != null:
+			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _exhaust_block(block)))
+		else:
+			_exhaust_block(block)
 
 # ──────────── 辅助方法 ────────────
 
@@ -250,6 +257,8 @@ func _exhaust_block(block: Block) -> void:
 			GridState.restore_grid_state(coord.x, coord.y)
 	_block_piles_here.remove_block_from_placed(block)
 	block.remove_from_group("placed_blocks")
+	# 清除时触发自然循环（NatureCycleBehavior 回收效果）
+	_trigger_nature_cycle(block)
 	if block.get_parent() != null and is_instance_valid(block.get_parent()):
 		block.get_parent().remove_child(block)
 	block.queue_free()
@@ -265,22 +274,31 @@ func _loose_block(block: Block) -> void:
 			GridState.restore_grid_state(coord.x, coord.y)
 	_block_piles_here.remove_block_from_placed(block)
 	block.remove_from_group("placed_blocks")
-	# 进弃牌堆
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var pl := node as Node2D
-			var pn = pl.get_node("%PlayerPile")
-			if pn != null and pn.has_method("DiscardedPile"):
-				var dp = pn.DiscardedPile
-				if dp != null and dp.has_method("add_block"):
-					block.IsPlaced = false
-					block.global_position = block.OriginalPos
-					dp.add_block(block)
-					if block.get_parent() != null and is_instance_valid(block.get_parent()):
-						block.get_parent().remove_child(block)
-					return
-	if block.get_parent() != null and is_instance_valid(block.get_parent()):
-		block.get_parent().remove_child(block)
+	# 进弃牌堆（统一走 BlockPilesHere 公共 API）
+	_block_piles_here.send_block_to_discard(block)
+	# 触发废品回收（ScrapPayoffBehavior）
+	_trigger_scrap_payoff(block)
+
+## 触发废品回收：查找 Block 的 ScrapPayoffBehavior 并执行
+func _trigger_scrap_payoff(block: Block) -> void:
+	for part in block.get_parts():
+		if part.Behaviors.size() == 0:
+			continue
+		for behavior in part.Behaviors:
+			if behavior is ScrapPayoffBehavior:
+				var payoff_action: AbstractGameAction = (behavior as ScrapPayoffBehavior).create_payoff_action(block, part, _block_piles_here)
+				if payoff_action != null and ActionManager.Instance != null:
+					ActionManager.Instance.add_to_top(payoff_action)
+					GameLog.debug("ResonanceBot: ScrapPayoffBehavior triggered for " + str(block.BlockName if not block.BlockName.is_empty() else ""))
+
+## 触发自然循环：Block 被清除（耗尽）时执行 NatureCycleBehavior 的回收效果
+func _trigger_nature_cycle(block: Block) -> void:
+	if block == null:
+		return
+	for part in block.get_parts():
+		for behavior in part.Behaviors:
+			if behavior is NatureCycleBehavior:
+				(behavior as NatureCycleBehavior).trigger_cycle(block)
 
 func _add_echo(tree: SceneTree, layers: int) -> void:
 	for node in tree.get_nodes_in_group("Players"):

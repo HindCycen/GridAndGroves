@@ -1,20 +1,3 @@
-# ─── Build / IDE / OS ───
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-[Bb]in/
-[Oo]bj/
-.vs/
-.vscode/
-.idea/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-Thumbs.db
-.DS_Store
-
 # ─── Godot Engine ───
 .godot/
 *.import
@@ -23,58 +6,26 @@ export_presets.cfg
 .autoload.gd
 .tmp/
 
-# ─── Editor settings (user-specific) ───
+# ─── 插件（第三方，不入库） ───
+addons/
+
+# ─── 编辑器设置（用户相关） ───
 .editor_settings-4.tres
 
-# ─── NuGet / packages ───
-packages/
-*.nupkg
-
-# ─── Logs ───
+# ─── 系统/编辑器杂项 ───
+.DS_Store
+Thumbs.db
 *.log
 logs/
-
-# Unity Asset Store tools
-Assets/AssetStoreTools*
-
-# Unity iOS build
-*[Bb]uild/
-
-# Unity WebGL build
-WebGL/
-
-# Unity Package Manager temp
-upm/
-
-# Unity crash reports
-Editor-prev.log
-Editor.log
-
-# Unity Player.log
-Player.log
-
-# Slay the Spire Code
-foreign-influence/
-memory/
-
-# Python / AI tools
-tools/venv/
-tools/output/
-tools/models/
 __pycache__/
 *.pyc
-*.pyo
 
-# AI model files (large .safetensors checkpoints)
+# ─── AI 模型文件（体积大，不入库） ───
 *.safetensors
 *.bin
 *.ckpt
 *.pt
 *.pth
-
-# HuggingFace / torch cache
+*.h5
 .cache/
 .huggingface_cache/
-*.h5
-
-addons/

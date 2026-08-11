@@ -36,9 +36,9 @@ Room (res://room/Room.gd)
 - 继承自 Room，每次进入时会增加 roomCount
 
 ### StageRoom
-- 管理 7 列 × 14 行的地图网格(每个格子 96×96 像素)
+- 管理 **14 列 × 7 行** 的地图网格(每个格子 96×96 像素)，`Cols = 14, Rows = 7`
 - 网格容器 Node2D 位于屏幕正中央
-- 格子图片: 左下角(0,13)和右上角(6,0)必须为 BattleRoomBn, 其余通过 `mapRand` 随机决定
+- 格子图片: 左下角(0,6)和右上角(13,0)必须为 BattleRoomBn, 其余通过 `mapRand` 随机决定
 - 导航规则:
   - 初次进入 StageRoom 时, 仅左下角 Bn 可点击(此时 roomCount == 0)
   - 离开一个房间后, 解锁其"上方"(row-1)和"右方"(col+1)的紧邻 Bn
@@ -46,11 +46,11 @@ Room (res://room/Room.gd)
   - 点击 Bn: 先闪烁 3 次(0.15 秒 ON / 0.15 秒 OFF), 然后进入对应房间
   - 离开房间后, 对应 Bn 透明度固定为 50%
 - 单击 BattleRoomBn:
-  - 根据 roomCount 选择敌人:
-    - roomCount == 20: 使用 BossChart
-    - roomCount > 6: 使用 StrongEnemyChart
-    - roomCount ≤ 6: 使用 WeakEnemyChart
-  - 使用 `monsterRand` 从对应 Chart 中随机选择 EnemyChartDef
+  - 根据 roomCount 选择敌人图表（`resources/enemy_defs.json` 的 `stageCharts`）:
+    - roomCount >= 20: 使用 `bossCharts`
+    - roomCount > 6: 使用 `strongCharts`
+    - roomCount ≤ 6: 使用 `weakCharts`（`eliteCharts` 为预留）
+  - 使用 `monsterRand` 从对应图表中随机选择一组敌人
   - 实例化 BattleRoom 并跳转
 - 单击 EventRoomBn: 实例化 EventRoom 并跳转
 
@@ -83,14 +83,17 @@ Room (res://room/Room.gd)
 - PossibleEvents: EventDef 数组, 用于随机抽取
 
 ### StageEnemyChartDef (res://resources/StageEnemyChartDef.gd)
-- WeakEnemyChart: EnemyChartDef[] (roomCount ≤ 6)
-- StrongEnemyChart: EnemyChartDef[] (roomCount > 6)
-- EliteChart: EnemyChartDef[] (预留)
-- BossChart: EnemyChartDef[] (roomCount == 20)
+- WeakEnemyChart / StrongEnemyChart / EliteChart / BossChart
+
+> ⚠️ **已弃用**：当前敌人图表由 `resources/enemy_defs.json` 的 `stageCharts` 字段驱动
+> （键名 `weakCharts` / `strongCharts` / `eliteCharts` / `bossCharts`），
+> 由 `JsonEnemyScanner` 注册到 `BlockRegistry.StageChartConfigs`，
+> `StageRoom._build_enemy_chart_for_room` 读取。
 
 ### StageDef (res://resources/StageDef.gd)
-- StageEnemyChart: StageEnemyChartDef
+- StageEnemyChart: StageEnemyChartDef（**旧方案，已不再使用**）
 - StageEventRand: EventRand
+- StartingDeck: Array[String]（初始牌组 Block 名称）
 
 ## 存档数据
 

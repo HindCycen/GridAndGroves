@@ -11,9 +11,8 @@
 3. [制作一个方块部件行为](#3-制作一个方块部件行为)
 4. [制作一个属性（Stat）](#4-制作一个属性stat)
 5. [制作一个自定义动作](#5-制作一个自定义动作)
-6. [制作一个自定义 VFX](#6-制作一个自定义-vfx)
-7. [深入：管线时序与钩子](#7-深入管线时序与钩子)
-8. [目录参考](#8-目录参考)
+6. [深入：管线时序与钩子](#6-深入管线时序与钩子)
+7. [目录参考](#7-目录参考)
 
 ---
 
@@ -64,8 +63,10 @@
 
 | 入队方式 | 方法 | 效果 |
 |----------|------|------|
-| 追加到队尾 | `ActionManager.add_to_bottom(action)` | 大多数效果使用 |
-| 插入到队首 | `ActionManager.add_to_top(action)` | 紧急效果（如触发类反击） |
+| 追加到队尾 | `ActionManager.Instance.add_to_bottom(action)` | 大多数效果使用 |
+| 插入到队首 | `ActionManager.Instance.add_to_top(action)` | 紧急效果（如触发类反击） |
+
+> `ActionManager` 是战斗场景中的运行时节点（非 Autoload），通过静态变量 `Instance` 访问，使用前判空。
 
 > `BlockPartBehavior` 通过 `create_action(block, part)` 方法返回具体 Action 类型，
 > 支持动画时长和 VFX。返回 null 表示无需 Action 入队（如纯方向修改行为）。
@@ -96,7 +97,6 @@
 
 | 字段 | 类型 | 用途 |
 |------|------|------|
-| `partId` | string | 唯一标识（如 `"DamagePart"`） |
 | `partId` | string | 唯一标识（如 `"DamagePart"`） |
 | `description` | string | 悬停描述，支持 `%D%`(伤害) `%S%`(护盾) `%M%`(魔数) 占位符 |
 | `baseDamage` | int | 基础伤害值 |
@@ -215,7 +215,8 @@ func create_action(block, part):
 ```gdscript
 func create_action(block, part):
     # 先用一个 WaitAction 等待 0.3s
-    ActionManager.add_to_bottom(WaitAction.new(0.3))
+    if ActionManager.Instance != null:
+        ActionManager.Instance.add_to_bottom(WaitAction.new(0.3))
     # 再用 CallbackAction 执行复杂逻辑
     return CallbackAction.new(func():
         # 你的复杂逻辑...
@@ -255,17 +256,24 @@ StatDef (resources/stat_defs/) ──→ StatBehavior (resources/stat_behaviors/
 ```gdscript
 class_name MyStatBehavior extends StatBehavior
 
-## @period OnTurnEnded
-func on_turn_end() -> void:
-    var stat = belonging_stat
-    if stat == null or stat.CurrentValue <= 0:
-        return
-    var players: Array[Node] = stat.get_tree().get_nodes_in_group("Players")
-    if players.size() > 0:
-        var health: HealthComponent = players[0].get_node("RenderingComponent/HealthComponent")
-        if health != null:
-            health.take_damage(stat.CurrentValue)
+func get_execute_periods() -> Array[int]:
+	return [Enums.StatExecuteAt.OnTurnEnded]
+
+func execute_at(period: int) -> void:
+	if period != Enums.StatExecuteAt.OnTurnEnded:
+		return
+	var stat = belonging_stat
+	if stat == null or stat.CurrentValue <= 0:
+		return
+	var players: Array[Node] = stat.get_tree().get_nodes_in_group("Players")
+	if players.size() > 0:
+		var health: HealthComponent = players[0].get_node("RenderingComponent/HealthComponent")
+		if health != null:
+			health.take_damage(stat.CurrentValue)
 ```
+
+> ⚠️ **注意**：实际分发靠覆写 `get_execute_periods()` + `execute_at()`（内部 `match` 分发）。
+> `## @period OnXxx` 注释只是文档约定，不会自动触发。照抄旧示例中只有注释标记的方法不会生效。
 
 ### 4.3 支持的触发时机
 
@@ -286,6 +294,8 @@ func on_turn_end() -> void:
 
 > **注意**：`OnTurnEnded` 由 Bot.end_turn() 触发，发生在敌人攻击之前。
 > `OnBattleEnded` 由 BattleRoom._on_defeat() 或 _on_victory() 触发。
+> **接线状态**：上表中前 9 个时期已接线（BattleTime 信号 + DamageAction 钩子）；
+> `OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied` 仅定义了枚举值，**尚未接线**。
 
 ### 4.4 步骤二：创建 StatDef (.tres)
 
@@ -328,7 +338,7 @@ if stat_def != null:
 ### 5.1 基类 API
 
 ```gdscript
-class_name AbstractGameAction extends RefCounted
+class_name AbstractGameAction
 
 var duration: float           # 总时长（秒）
 var start_duration: float     # 起始时长
@@ -337,12 +347,18 @@ var amount: int               # 数值
 var source: Node              # 动作发出者
 var target: Node              # 动作目标
 var action_type: int          # 动作类型
-var exhaust_source_block: bool # 是否耗尽来源方块
 
-func _update(delta: float) -> void:  # 每帧推进，子类重写
+func _init(dur: float = 0.0):  # 构造时传入时长
+    duration = dur
+    start_duration = dur
+
+func update(delta: float) -> void:  # 每帧推进，子类重写
     pass
 
-func tick_duration(delta: float) -> void:  # 推进 duration
+func exhaust_source_block() -> bool:  # 是否耗尽来源方块（重写返回 true）
+    return false
+
+func tick_duration(delta: float) -> void:  # 推进 duration，归零后 is_done = true
     pass
 ```
 
@@ -361,7 +377,7 @@ func _init(target: Node, amount: int, duration: float):
     start_duration = duration
     action_type = Enums.ActionType.Special
 
-func _update(delta: float) -> void:
+func update(delta: float) -> void:
     if is_done:
         return
     tick_duration(delta)
@@ -377,16 +393,19 @@ func _update(delta: float) -> void:
 ```gdscript
 # 在 Behavior.create_action 或任何代码中：
 var action = MyCustomAction.new(target, amount, 0.5)
-ActionManager.add_to_bottom(action) # 追加到队尾
+ActionManager.Instance.add_to_bottom(action) # 追加到队尾
 # 或
-ActionManager.add_to_top(action)    # 插入到队首
+ActionManager.Instance.add_to_top(action)    # 插入到队首
 ```
+
+> **注意**：`ActionManager` 是战斗场景中的运行时节点（非 Autoload），
+> 必须通过静态变量 `ActionManager.Instance` 访问；入队前判空。
 
 ---
 
-## 7. 深入：管线时序与钩子
+## 6. 深入：管线时序与钩子
 
-### 7.1 一个完整的 Bot Tick
+### 6.1 一个完整的 Bot Tick
 
 ```
 OnPatrolTimerTimeout()
@@ -400,7 +419,7 @@ OnPatrolTimerTimeout()
   │         ├─ 同步修改 _currentDirection ← Phase B 方向
   │         ├─ SayBlockExecute()
   │         │    → 触发 OnBlockExecute 钩子
-  │         └─ 每个 Behavior.CreateAction() 入队
+  │         └─ 每个 Behavior.create_action() 入队
   │             → DamageAction(0.4s)
   │             → ApplyStatusAction(0.3s)
   │             → 等
@@ -427,7 +446,7 @@ Phase C: Stat Y 产生 2 个 Action → addToBottom → 第 6,7 位...
 > 但注意：如果当前正在执行的 Action 已经开始，`addToTop` 不会打断它，
 > 而是从下一个开始插到前面。
 
-### 7.2 回合边界
+### 6.2 回合边界
 
 ```
 Bot 到达网格最右列 → EndTurn()
@@ -436,7 +455,7 @@ Bot 到达网格最右列 → EndTurn()
   → StartPlayerTurn()       → 下一回合
 ```
 
-### 7.3 死亡处理
+### 6.3 死亡处理
 
 ```
 玩家 HP ≤ 0
@@ -451,34 +470,36 @@ Bot 到达网格最右列 → EndTurn()
 
 ---
 
-## 8. 目录参考
+## 7. 目录参考
 
 ```
 resources/
 ├── block_defs.json          # ★ 所有 BlockDef 的 JSON 描述（注册入口）
-├── blockdefs/               # BlockDef .tres（仅保留 EnemyAttackBlock）
-├── blockparts/              # BlockPartDef .tres（仅保留 EnemyAttackPart00）
+├── enemy_defs.json          # ★ 所有敌人定义 + stageCharts（注册入口）
 ├── blockpart_behaviors/     # BlockPartBehavior .gd
-│   ├── DamageEnemyBehavior.gd
-│   ├── DamagePlayerBehavior.gd
+│   ├── DamageBehavior.gd / DamageEnemyBehavior.gd / DamagePlayerBehavior.gd
 │   ├── GrantShieldBehavior.gd
-│   ├── GrantPlayerStatBehavior.gd   # 带参数的行为
+│   ├── GrantStatBehavior.gd / GrantPlayerStatBehavior.gd / ApplyRustBehavior.gd / ApplyVineBehavior.gd
 │   ├── GiveGrowingStatBehavior.gd
-│   ├── MoveRightBehavior.gd
-│   ├── DoNothing.gd
-│   └── ExamplePartBehavior.gd
+│   ├── MoveRightBehavior.gd / DoNothing.gd / ExamplePartBehavior.gd
+│   ├── LooseBlockBehavior.gd / ScrapPayoffBehavior.gd / ChainReleaseBehavior.gd
+│   ├── ResonanceTriggerBehavior.gd / SpendEchoBehavior.gd / GlyphRootBehavior.gd
+│   ├── RootBehavior.gd / SymbiosisBoostBehavior.gd / JungleShelterBehavior.gd
+│   ├── NatureCycleBehavior.gd / SporeBurstBehavior.gd
+│   └── AddOverloadBehavior.gd / SpendOverloadBehavior.gd / OverloadToRustBehavior.gd
 ├── blockpart_picture/       # 方块贴图
 ├── stat_defs/               # StatDef .tres
 │   ├── Growing.tres
 │   ├── Shooting.tres
+│   ├── Overload.tres / Rust.tres / Vine.tres / Echo.tres / Symbiosis.tres / ScrapCounter.tres
 │   └── ...
 ├── stat_behaviors/          # StatBehavior .gd
 │   ├── GrowingStatBehavior.gd
 │   ├── ShootingStatBehavior.gd
 │   └── ...
 ├── stat_images/             # 属性图标
-├── enemy_defs/              # EnemyDefinition .tres
-├── enemy_intents/           # IntentDefinition .tres
+├── enemy_defs/              # EnemyDefinition .tres（旧方案，仅作格式参考）
+├── enemy_intents/           # IntentDefinition .tres（旧方案，仅作格式参考）
 ├── enemy_images/            # 敌人贴图
 └── ...
 ```
@@ -488,50 +509,48 @@ resources/
 ```
 actions/                     # Action 系统
 ├── AbstractGameAction.gd    # 动作基类
-├── ActionManager.gd         # 中央调度器
-├── DamageAction.gd          # 伤害动作（含 VFX）
+├── ActionManager.gd         # 中央调度器（战斗场景内节点，非 Autoload）
+├── DamageAction.gd          # 伤害动作（含 VFX 与伤害钩子）
 ├── HealAction.gd            # 治疗动作
 ├── ApplyStatusAction.gd     # 施加状态动作
 ├── CallbackAction.gd        # 回调包装动作
 ├── WaitAction.gd            # 等待动作
+├── VFXAction.gd             # VFX 包装动作
 └── ...
 
 vfx/                         # 视觉效果
-├── VFXAction.cs             # VFX 包装动作
-├── DamageNumberVFX.cs       # 浮动伤害数字
-├── BlockNumberVFX.cs        # 浮动格挡数字
+├── DamageNumberVFX.gd       # 浮动伤害数字
+├── BlockNumberVFX.gd        # 浮动格挡数字
 └── ...
 
 room/
-├── Bot.cs                   # 巡逻机器人（三段式执行）
-├── BattleRoom.cs            # 战斗房间管理
-├── EventRoom.cs             # 事件房间
-├── StageRoom.cs             # 楼层地图
-├── BlockPilesHere.cs        # 方块堆管理
+├── Bot.gd                   # 巡逻机器人（三段式执行）
+├── BattleRoom.gd            # 战斗房间管理
+├── EventRoom.gd             # 事件房间
+├── StageRoom.gd             # 楼层地图
+├── BlockPilesHere.gd        # 方块堆管理
+├── ResonanceBot.gd          # 共鸣连锁机器人
 └── ...
 
 global/
-├── BattleTime.cs            # 信号中枢（三段式 TicTac）
-├── GlobConstants.cs         # 枚举定义（StatExecuteAt / TicTacPhase）
-├── Glob.cs                  # Autoload 入口
-├── GlobBlockInitializer.cs  # 方块工厂
-├── GlobGridControlling.cs   # 网格控制
-├── GlobRandSetter.cs        # 随机数管理
-├── GlobRegistererExecuter.cs# 自动注册
-└── SaveLoad.cs              # 存档系统
+├── GameLog.gd               # 日志
+├── Enums.gd                 # 枚举定义（StatExecuteAt / EventActionType 等）
+├── GridState.gd             # 网格控制
+├── RngManager.gd            # 随机数管理
+├── BlockRegistry.gd         # 方块/敌人注册与创建
+├── PackManager.gd           # 卡包管理（尚未接入主流程）
+├── BattleTime.gd            # 信号中枢（三段式 TicTac）
+└── SaveLoad.gd              # 存档系统
 
 blocks/
-├── Block.cs                 # 方块实例
-├── BlockPart.cs             # 方块部件实例
-├── BlockDef.cs              # 方块定义（Resource）
-├── BlockPartDef.cs          # 部件定义（Resource）
-├── BlockPartBehavior.cs     # 部件行为基类
-└── ...
+├── Block.gd                 # 方块实例
+├── BlockPart.gd             # 方块部件实例
+└── BlockPartBehavior.gd     # 部件行为基类
 
 stats/
-├── Stat.cs                  # 属性实例
-├── StatBehavior.cs          # 属性行为基类
-├── StatDef.cs               # 属性定义（Resource）
+├── Stat.gd                  # 属性实例
+├── StatBehavior.gd          # 属性行为基类
+├── StatDef.gd               # 属性定义（Resource）
 └── ...
 ```
 

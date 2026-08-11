@@ -2,364 +2,176 @@
 
 ## 概述
 
-本系统实现了基于特性（Attribute）的 Stat 行为自动触发机制。当战斗中的特定事件发生时（如回合开始、回合结束等），所有标记了相应特性的方法会自动执行。
+本系统实现战斗事件 → StatBehavior 的自动触发机制。当战斗中的特定事件发生（回合开始、回合结束、Block 触发等），所有注册到 "stats" 组的 Stat 节点对应的 Behavior 会自动执行对应时期的方法。
+
+**技术栈**：纯 GDScript（Godot 4.7），无反射、无特性（Attribute）。
 
 ## 核心组件
 
-### 1. StatusBehaviorAttribute - 特性定义
+### 1. StatBehavior 基类
 
-**位置**: `attributes/StatusBehavior.cs`
+**位置**: `stats/StatBehavior.gd`
 
-```csharp
-[AttributeUsage(AttributeTargets.Method)]
-public class StatusBehaviorAttribute : Attribute {
-    public Glob.StatExecuteAt Period;
-}
+```gdscript
+class_name StatBehavior extends Resource
+
+var belonging_stat: Stat  # 绑定的 Stat 实例（由 Stat._ready 赋值）
+
+func execute_at(_period: int) -> void:
+    pass
+
+func get_execute_periods() -> Array[int]:
+    return []
 ```
 
-**作用**:
+子类需要：
+1. 覆写 `get_execute_periods()` 声明关注的时期（用于文档/自检）
+2. 覆写 `execute_at(period)`，用 `match period` 分发处理
 
-- 用于标记需要在特定时期执行的方法
-- 通过 `Period` 参数指定执行时机
+**示例**（`resources/stat_behaviors/OverloadStatBehavior.gd`）：
 
-**可用时期** (`Glob.StatExecuteAt`):
+```gdscript
+class_name OverloadStatBehavior extends StatBehavior
 
-- `OnBattleStarted` - 战斗开始时
-- `OnTurnStarted` - 回合开始时
-- `OnTicTac` - 滴答时
-- `OnTurnEnded` - 回合结束时
-- `OnBattleEnded` - 战斗结束时
+## 过载计数：OnTurnEnded 清零
+func get_execute_periods() -> Array[int]:
+	return [Enums.StatExecuteAt.OnPostBlockExecute, Enums.StatExecuteAt.OnTurnEnded]
 
----
-
-### 2. StatBehavior - 基类扩展
-
-**位置**: `stats/StatBehavior.cs`
-
-**新增功能**:
-
-#### a) StatExecuteMethod 结构体
-
-```csharp
-public struct StatExecuteMethod {
-    public MethodInfo Method;        // 方法信息
-    public Glob.StatExecuteAt ExecuteAt;  // 执行时机
-}
+func execute_at(period: int) -> void:
+	match period:
+		Enums.StatExecuteAt.OnTurnEnded:
+			if belonging_stat != null and belonging_stat.CurrentValue > 0:
+				belonging_stat.set_value(0)
 ```
 
-#### b) ExecuteMethods 属性
+### 2. Stat 节点注册
 
-```csharp
-public StatExecuteMethod[] ExecuteMethods { get; private set; }
+**位置**: `stats/Stat.gd`
+
+```gdscript
+func _ready() -> void:
+	CurrentValue = 0
+	if Definition != null and Definition.Behavior != null:
+		Definition.Behavior.belonging_stat = self
+	add_to_group("stats")  # ← 注册到 "stats" 组
 ```
 
-存储所有标记了 `[StatusBehavior]` 的方法
+所有 Stat 节点进入场景树时自动加入 "stats" 组，供 BattleTime 全局查找。
 
-#### c) CacheExecuteMethods() 方法
+### 3. BattleTime 事件触发器
 
-```csharp
-private void CacheExecuteMethods() {
-    var methods = GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-    var executeList = new List<StatExecuteMethod>();
-    
-    foreach (var method in methods) {
-        var attr = method.GetCustomAttribute<StatusBehaviorAttribute>();
-        if (attr != null) {
-            executeList.Add(new StatExecuteMethod {
-                Method = method,
-                ExecuteAt = attr.Period
-            });
-        }
-    }
-    
-    ExecuteMethods = executeList.ToArray();
-}
+**位置**: `global/BattleTime.gd`
+
+BattleTime 是 Autoload 信号总线，`_ready()` 时把自身信号连接到内部处理方法：
+
+```gdscript
+func _execute_stat_behaviors(period: Enums.StatExecuteAt) -> void:
+	var stats := get_tree().get_nodes_in_group("stats")
+	for node in stats:
+		if node is Stat and node.Definition != null and node.Definition.Behavior != null:
+			node.Definition.Behavior.execute_at(period)
 ```
 
-**作用**: 使用反射扫描并缓存所有标记方法
+对外只暴露 `say_xxx()` 触发方法，业务代码不直接调用 `execute_at`：
 
-#### d) ExecuteAt() 方法
+| 信号 | 触发方法 | 对应时期 |
+|------|----------|----------|
+| `battle_started` | `say_battle_started()` | `OnBattleStarted` |
+| `turn_started` | `say_turn_started()` | `OnTurnStarted` |
+| `pre_block_execute` | `say_pre_block_execute()` | `OnPreBlockExecute` |
+| `block_execute` | `say_block_execute()` | `OnBlockExecute` |
+| `post_block_execute` | `say_post_block_execute()` | `OnPostBlockExecute` |
+| `turn_ended` | `say_turn_ended()` | `OnTurnEnded` |
+| `battle_ended` | `say_battle_ended()` | `OnBattleEnded` |
 
-```csharp
-public void ExecuteAt(Glob.StatExecuteAt period) {
-    if (ExecuteMethods == null) return;
-    
-    foreach (var exec in ExecuteMethods) {
-        if (exec.ExecuteAt == period && exec.Method != null) {
-            exec.Method.Invoke(this, null);
-        }
-    }
-}
+### 4. DamageAction 伤害钩子
+
+**位置**: `actions/DamageAction.gd`
+
+伤害相关时期不由 BattleTime 触发，而是在 `DamageAction.update()` 中直接调用：
+
+- `_trigger_before_damage_hooks()` → `OnBeforeDamageApply`（扣血前）
+- `_trigger_after_damage_hooks()` → `OnAfterDamageApply`（扣血后）
+
+实现为遍历 "stats_components" 组中所有 StatsComponent 的 Stat，调用其 Behavior 对应时期。
+
+## 已接线的执行时期
+
+| 时期 | 触发来源 | 状态 |
+|------|----------|------|
+| `OnBattleStarted` | BattleTime（Bot._ready → say_battle_started） | ✅ |
+| `OnTurnStarted` | BattleTime（BattleRoom._start_player_turn） | ✅ |
+| `OnPreBlockExecute` | BattleTime（Bot 每 tick Phase A） | ✅ |
+| `OnBlockExecute` | BattleTime（Bot/ResonanceBot 触发部件时） | ✅ |
+| `OnPostBlockExecute` | BattleTime（Bot 每 tick Phase C） | ✅ |
+| `OnTurnEnded` | BattleTime（Bot.end_turn） | ✅ |
+| `OnBattleEnded` | BattleTime（BattleRoom 胜利/失败） | ✅ |
+| `OnBeforeDamageApply` | DamageAction | ✅ |
+| `OnAfterDamageApply` | DamageAction | ✅ |
+| `OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied` | 枚举已定义 | ⚠️ 尚未接线 |
+
+> `Enums.StatExecuteAt` 中的 `OnBeforeBlockApply`、`OnAfterBlockApply`、`OnStatusApplied`
+> 目前只是枚举值，尚无触发点。新增接线时在对应逻辑处调用 `Behavior.execute_at(period)` 即可。
+
+## 使用示例：创建自定义 StatBehavior
+
+1. 在 `resources/stat_behaviors/` 下新建 `.gd`，继承 `StatBehavior`：
+
+```gdscript
+class_name MyStatBehavior extends StatBehavior
+
+func get_execute_periods() -> Array[int]:
+	return [Enums.StatExecuteAt.OnTurnEnded]
+
+func execute_at(period: int) -> void:
+	if period != Enums.StatExecuteAt.OnTurnEnded:
+		return
+	if belonging_stat == null or belonging_stat.CurrentValue <= 0:
+		return
+	# 在 belonging_stat 上实现效果
+	GameLog.debug("MyStatBehavior executed, value = " + str(belonging_stat.CurrentValue))
 ```
 
-**作用**: 根据指定时期调用对应的所有方法
+2. 创建/修改 `resources/stat_defs/` 下的 `.tres`（StatDef），`Behavior` 字段指向该脚本。
 
----
+3. 通过 `StatsComponent.add_status(stat)` 施加状态（自动加入场景树与 "stats" 组）。
 
-### 3. Stat - 节点注册
-
-**位置**: `stats/Stat.cs`
-
-**修改内容**:
-
-```csharp
-public override void _Ready() {
-    CurrentValue = 0;
-    Definition.Behavior.SetBelongingStat(this);
-    AddToGroup("stats");  // ← 新增：添加到 "stats" 组
-}
-```
-
-**作用**:
-
-- 将所有 Stat 节点添加到 "stats" 组，便于全局查找和管理
-
----
-
-### 4. BattleTime - 事件触发器
-
-**位置**: `global/BattleTime.cs`
-
-**修改内容**:
-
-#### a) 订阅战斗事件
-
-```csharp
-public override void _Ready() {
-    EmitSignalBattleContextReady();
-    
-    // Subscribe to battle events and trigger stat behaviors
-    BattleStarted += () => ExecuteStatBehaviors(Glob.StatExecuteAt.OnBattleStarted);
-    TurnStarted += () => ExecuteStatBehaviors(Glob.StatExecuteAt.OnTurnStarted);
-    TicTac += () => ExecuteStatBehaviors(Glob.StatExecuteAt.OnTicTac);
-    TurnEnded += () => ExecuteStatBehaviors(Glob.StatExecuteAt.OnTurnEnded);
-    BattleEnded += () => ExecuteStatBehaviors(Glob.StatExecuteAt.OnBattleEnded);
-}
-```
-
-#### b) 执行 Stat 行为
-
-```csharp
-private void ExecuteStatBehaviors(Glob.StatExecuteAt period) {
-    var stats = GetTree().GetNodesInGroup("stats");
-    foreach (var node in stats) {
-        if (node is Stat stat && stat.Definition?.Behavior != null) {
-            stat.Definition.Behavior.ExecuteAt(period);
-        }
-    }
-}
-```
-
-**作用**:
-
-- 监听所有战斗事件信号
-- 当事件触发时，查找场景中所有 Stat 节点
-- 调用每个 Stat Behavior 在对应时期的所有方法
-
----
-
-## 使用示例
-
-### 创建自定义 StatBehavior
-
-**文件**: `resources/stat_behaviors/ExampleStatBehavior.cs`
-
-```csharp
-using Godot;
-using System;
-
-public partial class ExampleStatBehavior : StatBehavior {
-    [StatusBehavior(Period = Glob.StatExecuteAt.OnTurnEnded)]
-    public void ExecuteStat() {
-        GD.Print("Example Status Executed");
-    }
-}
-```
-
-**说明**:
-
-- 继承自 `StatBehavior`
-- 使用 `[StatusBehavior(Period = ...)]` 标记需要在特定时期执行的方法
-- 一个类可以有多个标记方法
-- 同一个方法可以在不同时期执行（使用多个标记）
-
----
-
-## 数据流和协作关系
+## 数据流
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    游戏启动 / 战斗开始                        │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Stat._Ready()                                              │
-│  ├─ 初始化 CurrentValue = 0                                 │
-│  ├─ 调用 Behavior.SetBelongingStat(this)                    │
-│  │   └─ CacheExecuteMethods() ← 反射扫描标记方法             │
-│  └─ AddToGroup("stats") ← 注册到全局组                       │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│  BattleTime._Ready()                                        │
-│  订阅所有战斗事件信号：                                      │
-│  ├─ BattleStarted → OnBattleStarted                         │
-│  ├─ TurnStarted → OnTurnStarted                             │
-│  ├─ TicTac → OnTicTac                                       │
-│  ├─ TurnEnded → OnTurnEnded ← 示例使用此事件                 │
-│  └─ BattleEnded → OnBattleEnded                             │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
-          战斗事件触发 (如：TurnEnded)
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│  BattleTime.ExecuteStatBehaviors(OnTurnEnded)               │
-│  ├─ GetTree().GetNodesInGroup("stats")                      │
-│  │   └─ 获取场景中所有 Stat 节点                              │
-│  └─ 对每个 Stat 节点:                                         │
-│      └─ stat.Definition.Behavior.ExecuteAt(OnTurnEnded)     │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│  StatBehavior.ExecuteAt(OnTurnEnded)                        │
-│  ├─ 遍历 ExecuteMethods 数组                                 │
-│  └─ 找到 ExecuteAt == OnTurnEnded 的方法                     │
-│      └─ 调用：exec.Method.Invoke(this, null)                │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│  ExampleStatBehavior.ExecuteStat()                          │
-│  └─ GD.Print("Example Status Executed") ✅                  │
-└─────────────────────────────────────────────────────────────┘
+战斗事件发生（如 Bot.end_turn）
+        │
+        ▼
+BattleTime.say_turn_ended()
+        │
+        ▼
+BattleTime._execute_stat_behaviors(OnTurnEnded)
+        │  遍历 "stats" 组
+        ▼
+每个 Stat.Definition.Behavior.execute_at(OnTurnEnded)
+        │
+        ▼
+子类实现按时期执行效果（match 分发）
 ```
-
----
-
-## 关键设计模式
-
-### 1. 特性驱动开发 (Attribute-Driven Development)
-
-- 使用 `[StatusBehavior]` 特性声明式地标记方法
-- 无需手动注册或配置
-- 代码即文档，意图清晰
-
-### 2. 反射缓存优化
-
-- 在 `_Ready()` 时一次性扫描并缓存方法信息
-- 避免每次事件触发时都进行反射操作
-- 平衡了灵活性和性能
-
-### 3. 观察者模式 (Observer Pattern)
-
-- `BattleTime` 作为事件源
-- `StatBehavior` 作为观察者
-- 通过信号 - 槽机制解耦
-
-### 4. 策略模式 (Strategy Pattern)
-
-- `StatBehavior` 可被继承和重写
-- 不同的 Stat 可以有不同的行为实现
-- 支持热插拔
-
----
-
-## 扩展指南
-
-### 添加新的执行时期
-
-1. 在 `GlobConstants.cs` 中添加枚举值:
-
-```csharp
-public enum StatExecuteAt {
-    OnBattleStarted, 
-    OnTurnStarted,
-    OnTicTac,
-    OnTurnEnded,
-    OnBattleEnded,
-    OnCustomEvent  // ← 新增值
-}
-```
-
-2. 在 `BattleTime.cs` 中添加对应的事件处理:
-
-```csharp
-// 添加新信号
-[Signal]
-public delegate void CustomEventEventHandler();
-
-// 在 _Ready() 中订阅
-CustomEvent += () => ExecuteStatBehaviors(Glob.StatExecuteAt.OnCustomEvent);
-
-// 添加触发方法
-public void SayCustomEvent() {
-    EmitSignalCustomEvent();
-}
-```
-
-### 创建复杂的行为逻辑
-
-```csharp
-public partial class HealthRegenerationBehavior : StatBehavior {
-    [StatusBehavior(Period = Glob.StatExecuteAt.OnTurnStarted)]
-    public void RegenerateHealth() {
-        // 每回合开始时恢复生命值
-        if (_belongingStat != null && !_belongingStat.IsFull) {
-            _belongingStat.AddValue(10);
-        }
-    }
-    
-    [StatusBehavior(Period = Glob.StatExecuteAt.OnTurnEnded)]
-    public void CheckOverheal() {
-        // 每回合结束时检查是否过量治疗
-        GD.Print("Current HP: " + _belongingStat.CurrentValue);
-    }
-}
-```
-
----
 
 ## 注意事项
 
-1. **性能考虑**
-    - 反射仅在初始化时执行一次
-    - 方法调用使用缓存的 `MethodInfo`
-    - 避免在标记方法中执行耗时操作
-
-2. **方法签名**
-    - 标记方法不能有参数
-    - 返回值会被忽略
-    - 建议使用 `void` 返回类型
-
-3. **访问修饰符**
-    - 支持 `public` 和 `private` 方法
-    - 推荐使用 `public` 提高可读性
-
-4. **错误处理**
-    - 确保标记方法不会抛出未处理的异常
-    - 异常会中断后续方法的执行
-
----
+1. **Behavior 是共享 Resource**：同一个 `.tres`/JSON 引用的 Behavior 实例可能被多个 Stat 共享
+   （`belonging_stat` 会指向最后绑定的 Stat）。多实例场景下避免在 Behavior 中保存实例状态，
+   状态应放在 `Stat.CurrentValue` 上。
+2. **`belonging_stat` 由 `Stat._ready` 赋值**，Behavior 内使用前判空。
+3. **不要在 `execute_at` 中直接修改场景树结构**（如 `queue_free` 遍历中的节点）；
+   需要移除 Stat 时通过 `StatsComponent.remove_status()`。
+4. 标注 `## @period OnTurnEnded` 只是注释约定（文档用途），实际分发由 `execute_at()` 决定。
 
 ## 相关文件清单
 
-| 文件路径                                              | 作用      | 修改状态  |
-|---------------------------------------------------|---------|-------|
-| `attributes/StatusBehavior.cs`                   | 特性定义    | 已有    |
-| `stats/StatBehavior.cs`                          | 行为基类    | ✨ 已扩展 |
-| `stats/Stat.cs`                                   | 统计节点    | ✨ 已修改 |
-| `global/BattleTime.cs`                            | 战斗时间管理  | ✨ 已扩展 |
-| `global/GlobConstants.cs`                         | 全局常量/枚举 | 已有    |
-| `resources/stat_behaviors/ExampleStatBehavior.cs` | 示例行为    | 用户创建  |
-
----
-
-## 总结
-
-该系统提供了一个灵活、可扩展的方式来管理战斗中的各种持续性效果（DoT、HoT、Buff、Debuff
-等）。通过特性标记和自动触发，大大减少了样板代码，提高了开发效率和代码可维护性。
+| 文件 | 作用 |
+|------|------|
+| `stats/StatBehavior.gd` | 行为基类 |
+| `stats/Stat.gd` | 状态节点（注册到 "stats" 组） |
+| `global/BattleTime.gd` | 战斗信号总线 |
+| `global/Enums.gd` | `StatExecuteAt` 枚举 |
+| `actions/DamageAction.gd` | 伤害钩子（OnBefore/AfterDamageApply） |
+| `resources/stat_behaviors/*.gd` | 具体行为实现 |
+| `resources/stat_defs/*.tres` | StatDef 数据 |

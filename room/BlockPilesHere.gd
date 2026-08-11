@@ -43,6 +43,19 @@ func disconnect_block_signals(block: Block) -> void:
 	if block.left_grid.is_connected(_on_block_left_grid):
 		block.left_grid.disconnect(_on_block_left_grid)
 
+## 将 Block 移入弃牌堆（重置状态、断开信号、从原父节点移除）
+## 供 Bot / Behavior / ResonanceBot 等统一调用，避免各自实现导致不一致
+func send_block_to_discard(block: Block) -> void:
+	if block == null:
+		return
+	disconnect_block_signals(block)
+	block.IsPlaced = false
+	block.global_position = block.OriginalPos
+	PlacedPile.remove_block(block)
+	if block.get_parent() != null and is_instance_valid(block.get_parent()):
+		block.get_parent().remove_child(block)
+	DiscardedPile.add_block(block)
+
 func _ready() -> void:
 	ShowingPile.child_entered_tree.connect(_on_showing_pile_child_added)
 
@@ -57,8 +70,6 @@ func initialize_draw_pile() -> void:
 
 func draw_cards(count: int) -> void:
 	_pending_draws += count
-	if _pending_draws > count:
-		return
 	_process_pending_draws()
 
 func _process_pending_draws() -> void:

@@ -31,13 +31,22 @@ func _ready() -> void:
 	_update_health_from_save_load()
 	var player := get_tree().get_first_node_in_group("Players") as Player
 	if player != null:
+		# 从存档恢复玩家状态（血量/卡组/属性/计数），保证跨房间持久
+		if _save_load != null and _save_load.Data != null:
+			_save_load.restore_player_state(player)
 		var health := player.get_node_or_null("RenderingComponent/HealthComponent") as HealthComponent
 		if health != null:
 			health.health_changed.connect(_on_health_changed)
 			_update_health_display(health.CurrentHealth, health.MaxHealth)
-	_update_stage_room_label()
+	# 延迟到本场景所有 _ready 完成后刷新标签（StageRoom 会递增 StageCount）
+	_update_stage_room_label.call_deferred()
 
 func _exit_tree() -> void:
+	if SaveLoad.RunEnded:
+		# 玩家已战败：跳过存档写入（save() 内部会删除存档文件）
+		if _save_load != null:
+			_save_load.save()
+		return
 	if is_instance_valid(self):
 		var player := get_tree().get_first_node_in_group("Players") as Player
 		if player != null:

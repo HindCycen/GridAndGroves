@@ -3,6 +3,7 @@ class_name ApplyVineBehavior extends GrantStatBehavior
 ## 施加藤蔓 (Apply Vine) Behavior
 ## 给敌人施加 Vine Stat（GrantStatBehavior 的简化封装）
 ## 等价于 GrantStatBehavior 设置 TargetGroup = "Enemies"，TargetStatDef = Vine.tres
+## 层数取部件 MagicNum（若为 0 则用默认 InitialValue）
 
 func _init() -> void:
 	TargetGroup = "Enemies"
@@ -13,6 +14,13 @@ func create_action(block, part):
 	if block == null:
 		return null
 	# 从部件 MagicNum 取层数（若为 0 则用默认 InitialValue）
-	if part.MagicNum > 0:
-		InitialValue = part.MagicNum
-	return super.create_action(block, part)
+	# 注意：不修改共享 behavior 实例的 InitialValue，避免污染其他同名单例
+	var layers: int = InitialValue
+	if part != null and part.MagicNum > 0:
+		layers = part.MagicNum
+	var tree: SceneTree = block.get_tree()
+	if tree == null:
+		return null
+	return CallbackAction.new(func():
+		_apply_stat_to_group(block, tree, layers)
+	, Enums.ActionType.ApplyStatus, ShouldExhaust)

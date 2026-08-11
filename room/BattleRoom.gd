@@ -36,7 +36,6 @@ func _ready() -> void:
 	_battle_resolved = false
 	_is_game_over = false
 	_enemy_manager.initialize(_player, _block_piles_here)
-	_enemy_manager.enemy_died.connect(_on_enemy_died_wrapper)
 	_enemy_manager.all_enemies_defeated.connect(_on_all_enemies_defeated)
 	if EnemyChart != null and EnemyChart.EnemyDefs != null:
 		_enemy_manager.spawn_from_chart(EnemyChart)
@@ -55,10 +54,6 @@ func _ready() -> void:
 	_setup_pile_viewer_buttons()
 	_round_number = 0
 	_start_player_turn()
-
-func _on_enemy_died_wrapper() -> void:
-	if _is_game_over:
-		return
 
 func _on_all_enemies_defeated() -> void:
 	if _is_game_over:
@@ -81,8 +76,6 @@ func _exit_tree() -> void:
 		if _end_turn_button.pressed.is_connected(_on_end_turn_pressed):
 			_end_turn_button.pressed.disconnect(_on_end_turn_pressed)
 	if _enemy_manager != null:
-		if _enemy_manager.enemy_died.is_connected(_on_enemy_died_wrapper):
-			_enemy_manager.enemy_died.disconnect(_on_enemy_died_wrapper)
 		if _enemy_manager.all_enemies_defeated.is_connected(_on_all_enemies_defeated):
 			_enemy_manager.all_enemies_defeated.disconnect(_on_all_enemies_defeated)
 	# 战斗未结束时退出，回退 RoomCount 防止存档跳过战斗
@@ -175,6 +168,7 @@ func _on_player_died() -> void:
 
 func _on_defeat() -> void:
 	_battle_resolved = true
+	SaveLoad.RunEnded = true
 	GameLog.info("\n=== Defeat! Player has been defeated! ===")
 	_end_turn_button.text = "Defeat..."
 	_end_turn_button.disabled = true

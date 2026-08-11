@@ -53,7 +53,8 @@ func _create_part(data: Dictionary) -> BlockPart:
 	if data.has("spriteTexture"):
 		part.SpriteTexture = data["spriteTexture"] as Texture2D
 	if data.has("behaviors"):
-		part.Behaviors = data["behaviors"]
+		# 复制数组，避免同名 Block 实例共享同一 behaviors 数组（运行时修改会互相污染）
+		part.Behaviors = data["behaviors"].duplicate()
 	_parts.append(part)
 	add_child(part)
 	return part
@@ -84,7 +85,30 @@ func _on_part_released(n: Node) -> void:
 		global_position = OriginalPos
 
 func _check_placement_conditions() -> bool:
-	return _are_all_parts_in_grid_bounds() and _are_all_cells_free() and _is_center_in_grid_bounds()
+	return _are_all_parts_in_grid_bounds() and _are_all_cells_free() and _is_center_in_grid_bounds() and _within_root_glyph_limit()
+
+## 检查驻留 Block（扎根/法阵）是否未超过数量上限
+## 上限：扎根 3 个（variant "root"）、法阵 2 个（variant "glyph"）
+func _within_root_glyph_limit() -> bool:
+	if Faction != BlockFaction.Player:
+		return true
+	var tree := get_tree()
+	if tree == null:
+		return true
+	var variant := ""
+	for part in _parts:
+		for behavior in part.Behaviors:
+			if behavior is RootBehavior:
+				variant = "root"
+			elif behavior is GlyphRootBehavior:
+				variant = (behavior as GlyphRootBehavior).IsVariant
+			if not variant.is_empty():
+				break
+		if not variant.is_empty():
+			break
+	if variant.is_empty():
+		return true
+	return GlyphRootBehavior.can_place_glyph(tree, variant)
 
 func _finalize_placement() -> void:
 	global_position = GridState.find_nearest_grid_point(global_position)

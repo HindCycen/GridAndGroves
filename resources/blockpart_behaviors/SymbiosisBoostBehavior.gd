@@ -10,16 +10,17 @@ class_name SymbiosisBoostBehavior extends BlockPartBehavior
 func create_action(block, part):
 	if block == null:
 		return null
+	# 在创建时捕获 BlockPilesHere（回调执行时 Block 可能已被移出场景树）
+	var block_piles := block.get_parent() as BlockPilesHere
+	if block_piles == null:
+		return null
 	return CallbackAction.new(func():
-		_apply_symbiosis_boost(block, part)
+		_apply_symbiosis_boost(block, part, block_piles)
 	, Enums.ActionType.Callback)
 
-func _apply_symbiosis_boost(block: Block, part) -> void:
+func _apply_symbiosis_boost(block: Block, part, block_piles: BlockPilesHere) -> void:
 	var tree := block.get_tree()
 	if tree == null:
-		return
-	var block_piles = block.get_parent()
-	if block_piles == null or not block_piles.has_method("PlacedPile"):
 		return
 	# 统计场上己方 Block 数量（包括此 Block 自身）
 	var ally_block_count: int = 0

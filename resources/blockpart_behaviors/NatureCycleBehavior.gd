@@ -24,7 +24,7 @@ func trigger_cycle(block: Block) -> void:
 		"heal":
 			_heal_player(tree, block)
 		"draw":
-			_draw_block(tree)
+			_draw_block(tree, block)
 		"shield":
 			_grant_shield(tree, block)
 		"overload":
@@ -40,16 +40,12 @@ func _heal_player(tree: SceneTree, block: Block) -> void:
 				GameLog.debug("NatureCycleBehavior: Healed " + str(CycleAmount) + " HP on root removal")
 			return
 
-func _draw_block(tree: SceneTree) -> void:
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var player := node as Node2D
-			var pile_node = player.get_node("%PlayerPile")
-			if pile_node != null and pile_node.has_method("draw_block"):
-				for _i in range(CycleAmount):
-					pile_node.draw_block()
-				GameLog.debug("NatureCycleBehavior: Drew " + str(CycleAmount) + " blocks on root removal")
-			return
+func _draw_block(tree: SceneTree, block: Block) -> void:
+	var block_piles := block.get_parent() as BlockPilesHere
+	if block_piles == null:
+		return
+	block_piles.draw_cards(CycleAmount)
+	GameLog.debug("NatureCycleBehavior: Drew " + str(CycleAmount) + " blocks on root removal")
 
 func _grant_shield(tree: SceneTree, block: Block) -> void:
 	for node in tree.get_nodes_in_group("Players"):

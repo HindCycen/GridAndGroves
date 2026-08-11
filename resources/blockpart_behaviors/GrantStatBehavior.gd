@@ -20,11 +20,12 @@ func create_action(block, _part):
 	var tree: SceneTree = block.get_tree()
 	if tree == null:
 		return null
+	var value: int = InitialValue
 	return CallbackAction.new(func():
-		_apply_stat_to_group(block, tree)
+		_apply_stat_to_group(block, tree, value)
 	, Enums.ActionType.ApplyStatus, ShouldExhaust)
 
-func _apply_stat_to_group(block: Block, tree: SceneTree) -> void:
+func _apply_stat_to_group(block: Block, tree: SceneTree, value: int = InitialValue) -> void:
 	for node in tree.get_nodes_in_group(TargetGroup):
 		if node is Node2D:
 			var target: Node2D = node as Node2D
@@ -36,13 +37,13 @@ func _apply_stat_to_group(block: Block, tree: SceneTree) -> void:
 				var stat: Stat = Stat.new()
 				stat.Definition = TargetStatDef
 				stats_comp.add_status(stat)
-				stat.add_value(InitialValue)
-				print("GrantStatBehavior: Added Stat [", TargetStatDef.StatName, "] = ", InitialValue, " to ", target.name)
+				stat.add_value(value)
+				print("GrantStatBehavior: Added Stat [", TargetStatDef.StatName, "] = ", value, " to ", target.name)
 			else:
 				var existing: Stat = stats_comp.get_status(TargetStatDef.StatName)
 				if existing != null:
-					existing.add_value(InitialValue)
-					print("GrantStatBehavior: Stacked Stat [", TargetStatDef.StatName, "] +", InitialValue, " on ", target.name, " = ", existing.CurrentValue)
+					existing.add_value(value)
+					print("GrantStatBehavior: Stacked Stat [", TargetStatDef.StatName, "] +", value, " on ", target.name, " = ", existing.CurrentValue)
 			# 从牌组移除同名 Block（仅对玩家有效）
 			if RemoveBlockFromDeck and not block.BlockName.is_empty():
 				_remove_block_from_deck(target, block)

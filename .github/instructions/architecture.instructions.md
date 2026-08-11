@@ -10,26 +10,27 @@ applyTo: "**/*.gd"
 1. **动作队列调度**: 所有效果通过 `AbstractGameAction` 入队到 `ActionManager` 异步执行，而非直接函数调用
 2. **三段式 TicTac**: 每个 Bot tick 分为 PreBlockExecute → BlockExecute → PostBlockExecute 三个阶段
 3. **信号驱动**: `BattleTime` 作为事件总线，发出信号触发 `StatBehavior` 的钩子方法
-4. **Resource 链**: BlockDef → BlockPartDef → BlockPartBehavior 三级引用
-5. **JSON 扫描注册**: BlockDef 数据集中在 `block_defs.json`，由 `JsonBlockScanner` 运行时扫描注册
+4. **JSON 扫描注册**: BlockDef 数据集中在 `block_defs.json`，敌人数据集中在 `enemy_defs.json`，由 JSON 扫描器运行时扫描注册
 
 ## Autoload 单例
 
 | Autoload | 文件 | 职责 |
 |----------|------|------|
-| BlockRegistry | `global/BlockRegistry.gd` | 方块注册与创建 |
-| PackManager | `global/PackManager.gd` | 卡包注册与卡池构建 |
-| BattleTime | `global/BattleTime.gd` | 战斗信号总线，StatBehavior 触发器 |
-| SaveLoad | `global/SaveLoad.gd` | 存档读写 |
+| GameLog | `global/GameLog.gd` | 日志输出 |
 | GridState | `global/GridState.gd` | 网格状态管理 |
-| RngManager | `global/RngManager.gd` | 随机数管理 |
+| RngManager | `global/RngManager.gd` | 多流随机数管理 |
+| BlockRegistry | `global/BlockRegistry.gd` | 方块/敌人注册与创建 |
+| PackManager | `global/PackManager.gd` | 卡包注册与卡池构建（尚未接入游戏流程） |
+| BattleTime | `global/BattleTime.gd` | 战斗信号总线，StatBehavior 触发器 |
+| SaveLoad | `global/SaveLoad.gd` | 存档读写与玩家状态恢复 |
 
 ## 动作系统 (actions/)
 
-`AbstractGameAction` 是基类，所有动作通过 `ActionManager` 调度：
-- `ActionManager.add_to_bottom(action)` — 追加到队尾
-- `ActionManager.add_to_top(action)` — 插入到队首
-- `action._update(delta)` — 每帧调用，完成后置 `is_done = true`
+`AbstractGameAction` 是基类，所有动作通过 `ActionManager` 调度。
+`ActionManager` 是战斗场景中的运行时节点（非 Autoload），通过静态变量 `Instance` 访问：
+- `ActionManager.Instance.add_to_bottom(action)` — 追加到队尾
+- `ActionManager.Instance.add_to_top(action)` — 插入到队首
+- `action.update(delta)` — 每帧调用，完成后置 `is_done = true`
 
 ## Bot 巡逻管线 (room/Bot.gd)
 
@@ -41,16 +42,18 @@ applyTo: "**/*.gd"
 
 ## StatBehavior 系统 (stats/)
 
-- 继承 `StatBehavior`，在方法上加 `## @period OnTurnEnded` 标记触发时机
-- `BattleTime` 在发出信号时扫描所有 "stats" 组中的 Stat 节点
-- `StatBehavior.execute_at(period)` 通过方法名匹配调用
+- 继承 `StatBehavior`，覆写 `get_execute_periods()` 声明时期，覆写 `execute_at(period)` 实现效果（内部 `match` 分发）
+- `Stat._ready()` 自动加入 "stats" 组；`BattleTime` 发出信号时遍历该组，调用 `Definition.Behavior.execute_at(period)`
+- `## @period OnXxx` 注释只是文档约定，不参与分发
+- 已接线时期: `OnBattleStarted`, `OnTurnStarted`, `OnPreBlockExecute`, `OnBlockExecute`, `OnPostBlockExecute`, `OnTurnEnded`, `OnBattleEnded`, `OnBeforeDamageApply`, `OnAfterDamageApply`
 
 ## 注册机制
 
 - BlockDef 通过 `JsonBlockScanner.scan_and_register()` 从 `resources/block_defs.json` 注册
-- 卡包通过 `PackManager.subscribe_block_pack()` / `subscribe_mini_pack()` 注册
-- `BlockRegistry._ready()` 自动调用 `auto_register_blocks()` → 触发 JSON 扫描
-- `OriginalBlockRegisterer.register()` 也被 JSON 扫描器替代
+- 敌人与楼层图表通过 `JsonEnemyScanner.scan_and_register()` 从 `resources/enemy_defs.json` 注册
+- `BlockRegistry._ready()` 自动调用 `auto_register_blocks()` / `auto_register_enemies()`
+- `registerers/` 下 `AbstractBlockRegisterer` / `OriginalBlockRegisterer` 为历史遗留，`register()` 已无调用方
+- 卡包（`PackManager.subscribe_block_pack()` / `subscribe_mini_pack()` / `build_card_pool()`）已实现但**尚未接入游戏流程**
 
 ## BlockDef JSON 注册格式
 

@@ -8,16 +8,17 @@ class_name ChainReleaseBehavior extends BlockPartBehavior
 func create_action(block, part):
 	if block == null:
 		return null
+	# 在创建时捕获 BlockPilesHere（回调执行时 Block 可能已被移出场景树）
+	var block_piles := block.get_parent() as BlockPilesHere
+	if block_piles == null:
+		return null
 	return CallbackAction.new(func():
-		_chain_release(block)
+		_chain_release(block, block_piles)
 	, Enums.ActionType.Callback)
 
-func _chain_release(block: Block) -> void:
+func _chain_release(block: Block, block_piles: BlockPilesHere) -> void:
 	var tree := block.get_tree()
 	if tree == null:
-		return
-	var block_piles = block.get_parent()
-	if block_piles == null or not block_piles.has_method("PlacedPile"):
 		return
 	var all_placed: Array = block_piles.PlacedPile.Pile
 	# 获取本 Block 所有部件占用的格子坐标
@@ -47,7 +48,7 @@ func _chain_release(block: Block) -> void:
 				if b.Faction != Block.BlockFaction.Player:
 					continue
 				if _is_block_at_grid(b, neighbor_cell) and _has_loose_behavior(b):
-					_release_loose_block(b, tree, block_piles)
+					_release_loose_block(b, block_piles)
 					# 仅释放第一个找到的（防止一次释放太多）
 					return
 
@@ -68,30 +69,18 @@ func _has_loose_behavior(block_node: Block) -> bool:
 				return true
 	return false
 
-func _release_loose_block(block_node: Block, tree: SceneTree, block_piles) -> void:
+func _release_loose_block(block_node: Block, block_piles: BlockPilesHere) -> void:
 	# 释放格子
 	for p in block_node.get_parts():
 		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
 		var coord: Vector2i = GridState.get_grid_coords(gp)
 		if coord.x >= 0 and coord.y >= 0:
 			GridState.restore_grid_state(coord.x, coord.y)
-	# 从放置堆移除
-	block_piles.PlacedPile.remove_block(block_node)
-	# 进入弃牌堆
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var player := node as Node2D
-			var pile_node = player.get_node("%PlayerPile")
-			if pile_node != null and pile_node.has_method("DiscardedPile"):
-				var discard = pile_node.DiscardedPile
-				if discard != null and discard.has_method("add_block"):
-					block_node.IsPlaced = false
-					block_node.global_position = block_node.OriginalPos
-					discard.add_block(block_node)
-					GameLog.debug("ChainReleaseBehavior: Released adjacent loose block " + str(block_node.BlockName if not block_node.BlockName.is_empty() else "") + " to discard")
-					return
-	# 安全兜底
-	block_node.global_position = Vector2(9999, 9999)
+	# 从放置堆移除并进入弃牌堆（统一走公共 API）
+	block_piles.remove_block_from_placed(block_node)
+	block_node.remove_from_group("placed_blocks")
+	block_piles.send_block_to_discard(block_node)
+	GameLog.debug("ChainReleaseBehavior: Released adjacent loose block " + str(block_node.BlockName if not block_node.BlockName.is_empty() else "") + " to discard")
 
 func _is_out_of_bounds(pos: Vector2i) -> bool:
 	return pos.x < 0 or pos.x > 6 or pos.y < 0 or pos.y > 4

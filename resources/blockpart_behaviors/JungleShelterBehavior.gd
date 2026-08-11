@@ -10,16 +10,17 @@ class_name JungleShelterBehavior extends BlockPartBehavior
 func create_action(block, part):
 	if block == null:
 		return null
+	# 在创建时捕获 BlockPilesHere（回调执行时 Block 可能已被移出场景树）
+	var block_piles := block.get_parent() as BlockPilesHere
+	if block_piles == null:
+		return null
 	return CallbackAction.new(func():
-		_apply_shelter(block)
+		_apply_shelter(block, block_piles)
 	, Enums.ActionType.Block)
 
-func _apply_shelter(block: Block) -> void:
+func _apply_shelter(block: Block, block_piles: BlockPilesHere) -> void:
 	var tree := block.get_tree()
 	if tree == null:
-		return
-	var block_piles = block.get_parent()
-	if block_piles == null or not block_piles.has_method("PlacedPile"):
 		return
 	# 获取本 Block 所有部件占用的格子坐标
 	var my_cells: Array[Vector2i] = []
