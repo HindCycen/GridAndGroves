@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="BlockPack" format=3]
+
+[ext_resource type="Script" uid="uid://4mww27ifo7gl" path="res://packs/BlockPack.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+PackName = "星语术士"
+BlockNames = Array[String](["StardustArrow", "StarShard", "StarlightShield", "EnergyConduit", "Meteor", "StarTrail", "Aura", "Constellation", "Twinkle", "AstralShield", "FocusRay", "GravityRipple", "Stardust", "MoonArc", "LightPillar", "Sparkle", "ResonanceCrystal", "StarburstNode", "Weave", "StarPulse", "BinaryStars", "EtherShield", "Astrolabe", "GalaxyBranch", "StarGate", "SupernovaOmen", "GuardianGlyph", "VoidRift", "StellarChorus", "AstralGlyph", "Collapsar", "Nova"])

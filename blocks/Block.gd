@@ -15,6 +15,7 @@ var BlockName: String
 var Description: String
 var PartDatas: Array = []  # Array of Dictionaries (raw JSON part data)
 var Faction: int = BlockFaction.Player
+var Rarity: int = 0  # 0 普通 / 1 稀有 / 2 史诗 / 3 传说
 var IsPlaced: bool
 var IsPressed: bool
 var OriginalPos: Vector2

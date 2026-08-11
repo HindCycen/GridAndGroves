@@ -1,5 +1,9 @@
 extends Node
 
+## 稀有度权重表：普通 10 / 稀有 4 / 史诗 1.5 / 传说 0.5
+## 用于战利品/商店的稀有度加权随机（参见 planning/card_pack_design/balance.md）
+const RarityWeights: Dictionary = {0: 10.0, 1: 4.0, 2: 1.5, 3: 0.5}
+
 var BlockDefs: Dictionary = {}
 var EnemyDefs: Dictionary = {}
 var StageChartConfigs: Dictionary = {}
@@ -43,8 +47,23 @@ func create_block(block_data: Dictionary) -> Block:
 	block.BlockName = block_data.get("name", "")
 	block.Description = block_data.get("description", "")
 	block.Faction = block_data.get("faction", Block.BlockFaction.Player)
+	block.Rarity = block_data.get("rarity", 0)
 	block.PartDatas = block_data.get("parts", [])
 	return block
+
+## 按稀有度权重随机抽取一个稀有度等级（0~3）
+## 使用奖励随机流（reward RNG），保证存档可复现
+static func pick_random_rarity() -> int:
+	var total := 0.0
+	for rarity in RarityWeights:
+		total += RarityWeights[rarity]
+	var roll := float(RngManager.get_reward_rand(10000)) / 10000.0 * total
+	var acc := 0.0
+	for rarity in RarityWeights:
+		acc += RarityWeights[rarity]
+		if roll < acc:
+			return rarity
+	return 0
 
 func create_block_by_name(block_name: String) -> Block:
 	if not BlockDefs.has(block_name):

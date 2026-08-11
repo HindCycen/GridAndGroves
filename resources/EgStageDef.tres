@@ -71,4 +71,5 @@ metadata/_custom_type_script = "res://resources/EventRand.gd"
 
 [resource]
 script = ExtResource("1")
+StartingDeck = Array[String](["Strike", "Strike", "Strike", "Strike", "Defend", "Defend", "Defend", "Defend"])
 StageEventRand = SubResource("SubResource_rand")

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="MiniPack" format=3]
+
+[ext_resource type="Script" uid="uid://cr171q7vcrxhk" path="res://packs/MiniPack.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+PackName = "星尘余烬"
+BlockNames = Array[String](["Spark", "GravityWave", "EnergySiphon", "ArcaneShield", "RandomSpark", "StaticField", "UnstableRift", "StardustEcho", "Supernova", "EmberRekindle"])

@@ -1,6 +1,7 @@
 class_name DataResource extends Resource
 
 @export var ChestRandUsage: int
+@export var Gold: int = 10
 @export var GridClickable: Array[int] = []
 @export var GridIsBattleCell: Array[int] = []
 @export var GridLeft: Array[int] = []
@@ -21,3 +22,5 @@ class_name DataResource extends Resource
 @export var LastNonStageRoomType: int = 0  # 0=None, 1=Battle, 2=Event
 @export var LastNonStageRoomEventDefPath: String = ""
 @export var LastNonStageRoomEnemyNames: Array[String] = []
+@export var MainPackName: String = ""
+@export var SelectedMiniPackNames: Array[String] = []

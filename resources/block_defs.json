@@ -3,6 +3,7 @@
     {
       "name": "DamageBlock",
       "description": "",
+      "rarity": 0,
       "parts": [
         {
           "partId": "DamagePart",
@@ -19,6 +20,7 @@
     {
       "name": "EnemyAttackBlock",
       "description": "",
+      "rarity": 0,
       "faction": 1,
       "parts": [
         {
@@ -36,6 +38,7 @@
     {
       "name": "ExampleBlock",
       "description": "",
+      "rarity": 0,
       "parts": [
         {
           "partId": "EgPart",
@@ -61,6 +64,7 @@
     {
       "name": "ExampleMoveRight",
       "description": "",
+      "rarity": 0,
       "parts": [
         {
           "partId": "EgMoveRightPart",
@@ -78,6 +82,7 @@
     {
       "name": "Growing",
       "description": "",
+      "rarity": 0,
       "parts": [
         {
           "partId": "GrowingPart",
@@ -93,6 +98,7 @@
     {
       "name": "Shield",
       "description": "",
+      "rarity": 0,
       "parts": [
         {
           "partId": "Shield00",
@@ -118,6 +124,7 @@
     {
       "name": "Strike",
       "description": "",
+      "rarity": 0,
       "parts": [
         {
           "partId": "JustDoNothing",
@@ -135,6 +142,23 @@
           "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
           "behaviors": [
             { "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Defend",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Defend00",
+          "baseShield": 6,
+          "description": "Gain %S% Shield.",
+          "movingDirection": [0, 1],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "behaviors": [
+            { "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd" }
           ]
         }
       ]

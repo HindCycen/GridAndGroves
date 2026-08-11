@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="BlockPack" format=3]
+
+[ext_resource type="Script" uid="uid://4mww27ifo7gl" path="res://packs/BlockPack.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+PackName = "铁锈游侠"
+BlockNames = Array[String](["RustyWrench", "MetalShard", "OldGear", "OverloadCoil", "QuickRelease", "ScrapThrow", "IronPipe", "Sandpaper", "DeadBattery", "BarbedWire", "Spring", "Screwdriver", "IronPlate", "ScrapShot", "DoubleWrench", "OldScrew", "IronChain", "FlareGun", "Sandblaster", "ScrapTorrent", "OverloadCapacitor", "WeldingTorch", "BigWrench", "Anvil", "RustBomb", "ChainSaw", "OldEngine", "ChainReaction", "RustStorm", "OverloadRush", "SteamHammer", "ScrapGolem", "MagneticPinch"])

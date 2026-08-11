@@ -39,6 +39,7 @@ static func _create_block_data(entry: Dictionary) -> Dictionary:
 	block_data["name"] = entry.name
 	block_data["description"] = entry.get("description", "")
 	block_data["faction"] = entry.get("faction", 0)
+	block_data["rarity"] = entry.get("rarity", 0)
 	
 	if entry.has("parts"):
 		var parts: Array = []
