@@ -1,164 +1,1576 @@
 {
   "blocks": [
     {
-      "name": "DamageBlock",
+      "name": "RustyWrench",
       "description": "",
       "rarity": 0,
       "parts": [
         {
-          "partId": "DamagePart",
-          "baseDamage": 10,
-          "description": "Deal %D% damage to the enemy.",
-          "movingDirection": [0, 1],
+          "partId": "RustyWrench00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
           "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
-          "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "EnemyAttackBlock",
-      "description": "",
-      "rarity": 0,
-      "faction": 1,
-      "parts": [
-        {
-          "partId": "EnemyAttackPart",
-          "baseDamage": 5,
-          "description": "Deal %D% damage to the player.",
-          "movingDirection": [0, 1],
-          "spriteTexture": "res://resources/blockpart_picture/grey/GreyAttack.png",
-          "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd" }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "ExampleBlock",
-      "description": "",
-      "rarity": 0,
-      "parts": [
-        {
-          "partId": "EgPart",
-          "description": "Nothing.",
-          "movingDirection": [0, 1],
-          "spriteTexture": "res://resources/blockpart_picture/green/Blank-G.png",
-          "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/ExamplePartBehavior.gd" }
-          ]
-        },
-        {
-          "partId": "EgPart2",
-          "description": "Nothing.",
-          "movingDirection": [0, 1],
-          "partialPosition": [0, 1],
-          "spriteTexture": "res://resources/blockpart_picture/green/Blank-G.png",
-          "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/ExamplePartBehavior.gd" }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "ExampleMoveRight",
-      "description": "",
-      "rarity": 0,
-      "parts": [
-        {
-          "partId": "EgMoveRightPart",
-          "baseDamage": 5,
-          "description": "Make [Y]{Bot} move [G]{Right} before meeting other blockparts. Meanwhile deal %D% damage.",
-          "movingDirection": [1, 0],
-          "spriteTexture": "res://resources/blockpart_picture/green/Right-G.png",
-          "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/MoveRightBehavior.gd" },
-            { "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Growing",
-      "description": "",
-      "rarity": 0,
-      "parts": [
-        {
-          "partId": "GrowingPart",
-          "description": "Give yourself a [G]{Growing}[/G] status: heal 12 HP when battle ends.",
-          "movingDirection": [0, 1],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
-          "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/GiveGrowingStatBehavior.gd" }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Shield",
-      "description": "",
-      "rarity": 0,
-      "parts": [
-        {
-          "partId": "Shield00",
-          "description": "",
-          "movingDirection": [0, 1],
-          "partialPosition": [0, 0],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
-          "behaviors": []
-        },
-        {
-          "partId": "Shield01",
-          "baseShield": 5,
-          "description": "Gain %S% Shield.",
-          "movingDirection": [0, 1],
-          "partialPosition": [0, 1],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
-          "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd" }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Strike",
-      "description": "",
-      "rarity": 0,
-      "parts": [
-        {
-          "partId": "JustDoNothing",
-          "description": "Just do nothing.",
-          "movingDirection": [0, 1],
-          "spriteTexture": "res://resources/blockpart_picture/green/Blank-G.png",
-          "behaviors": []
-        },
-        {
-          "partId": "Strike01",
           "baseDamage": 6,
-          "description": "Deal %D% Damage.",
-          "movingDirection": [0, 1],
-          "partialPosition": [0, 1],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
           "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd" }
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
           ]
         }
       ]
     },
     {
-      "name": "Defend",
+      "name": "MetalShard",
       "description": "",
       "rarity": 0,
       "parts": [
         {
-          "partId": "Defend00",
-          "baseShield": 6,
-          "description": "Gain %S% Shield.",
-          "movingDirection": [0, 1],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "partId": "MetalShard00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
           "behaviors": [
-            { "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd" }
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OldGear",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "OldGear00",
+          "description": "获得 %S% 点护盾。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OverloadCoil",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "OverloadCoil00",
+          "description": "造成 %D% 点伤害。过载 +1。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
+              "params": {
+                "LayersPerTrigger": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "QuickRelease",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "QuickRelease00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ScrapThrow",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "ScrapThrow00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "ScrapThrow01",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "IronPipe",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "IronPipe00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "IronPipe01",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sandpaper",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Sandpaper00",
+          "description": "造成 %D% 点伤害。锈蚀 +1。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "baseMagicNum": 1,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyRustBehavior.gd",
+              "params": {
+                "InitialValue": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DeadBattery",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "DeadBattery00",
+          "description": "获得 %S% 点护盾。过载 +1。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
+              "params": {
+                "LayersPerTrigger": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BarbedWire",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "BarbedWire00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "BarbedWire01",
+          "description": "获得 %S% 点护盾。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Spring",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Spring00",
+          "description": "获得 %S% 点护盾。松动。回收时抽 1 Block。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ScrapPayoffBehavior.gd",
+              "params": {
+                "PayoffType": "draw",
+                "PayoffAmount": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Screwdriver",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Screwdriver00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "IronPlate",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "IronPlate00",
+          "description": "获得 %S% 点护盾。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "ScrapShot",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "ScrapShot00",
+          "description": "造成 %D% 点伤害。过载 +1。本回合每松动 1 个 Block 伤害 +1。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ScrapBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerScrap": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
+              "params": {
+                "LayersPerTrigger": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DoubleWrench",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "DoubleWrench00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "DoubleWrench01",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OldScrew",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "OldScrew00",
+          "description": "造成 %D% 点伤害。锈蚀 +2。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "baseMagicNum": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyRustBehavior.gd",
+              "params": {
+                "InitialValue": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "IronChain",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "IronChain00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "IronChain01",
+          "description": "获得 %S% 点护盾。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FlareGun",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "FlareGun00",
+          "description": "造成 %D% 点伤害。一次性。从弃牌堆回收 1 个松动 Block。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RecallFromDiscardBehavior.gd",
+              "params": {
+                "RequireLoose": true
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "Sandblaster",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Sandblaster00",
+          "description": "造成 %D% 点伤害。锈蚀 +2。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "baseMagicNum": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyRustBehavior.gd",
+              "params": {
+                "InitialValue": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ScrapTorrent",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ScrapTorrent00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "ScrapTorrent01",
+          "description": "造成 %D% 点伤害。松动。本回合松动 ≥3 时伤害翻倍。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ScrapThresholdBehavior.gd",
+              "params": {
+                "Threshold": 3,
+                "BonusDamage": 6
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OverloadCapacitor",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "OverloadCapacitor00",
+          "description": "获得 %S% 点护盾。每消费 1 层过载 +2 护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/SpendOverloadBehavior.gd",
+              "params": {
+                "EffectType": "shield",
+                "BonusPerLayer": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "WeldingTorch",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "WeldingTorch00",
+          "description": "造成 %D% 点伤害。每消费 1 层过载 +3 伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/SpendOverloadBehavior.gd",
+              "params": {
+                "EffectType": "damage",
+                "BonusPerLayer": 3
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "BigWrench",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "BigWrench00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "BigWrench01",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Anvil",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Anvil00",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/OverloadThresholdBehavior.gd",
+              "params": {
+                "Threshold": 5,
+                "BonusDamage": 6
+              }
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Anvil01",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Anvil02",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Anvil03",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "RustBomb",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "RustBomb00",
+          "description": "造成 %D% 点伤害。锈蚀 +3。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "baseMagicNum": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyRustBehavior.gd",
+              "params": {
+                "InitialValue": 3
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "RustBomb01",
+          "description": "每有 1 个松动 Block 刚进入弃牌堆，锈蚀 +1。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ScrapToRustBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ChainSaw",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ChainSaw00",
+          "description": "造成 %D% 点伤害。过载 +3。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 9,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
+              "params": {
+                "LayersPerTrigger": 3
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "OldEngine",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "OldEngine00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "OldEngine01",
+          "description": "从弃牌堆回收 1 个松动 Block。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/RecallFromDiscardBehavior.gd",
+              "params": {
+                "RequireLoose": true
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ChainReaction",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ChainReaction00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "ChainReaction01",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "ChainReaction02",
+          "description": "触发时释放相邻的松动 Block。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainReleaseBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RustStorm",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "RustStorm00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "RustStorm01",
+          "description": "消费全部过载层数，每层施加 1 层锈蚀。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/OverloadToRustBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OverloadRush",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "OverloadRush00",
+          "description": "造成 %D% 点伤害。每消费 1 层过载 +5 伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/SpendOverloadBehavior.gd",
+              "params": {
+                "EffectType": "damage",
+                "BonusPerLayer": 5
+              }
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "OverloadRush01",
+          "description": "过载清零后重新产生 2 层过载。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
+              "params": {
+                "LayersPerTrigger": 2
+              }
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "OverloadRush02",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "SteamHammer",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "SteamHammer00",
+          "description": "造成 %D% 点伤害。每消费 1 层过载 +2 伤害；消费 ≥5 层时额外施加 1 层锈蚀。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/SpendOverloadBoostBehavior.gd",
+              "params": {
+                "BonusPerLayer": 2,
+                "RustAtLayers": 5
+              }
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "SteamHammer01",
+          "description": "",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "ScrapGolem",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "ScrapGolem00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": false
+              }
+            }
+          ]
+        },
+        {
+          "partId": "ScrapGolem01",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": false
+              }
+            }
+          ]
+        },
+        {
+          "partId": "ScrapGolem02",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": false
+              }
+            }
+          ]
+        },
+        {
+          "partId": "ScrapGolem03",
+          "description": "造成 %D% 点伤害。松动。四个部件全部触发后回收 1 个 Block。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": false
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MagneticPinch",
+      "description": "",
+      "rarity": 3,
+      "parts": [
+        {
+          "partId": "MagneticPinch00",
+          "description": "造成 %D% 点伤害。每消费 1 层过载 +4 伤害（等价设计值：A/B 各 +2）。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 12,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/SpendOverloadBoostBehavior.gd",
+              "params": {
+                "BonusPerLayer": 4,
+                "RustAtLayers": 0
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": true
+              }
+            }
+          ]
+        },
+        {
+          "partId": "MagneticPinch01",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 12,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": true
+              }
+            }
+          ]
+        },
+        {
+          "partId": "MagneticPinch02",
+          "description": "松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": true
+              }
+            }
+          ]
+        },
+        {
+          "partId": "MagneticPinch03",
+          "description": "获得 %S% 点护盾。全部件触发后回收 1 个松动 Block。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": true
+              }
+            }
           ]
         }
       ]

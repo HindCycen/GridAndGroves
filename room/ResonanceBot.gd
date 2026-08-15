@@ -176,6 +176,9 @@ func _process_block_part(block: Block, part: BlockPart, depth: int) -> void:
 		return
 	var should_exhaust := false
 	var has_loose := false
+	# 一次性标记：部件声明 Exhaust 时触发后立即移出战斗
+	if part.Exhaust:
+		should_exhaust = true
 	for behavior in part.Behaviors:
 		if behavior == null:
 			continue
@@ -276,8 +279,36 @@ func _loose_block(block: Block) -> void:
 	block.remove_from_group("placed_blocks")
 	# 进弃牌堆（统一走 BlockPilesHere 公共 API）
 	_block_piles_here.send_block_to_discard(block)
+	# 废品计数 +1（ScrapCounterStat，供增幅效果读取）
+	_increment_scrap_counter(block)
 	# 触发废品回收（ScrapPayoffBehavior）
 	_trigger_scrap_payoff(block)
+
+## 玩家 ScrapCounterStat +1（本回合松动触发计数）
+func _increment_scrap_counter(block: Block) -> void:
+	var tree := get_tree()
+	if tree == null:
+		return
+	for node in tree.get_nodes_in_group("Players"):
+		if node is Node2D:
+			var player := node as Node2D
+			var rendering = player.get_node("RenderingComponent")
+			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
+			if stats_comp == null:
+				return
+			if not stats_comp.has_status("ScrapCounter"):
+				var scrap_def: Resource = load("res://resources/stat_defs/ScrapCounter.tres")
+				if scrap_def == null:
+					printerr("ResonanceBot: ScrapCounter.tres not found!")
+					return
+				var stat: Stat = Stat.new()
+				stat.Definition = scrap_def
+				stats_comp.add_status(stat)
+				stat.add_value(1)
+			else:
+				stats_comp.get_status("ScrapCounter").add_value(1)
+			GameLog.debug("ResonanceBot: ScrapCounter +1 (total: " + str(stats_comp.get_status("ScrapCounter").CurrentValue) + ")")
+			return
 
 ## 触发废品回收：查找 Block 的 ScrapPayoffBehavior 并执行
 func _trigger_scrap_payoff(block: Block) -> void:

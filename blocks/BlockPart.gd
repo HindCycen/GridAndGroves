@@ -17,6 +17,7 @@ var SpriteTexture: Texture2D
 var Damage: int
 var Shield: int
 var MagicNum: int
+var Exhaust: bool = false  # 一次性：触发后立即移出战斗（Bot 检测此标记）
 
 func _ready() -> void:
 	var shape2d := RectangleShape2D.new()

@@ -56,6 +56,36 @@ func send_block_to_discard(block: Block) -> void:
 		block.get_parent().remove_child(block)
 	DiscardedPile.add_block(block)
 
+## 从弃牌堆回收 1 个 Block 到手牌（ShowingPile）
+## require_loose 为 true 时只回收带松动标记的 Block（铁锈游侠"废品回收"语义）
+## 回收成功返回 true；弃牌堆无可回收对象返回 false
+func recall_from_discard(require_loose: bool) -> bool:
+	var candidates: Array[Block] = []
+	for b in DiscardedPile.Pile:
+		if not is_instance_valid(b):
+			continue
+		if require_loose and not _has_loose_behavior(b):
+			continue
+		candidates.append(b)
+	if candidates.size() == 0:
+		return false
+	# 回收第一个符合条件的（弃牌堆顺序即进入顺序，先进先回收）
+	var block: Block = candidates[0]
+	DiscardedPile.remove_block(block)
+	block.global_position = Vector2.ZERO
+	ShowingPile.add_child(block)
+	GameLog.debug("BlockPilesHere: Recalled [" + (block.BlockName if not block.BlockName.is_empty() else "?") + "] from discard" + (" (loose)" if require_loose else ""))
+	return true
+
+func _has_loose_behavior(block: Block) -> bool:
+	for part in block.get_parts():
+		if part.Behaviors.size() == 0:
+			continue
+		for behavior in part.Behaviors:
+			if behavior is LooseBlockBehavior:
+				return true
+	return false
+
 func _ready() -> void:
 	ShowingPile.child_entered_tree.connect(_on_showing_pile_child_added)
 

@@ -132,13 +132,25 @@ MainMenu (Continue / New Game)
 
 ### Phase 1 — 卡包内容落地（P0，工作量最大）
 
-| # | 任务 | 说明 |
+> **进度：铁锈游侠 33 Block 已完成（2026-08-15），其余待实施**
+
+| # | 任务 | 状态 |
 |---|------|------|
-| 1.1 | 按 `pack_ranger.md` 落地铁锈游侠约 33 Block | 全部写入 `block_defs.json`，复用已有 Behavior；新增设计文档中缺失的 Behavior（如 `RecallSelfBehavior`） |
-| 1.2 | 按 `pack_weaver.md` 落地星语术士约 32 Block | 含法阵上限 2 的校验（`BlockPilesHere` 放置时计数 Glyph） |
-| 1.3 | 按 `pack_sentinel.md` 落地翠绿哨兵约 30 Block | 含扎根上限 3 校验 |
-| 1.4 | 按 `minipacks.md` 落地 5 小包各 10 Block | 含 `PlacementRestrictionBehavior` 通用放置限制钩子（`Block.gd` 放置检查处遍历 behaviors） |
-| 1.5 | 数值验算 | 按 `balance.md` 公式逐 Block 验算（形状系数 × 稀有度 × 标签系数），不达标者调整 |
+| 1.1 | 按 `pack_ranger.md` 落地铁锈游侠约 33 Block | ✅ 33/33 全部写入 `block_defs.json`（18 普通 / 10 稀有 / 4 史诗 / 1 传说），含 22 松动 / 7 一次性，`.tres` 命名契约 100% 匹配，headless 实例化验证通过 |
+| 1.2 | 按 `pack_weaver.md` 落地星语术士约 32 Block | ⬜ 待实施（法阵上限校验在 Phase 1.4 的放置限制钩子中统一做） |
+| 1.3 | 按 `pack_sentinel.md` 落地翠绿哨兵约 30 Block | ⬜ 待实施 |
+| 1.4 | 按 `minipacks.md` 落地 5 小包各 10 Block | ⬜ 待实施（含 `PlacementRestrictionBehavior` 通用放置限制钩子） |
+| 1.5 | 数值验算 | ⚠️ 游侠部分已按 `balance.md` 锚点验算通过；其余包随内容落地 |
+
+**1.1 配套代码改动（已随游侠包落地）：**
+
+- `BlockPart` 新增 `Exhaust` 字段（一次性标记），`JsonBlockScanner` / `Block` 读取；`Bot` / `ResonanceBot` 触发时移出战斗（此前一次性机制无任何接线）
+- `ScrapCounterStat` 递增接线：`Bot._loose_block` / `ResonanceBot._loose_block` 松动时玩家计数 +1（此前 Stat 存在但从未递增，依赖它的增幅效果全部失效）
+- `BlockPilesHere` 新增公共 API `recall_from_discard(require_loose)`（弃牌堆回收到手牌）
+- 新增 7 个 Behavior（`resources/blockpart_behaviors/`）：
+  `RecallFromDiscardBehavior`（回收）/ `ScrapBonusDamageBehavior`（每松动 1 个 +1 伤害）/ `ScrapThresholdBehavior`（≥N 松动追加伤害）/ `OverloadThresholdBehavior`（≥N 过载追加伤害）/ `ScrapToRustBehavior`（按松动数上锈蚀）/ `SpendOverloadBoostBehavior`（消费过载强化伤害，≥N 层附锈蚀）/ `FullTriggerRewardBehavior`（全部件触发回收）
+
+> **已知取舍**：`MagneticPinch` 的过载加成由部件 A 独享（每层 +4，数值等价设计的"A/B 各 +2"）；`SteamHammer` 消费端从部件 B 移到伤害部件 A（数值一致，避免"伤害 Action 已入队无法加成"的顺序问题）。
 
 ### Phase 2 — 卡包接入主流程（P0）
 

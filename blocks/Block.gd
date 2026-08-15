@@ -46,6 +46,7 @@ func _create_part(data: Dictionary) -> BlockPart:
 	part.Damage = data.get("baseDamage", 0)
 	part.MagicNum = data.get("baseMagicNum", 0)
 	part.Shield = data.get("baseShield", 0)
+	part.Exhaust = data.get("exhaust", false)
 	part.Description = data.get("description", "")
 	if data.has("movingDirection"):
 		part.MovingDirection = data["movingDirection"] as Vector2i
