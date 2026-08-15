@@ -70,6 +70,9 @@ func _trigger_damage_hooks(period: int) -> void:
 			var sc: StatsComponent = node as StatsComponent
 			for stat in sc.get_all_statuses():
 				if stat.Definition != null and stat.Definition.Behavior != null:
+					# 与 BattleTime._execute_stat_behaviors 相同：
+					# Behavior 为共享 Resource 实例，调用前先修正 belonging_stat
+					stat.Definition.Behavior.belonging_stat = stat
 					stat.Definition.Behavior.execute_at(period)
 
 ## 获取可用的场景树：优先 source，其次 target，都不可用时返回 null

@@ -21,6 +21,10 @@ func _execute_stat_behaviors(period: Enums.StatExecuteAt) -> void:
 	var stats := get_tree().get_nodes_in_group("stats")
 	for node in stats:
 		if node is Stat and node.Definition != null and node.Definition.Behavior != null:
+			# StatDef.Behavior 是共享 Resource 实例（load 全局缓存），
+			# 多个 Stat 会指向同一 Behavior；调用前必须把 belonging_stat
+			# 指向当前 Stat，否则后 _ready 的 Stat 会覆盖前者的归属
+			node.Definition.Behavior.belonging_stat = node
 			node.Definition.Behavior.execute_at(period)
 
 func _on_battle_started() -> void: _execute_stat_behaviors(Enums.StatExecuteAt.OnBattleStarted)

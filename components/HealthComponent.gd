@@ -18,6 +18,9 @@ func take_damage(damage: int) -> void:
 		return
 	if damage == 0:
 		return
+	if is_dead:
+		# 已死亡不再处理伤害，避免 died 信号重复发出导致双重结算
+		return
 	var shield: ShieldComponent = _resolve_shield_component()
 	if shield != null and shield.CurrentShield > 0:
 		var absorbed := mini(shield.CurrentShield, damage)

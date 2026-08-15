@@ -55,7 +55,12 @@ func _create_part(data: Dictionary) -> BlockPart:
 		part.SpriteTexture = data["spriteTexture"] as Texture2D
 	if data.has("behaviors"):
 		# 复制数组，避免同名 Block 实例共享同一 behaviors 数组（运行时修改会互相污染）
-		part.Behaviors = data["behaviors"].duplicate()
+		# 且 Behavior 对象本身也需按实例 duplicate()：JSON 扫描时同名 Block 的所有实例
+		# 共享同一批 Behavior Resource（含可变状态，如 SporeBurstBehavior 的触发标记），
+		# 不复制会导致多实例状态串台
+		part.Behaviors = data["behaviors"].map(func(b):
+			return b.duplicate() if b is Resource else b
+		)
 	_parts.append(part)
 	add_child(part)
 	return part

@@ -217,7 +217,12 @@ func _build_enemy_chart_for_room(room_count: int) -> EnemyChartDef:
 	chart_def.EnemyDefs = []
 	
 	if chart_list.is_empty():
-		GameLog.warn("StageRoom: No chart entries found for key '" + stage_key + "/" + chart_key + "', returning empty chart")
+		# 防御：该 StageDef 未在 enemy_defs.json 配置图表时，
+		# 回退到默认敌人（Gonh），避免战斗房零敌人导致流程卡死
+		GameLog.warn("StageRoom: No chart entries found for key '" + stage_key + "/" + chart_key + "', falling back to default enemy [Gonh]")
+		var fallback_def: EnemyDefinition = BlockRegistry.get_enemy_def("Gonh")
+		if fallback_def != null:
+			chart_def.EnemyDefs = [fallback_def]
 		return chart_def
 	
 	# 从该难度图表中随机选取一组

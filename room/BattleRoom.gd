@@ -163,6 +163,8 @@ func _on_victory() -> void:
 	)
 
 func _on_player_died() -> void:
+	if _is_game_over:
+		return
 	_is_game_over = true
 	_on_defeat()
 

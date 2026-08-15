@@ -10,7 +10,7 @@ script = ExtResource("2_shooting")
 [resource]
 script = ExtResource("1_statdef")
 Behavior = SubResource("Resource_shooting")
-Description = "每回合结束时，栋栋会[Y]{射精}，对玩家造成 %N% 点伤害"
+Description = "每回合结束时，对玩家造成 %N% 点伤害"
 Icon = ExtResource("3_icon")
 MaxValue = 10
-StatName = "SemenShooting"
+StatName = "Shooting"

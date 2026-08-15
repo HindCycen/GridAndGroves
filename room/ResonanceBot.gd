@@ -307,11 +307,11 @@ func _add_echo(tree: SceneTree, layers: int) -> void:
 			var ren = pl.get_node("RenderingComponent")
 			var sc: StatsComponent = ren.StatsComponentRef if ren != null else null
 			if sc == null:
-				return
+				continue
 			if not sc.has_status("Echo"):
 				var def: Resource = load("res://resources/stat_defs/Echo.tres")
 				if def == null:
-					return
+					continue
 				var s := Stat.new()
 				s.Definition = def
 				sc.add_status(s)

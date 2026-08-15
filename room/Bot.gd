@@ -163,8 +163,14 @@ func _end_turn() -> void:
 func _release_cell_safely(pos: Vector2i) -> void:
 	if _is_out_of_bounds(pos):
 		return
-	if not _has_enemy_block_at(pos) and GridState.get_grid_state(pos.x, pos.y) != Enums.GridStateEnum.Unable:
-		GridState.restore_grid_state(pos.x, pos.y)
+	if GridState.get_grid_state(pos.x, pos.y) == Enums.GridStateEnum.Unable:
+		return
+	if _has_block_at(pos):
+		# 格子上仍有 Block（未被松动/耗尽）：恢复为 Occupied，
+		# 而不是盲恢复为 Free，否则会抹掉 Block 的占格状态，导致玩家可重叠放置
+		GridState.set_grid_state(pos.x, pos.y, Enums.GridStateEnum.Occupied)
+		return
+	GridState.restore_grid_state(pos.x, pos.y)
 
 func _go_to_starter_point() -> void:
 	global_position = Vector2(GridState.get_grid_pos(Vector2i(0, 0)).x, GridState.get_grid_pos(Vector2i(0, 0)).y - 96)
@@ -173,11 +179,10 @@ func _go_to_starter_point() -> void:
 	_animated_sprite_2d.stop()
 	visible = false
 
-func _has_enemy_block_at(grid_pos: Vector2i) -> bool:
+## 检查格子上是否有任意阵营的 Block（玩家或敌人）
+func _has_block_at(grid_pos: Vector2i) -> bool:
 	for block in _block_piles_here.get_blocks_on_grid():
 		if not is_instance_valid(block):
-			continue
-		if block.Faction != Block.BlockFaction.Enemy:
 			continue
 		for part in block.get_parts():
 			var coords: Vector2i = GridState.get_grid_coords(GridState.find_nearest_grid_point(part.global_position))

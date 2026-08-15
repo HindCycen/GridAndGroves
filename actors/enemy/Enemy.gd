@@ -8,6 +8,9 @@ func _ready() -> void:
 	add_to_group("Enemies")
 	_ai_component = get_node_or_null("AIComponent")
 	if Definition != null:
+		# 应用定义中的攻击力（enemy_defs.json 的 attackDamage），
+		# 否则 AttackDamage 永远停留在默认值 10
+		AttackDamage = Definition.AttackDamage
 		var health: HealthComponent = get_node("RenderingComponent/HealthComponent") as HealthComponent
 		if health != null:
 			health.set_max_health(Definition.MaxHealth)
