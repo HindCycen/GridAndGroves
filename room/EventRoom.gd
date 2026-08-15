@@ -74,6 +74,12 @@ func _execute_action(type: int, value: int) -> void:
 			data.PlayerCurrentHealth = mini(data.PlayerCurrentHealth + value, data.PlayerMaxHealth)
 		Enums.EventActionType.DamagePlayer:
 			data.PlayerCurrentHealth = maxi(data.PlayerCurrentHealth - value, 0)
+		Enums.EventActionType.AddGold:
+			data.Gold = maxi(data.Gold + value, 0)
+			GameLog.debug("EventRoom: Gold +" + str(value) + " (total: " + str(data.Gold) + ")")
+		Enums.EventActionType.RemoveGold:
+			data.Gold = maxi(data.Gold - value, 0)
+			GameLog.debug("EventRoom: Gold -" + str(value) + " (total: " + str(data.Gold) + ")")
 		Enums.EventActionType.AddBlockToDeck:
 			var list: Array[String] = data.PlayerDeckBlockNames.duplicate() if data.PlayerDeckBlockNames != null else []
 			for i in value:

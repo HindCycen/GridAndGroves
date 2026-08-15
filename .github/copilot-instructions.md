@@ -228,8 +228,10 @@ var block = BlockRegistry.create_block_by_name("DamageBlock")
 | `MiniPack` | `class_name Resource` | 小卡包，`PackName` + `BlockNames: Array[String]`，为每局注入变化 |
 | `CardPool` | 运行时类 | 由 1 个 BlockPack + 4 个随机 MiniPack 合并去重而成（`AllBlockNames` / `Count` / `get_random_block_name()` / `get_random_block_names()`） |
 
-> 目前 `pack_ranger.md` / `pack_weaver.md` / `pack_sentinel.md` / `minipacks.md`
-> 中的卡包设计尚未落地为 `.tres` 资源，`block_defs.json` 目前只包含示例 Block。
+> ✅ 卡包 `.tres` 已落地（Phase 0，2026-08-11）：3 主包 + 5 小包已创建于
+> `resources/block_packs/`、`resources/mini_packs/`（见 `planning/main-loop-repair-plan.md`）。
+> 但 `.tres` 中引用的 Block 名称（如 `RustyWrench`）尚未写入 `block_defs.json`
+> （Phase 1 待办），当前 `block_defs.json` 只包含 8 个示例 Block。
 
 ### 生命周期（目标设计）
 
@@ -245,7 +247,7 @@ var block = BlockRegistry.create_block_by_name("DamageBlock")
 
 ### 接入待办
 
-1. 创建主卡包与 4 个 MiniPack 的 `.tres` 资源（`resources/block_packs/`、`resources/mini_packs/`）
+1. ✅ 创建主卡包与 MiniPack 的 `.tres` 资源（`resources/block_packs/`、`resources/mini_packs/`）— Phase 0 已完成（3 主包 + 5 小包）
 2. 在开局时注册卡包并调用 `build_card_pool()`（主菜单卡包选择界面）
 3. 初始牌组 / 战利品奖励改为从 `CurrentCardPool` 生成
 4. 游戏结束时调用 `clear_card_pool()`
