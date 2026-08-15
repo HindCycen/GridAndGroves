@@ -46,6 +46,7 @@ func _create_part(data: Dictionary) -> BlockPart:
 	part.Damage = data.get("baseDamage", 0)
 	part.MagicNum = data.get("baseMagicNum", 0)
 	part.Shield = data.get("baseShield", 0)
+	part.Heal = data.get("baseHeal", 0)
 	part.Exhaust = data.get("exhaust", false)
 	part.Description = data.get("description", "")
 	if data.has("movingDirection"):
@@ -92,7 +93,20 @@ func _on_part_released(n: Node) -> void:
 		global_position = OriginalPos
 
 func _check_placement_conditions() -> bool:
-	return _are_all_parts_in_grid_bounds() and _are_all_cells_free() and _is_center_in_grid_bounds() and _within_root_glyph_limit()
+	if not (_are_all_parts_in_grid_bounds() and _are_all_cells_free() and _is_center_in_grid_bounds() and _within_root_glyph_limit()):
+		return false
+	return _passes_behavior_placement_checks()
+
+## 通用放置限制钩子：遍历所有部件的 Behavior，若有 PlacementRestrictionBehavior
+## 则调用 check_placement(block) 做额外条件校验（如"只能放中央"）
+func _passes_behavior_placement_checks() -> bool:
+	for part in _parts:
+		for behavior in part.Behaviors:
+			if behavior == null:
+				continue
+			if not behavior.check_placement(self):
+				return false
+	return true
 
 ## 检查驻留 Block（扎根/法阵）是否未超过数量上限
 ## 上限：扎根 3 个（variant "root"）、法阵 2 个（variant "glyph"）

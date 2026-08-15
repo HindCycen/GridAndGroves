@@ -1574,6 +1574,4802 @@
           ]
         }
       ]
+    },
+    {
+      "name": "StardustArrow",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "StardustArrow00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StarShard",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "StarShard00",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StarlightShield",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "StarlightShield00",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EnergyConduit",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "EnergyConduit00",
+          "description": "抽 1 Block。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
+              "params": {
+                "DrawCount": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Meteor",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Meteor00",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "StarTrail",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "StarTrail00",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "StarTrail01",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Aura",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Aura00",
+          "description": "获得 %S% 点护盾。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Constellation",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Constellation00",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Constellation01",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Twinkle",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Twinkle00",
+          "description": "造成 %D% 点伤害。共鸣。抽 1 Block。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
+              "params": {
+                "DrawCount": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AstralShield",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "AstralShield00",
+          "description": "获得 %S% 点护盾。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "FocusRay",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "FocusRay00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "FocusRay01",
+          "description": "造成 %D% 点伤害。共鸣（向右传播）。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GravityRipple",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "GravityRipple00",
+          "description": "造成 %D% 点伤害。Bot 折返（方向向上）。",
+          "movingDirection": [
+            0,
+            -1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Stardust",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Stardust00",
+          "description": "造成 %D% 点伤害。共鸣。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MoonArc",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "MoonArc00",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "MoonArc01",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LightPillar",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "LightPillar00",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "LightPillar01",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "Sparkle",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Sparkle00",
+          "description": "造成 %D% 点伤害。共鸣。回响 +1。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/AddEchoBehavior.gd",
+              "params": {
+                "LayersPerTrigger": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ResonanceCrystal",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ResonanceCrystal00",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "ResonanceCrystal01",
+          "description": "纯传播源。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StarburstNode",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "StarburstNode00",
+          "description": "造成 %D% 点伤害。链位置每 +1 伤害 +2。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerDepth": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Weave",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Weave00",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Weave01",
+          "description": "抽 1 Block。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
+              "params": {
+                "DrawCount": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Weave02",
+          "description": "获得 %S% 点护盾。共鸣。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StarPulse",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "StarPulse00",
+          "description": "造成 %D% 点伤害。链位置 ≥1 时翻倍。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerDepth": 6
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BinaryStars",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "BinaryStars00",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "BinaryStars01",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EtherShield",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "EtherShield00",
+          "description": "获得 %S% 点护盾。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "EtherShield01",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Astrolabe",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Astrolabe00",
+          "description": "造成 %D% 点伤害。本回合每触发 1 个共鸣 Block 伤害 +1。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/EchoBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerEcho": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GalaxyBranch",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "GalaxyBranch00",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "GalaxyBranch01",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "GalaxyBranch02",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            -1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StarGate",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "StarGate00",
+          "description": "获得 %S% 点护盾。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "SupernovaOmen",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "SupernovaOmen00",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": false,
+                "EchoReward": 3
+              }
+            }
+          ]
+        },
+        {
+          "partId": "SupernovaOmen01",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": false,
+                "EchoReward": 3
+              }
+            }
+          ]
+        },
+        {
+          "partId": "SupernovaOmen02",
+          "description": "造成 %D% 点伤害。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": false,
+                "EchoReward": 3
+              }
+            }
+          ]
+        },
+        {
+          "partId": "SupernovaOmen03",
+          "description": "造成 %D% 点伤害。共鸣。全部件触发后回响 +3。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/FullTriggerRewardBehavior.gd",
+              "params": {
+                "RequireLoose": false,
+                "EchoReward": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GuardianGlyph",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "GuardianGlyph00",
+          "description": "获得 %S% 点护盾。法阵（驻留，每回合触发）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/GlyphRootBehavior.gd",
+              "params": {
+                "IsVariant": "glyph"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VoidRift",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "VoidRift00",
+          "description": "造成 %D% 点伤害。一次性。触发后销毁场上 1 个己方法阵。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 15,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SacrificeGlyphBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "StellarChorus",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "StellarChorus00",
+          "description": "造成 %D% 点伤害。链位置加成。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerDepth": 5
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/EchoThresholdBehavior.gd",
+              "params": {
+                "Threshold": 5,
+                "BonusDamage": 5
+              }
+            }
+          ]
+        },
+        {
+          "partId": "StellarChorus01",
+          "description": "造成 %D% 点伤害。链位置加成。共鸣。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerDepth": 5
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AstralGlyph",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "AstralGlyph00",
+          "description": "法阵（驻留）。对本回合每个共鸣 Block 造成 4 伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/EchoBurstBehavior.gd",
+              "params": {
+                "DamagePerEcho": 4
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/GlyphRootBehavior.gd",
+              "params": {
+                "IsVariant": "glyph"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Collapsar",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "Collapsar00",
+          "description": "造成 %D% 点伤害（含献祭 +8）。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 18,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Collapsar01",
+          "description": "销毁场上 1 个己方法阵。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/SacrificeGlyphBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Collapsar02",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Nova",
+      "description": "",
+      "rarity": 3,
+      "parts": [
+        {
+          "partId": "Nova00",
+          "description": "造成 %D% 点伤害。链位置每 +1 伤害 +2。共鸣。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerDepth": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Nova01",
+          "description": "造成 %D% 点伤害。链位置每 +1 伤害 +2。共鸣。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerDepth": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Nova02",
+          "description": "造成 %D% 点伤害。链位置每 +1 伤害 +2。共鸣。",
+          "movingDirection": [
+            -1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerDepth": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ThornShot",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "ThornShot00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EntanglingVine",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "EntanglingVine00",
+          "description": "施加 3 层藤蔓。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseMagicNum": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineBehavior.gd",
+              "params": {
+                "InitialValue": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "WoodShield",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "WoodShield00",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bush",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Bush00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Bush01",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HealingSpore",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "HealingSpore00",
+          "description": "治疗 5。松动。被清除时额外治疗 2。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 5
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/NatureCycleBehavior.gd",
+              "params": {
+                "CycleType": "heal",
+                "CycleAmount": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PoisonIvy",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "PoisonIvy00",
+          "description": "造成 %D% 点伤害。藤蔓 +2。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "baseMagicNum": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineBehavior.gd",
+              "params": {
+                "InitialValue": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bark",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Bark00",
+          "description": "获得 %S% 点护盾。扎根（驻留）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SeedShot",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "SeedShot00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VineWhip",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "VineWhip00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "VineWhip01",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MushroomCloud",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "MushroomCloud00",
+          "description": "造成 %D% 点伤害。藤蔓 +1。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "baseMagicNum": 1,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineBehavior.gd",
+              "params": {
+                "InitialValue": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SpikeTrap",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "SpikeTrap00",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "RootBind",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "RootBind00",
+          "description": "获得 %S% 点护盾。扎根。共生：每 1 个己方 Block 额外 +1 护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SymbiosisBoostBehavior.gd",
+              "params": {
+                "EffectType": "shield",
+                "BonusPerBlock": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GreenLeaf",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "GreenLeaf00",
+          "description": "治疗 3。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 3
+              }
+            }
+          ]
+        },
+        {
+          "partId": "GreenLeaf01",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BeeSting",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "BeeSting00",
+          "description": "造成 %D% 点伤害。藤蔓 +2。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "baseMagicNum": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineBehavior.gd",
+              "params": {
+                "InitialValue": 2
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "Moss",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Moss00",
+          "description": "获得 %S% 点护盾。扎根。共生：每 1 个己方 Block 额外 +1 护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SymbiosisBoostBehavior.gd",
+              "params": {
+                "EffectType": "shield",
+                "BonusPerBlock": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SporeBurst",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "SporeBurst00",
+          "description": "造成 %D% 点伤害。藤蔓 +1。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "baseMagicNum": 1,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineBehavior.gd",
+              "params": {
+                "InitialValue": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DeepRoot",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "DeepRoot00",
+          "description": "获得 %S% 点护盾。扎根（驻留，每回合触发）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SporeCloud",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "SporeCloud00",
+          "description": "造成 %D% 点伤害。对所有敌人施加 2 层藤蔓。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineAllBehavior.gd",
+              "params": {
+                "VineLayers": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Photosynthesis",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Photosynthesis00",
+          "description": "治疗 6。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 6
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ThornedArmor",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ThornedArmor00",
+          "description": "获得 %S% 点护盾。获得护盾时对敌人造成 3 伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ShieldReflectBehavior.gd",
+              "params": {
+                "ReflectDamage": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JunglesWrath",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "JunglesWrath00",
+          "description": "造成 %D% 点伤害。共生：每 1 个己方 Block 伤害 +1。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SymbiosisBoostBehavior.gd",
+              "params": {
+                "EffectType": "damage",
+                "BonusPerBlock": 1
+              }
+            }
+          ]
+        },
+        {
+          "partId": "JunglesWrath01",
+          "description": "造成 %D% 点伤害。共生：每 1 个己方 Block 伤害 +1。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SymbiosisBoostBehavior.gd",
+              "params": {
+                "EffectType": "damage",
+                "BonusPerBlock": 1
+              }
+            }
+          ]
+        },
+        {
+          "partId": "JunglesWrath02",
+          "description": "造成 %D% 点伤害。共生：每 1 个己方 Block 伤害 +1。",
+          "movingDirection": [
+            -1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SymbiosisBoostBehavior.gd",
+              "params": {
+                "EffectType": "damage",
+                "BonusPerBlock": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SymbioticShield",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "SymbioticShield00",
+          "description": "获得 %S% 点护盾。共生：每 1 个己方 Block 护盾 +1。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SymbiosisBoostBehavior.gd",
+              "params": {
+                "EffectType": "shield",
+                "BonusPerBlock": 1
+              }
+            }
+          ]
+        },
+        {
+          "partId": "SymbioticShield01",
+          "description": "获得 %S% 点护盾。共生：每 1 个己方 Block 护盾 +1。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SymbiosisBoostBehavior.gd",
+              "params": {
+                "EffectType": "shield",
+                "BonusPerBlock": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VineTrap",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "VineTrap00",
+          "description": "造成 %D% 点伤害。藤蔓 +3。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "baseMagicNum": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineBehavior.gd",
+              "params": {
+                "InitialValue": 3
+              }
+            }
+          ]
+        },
+        {
+          "partId": "VineTrap01",
+          "description": "敌人当前藤蔓层数翻倍。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DoubleVineBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "ForestShield",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ForestShield00",
+          "description": "获得 %S% 点护盾。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 9,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "ForestShield01",
+          "description": "获得 %S% 点护盾。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VampireVine",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "VampireVine00",
+          "description": "造成 %D% 点伤害。治疗 2（伤害的 50%）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ThornWall",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ThornWall00",
+          "description": "获得 %S% 点护盾。反伤 3。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ShieldReflectBehavior.gd",
+              "params": {
+                "ReflectDamage": 3
+              }
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "ThornWall01",
+          "description": "获得 %S% 点护盾。反伤 3。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ShieldReflectBehavior.gd",
+              "params": {
+                "ReflectDamage": 3
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "ToxicNova",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ToxicNova00",
+          "description": "造成 %D% 点伤害。对所有敌人施加 3 层藤蔓。松动。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineAllBehavior.gd",
+              "params": {
+                "VineLayers": 3
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "ToxicBloom",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "ToxicBloom00",
+          "description": "造成 %D% 点伤害。消耗全部藤蔓层数，每层 +1 伤害；≥10 层全体 +3 藤蔓。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ConsumeVineDamageBehavior.gd",
+              "params": {
+                "ReapplyThreshold": 10,
+                "ReapplyVine": 3
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "SeedMine",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "SeedMine00",
+          "description": "造成 %D% 点伤害。驻留。触发后消失并生成 1 个小树苗。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 12,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/SummonBlockBehavior.gd",
+              "params": {
+                "SummonName": "Sapling"
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "AncientTree",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "AncientTree00",
+          "description": "获得 %S% 点护盾。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "AncientTree01",
+          "description": "获得 %S% 点护盾。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "AncientTree02",
+          "description": "治疗 4。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 4
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "AncientTree03",
+          "description": "共生爆发：每 1 个己方扎根 Block 对敌人造成 5 伤害。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/RootCountDamageBehavior.gd",
+              "params": {
+                "DamagePerRoot": 5
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ThornField",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "ThornField00",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "ThornField01",
+          "description": "在随机空格生成 1 个荆棘陷阱。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/SummonBlockBehavior.gd",
+              "params": {
+                "SummonName": "ThornTrap"
+              }
+            }
+          ]
+        },
+        {
+          "partId": "ThornField02",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Yggdrasil",
+      "description": "",
+      "rarity": 3,
+      "parts": [
+        {
+          "partId": "Yggdrasil00",
+          "description": "获得 %S% 点护盾。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Yggdrasil01",
+          "description": "获得 %S% 点护盾。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Yggdrasil02",
+          "description": "对敌人施加 扎根数 ×2 层藤蔓。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/RootCountVineBehavior.gd",
+              "params": {
+                "VinePerRoot": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Yggdrasil03",
+          "description": "丛林庇护：相邻己方 Block 获得额外护盾。扎根。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/JungleShelterBehavior.gd",
+              "params": {
+                "ShelterShieldPerRoot": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Medkit",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Medkit00",
+          "description": "治疗 8。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 8
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "Bandage",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Bandage00",
+          "description": "治疗 5。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 5
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EnergyDrink",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "EnergyDrink00",
+          "description": "获得 %S% 点护盾。抽 1 Block。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
+              "params": {
+                "DrawCount": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BulletproofVest",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "BulletproofVest00",
+          "description": "获得 %S% 点护盾。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 14,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "Flashbang",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Flashbang00",
+          "description": "造成 %D% 点伤害。敌人下回合伤害 -4（锈蚀）。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "baseMagicNum": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyRustBehavior.gd",
+              "params": {
+                "InitialValue": 4
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Stimulant",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Stimulant00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Stimulant01",
+          "description": "自伤 3。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CompressedRation",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "CompressedRation00",
+          "description": "治疗 4。扎根（每回合触发）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 4
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flare",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Flare00",
+          "description": "造成 %D% 点伤害。抽 1 Block。松动。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
+              "params": {
+                "DrawCount": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TacticalKneepad",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "TacticalKneepad00",
+          "description": "获得 %S% 点护盾。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FirstAidSpray",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "FirstAidSpray00",
+          "description": "治疗 6。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 6
+              }
+            }
+          ]
+        },
+        {
+          "partId": "FirstAidSpray01",
+          "description": "治疗 2（共生简化：每 Block +2 治疗）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Grenade",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Grenade00",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "Molotov",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Molotov00",
+          "description": "造成 %D% 点伤害。藤蔓 +2。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "baseMagicNum": 2,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyVineBehavior.gd",
+              "params": {
+                "InitialValue": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ProximityMine",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ProximityMine00",
+          "description": "造成 %D% 点伤害。驻留。触发后消失。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 12,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "TNTBundle",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "TNTBundle00",
+          "description": "造成 %D% 点伤害。相邻格 Block 也被触发。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ChainTriggerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "TNTBundle01",
+          "description": "",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "FragGrenade",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "FragGrenade00",
+          "description": "造成 %D% 点伤害。对敌全体 3 伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SmokeBomb",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "SmokeBomb00",
+          "description": "获得 %S% 点护盾。敌人下回合伤害 -4（锈蚀简化，原设计 -50%）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 6,
+          "baseMagicNum": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ApplyRustBehavior.gd",
+              "params": {
+                "InitialValue": 4
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "UnstableCore",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "UnstableCore00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 20,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "UnstableCore01",
+          "description": "自伤 8。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "UnstableCore02",
+          "description": "",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "Detonator",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Detonator00",
+          "description": "引爆场上所有一次性 Block。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DetonatorBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ScrapBomb",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "ScrapBomb00",
+          "description": "造成 %D% 点伤害。本回合每松动 1 个 Block 伤害 +1。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ScrapBonusDamageBehavior.gd",
+              "params": {
+                "BonusPerScrap": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EMP",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "EMP00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "EMP01",
+          "description": "移除敌人 1 层正面 Stat。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/RemoveEnemyBuffBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BloodPact",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "BloodPact00",
+          "description": "造成 %D% 点伤害。失去 4 HP。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SoulDrain",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "SoulDrain00",
+          "description": "造成 %D% 点伤害。回复 3（伤害的 50%）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DevilsDeal",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "DevilsDeal00",
+          "description": "过载 +2。失去 6 HP。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
+              "params": {
+                "LayersPerTrigger": 2
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ShadowStep",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "ShadowStep00",
+          "description": "造成 %D% 点伤害。方向向上。松动。",
+          "movingDirection": [
+            0,
+            -1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BacklashCurse",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "BacklashCurse00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 12,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "BacklashCurse01",
+          "description": "弃牌堆丢 1 Block（永久销毁）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/RemoveFromDiscardBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LifeTransfer",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "LifeTransfer00",
+          "description": "治疗 10。场上 1 个 Block 回手。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "baseHeal": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/HealBehavior.gd",
+              "params": {
+                "HealAmount": 10
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ReturnPlacedToHandBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PainAmplifier",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "PainAmplifier00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Hack",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Hack00",
+          "description": "造成 %D% 点伤害。移除敌人 1 层正面 Stat。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RemoveEnemyBuffBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OverloadProtocol",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "OverloadProtocol00",
+          "description": "造成 %D% 点伤害。过载 ≥3 时伤害翻倍。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/OverloadThresholdBehavior.gd",
+              "params": {
+                "Threshold": 3,
+                "BonusDamage": 8
+              }
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "OverloadProtocol01",
+          "description": "过载 +2。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
+              "params": {
+                "LayersPerTrigger": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "WhisperOfTheDead",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "WhisperOfTheDead00",
+          "description": "造成 %D% 点伤害。失去 2 HP。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "WhisperOfTheDead01",
+          "description": "造成 %D% 点伤害。失去 2 HP。松动。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "WhisperOfTheDead02",
+          "description": "造成 %D% 点伤害。失去 2 HP。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TurnCommand",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "TurnCommand00",
+          "description": "纯方向修改：Bot 转向右。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "ReturnBeacon",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "ReturnBeacon00",
+          "description": "纯方向修改：Bot 折返（向上）。",
+          "movingDirection": [
+            0,
+            -1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "PiercingShot",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "PiercingShot00",
+          "description": "造成 %D% 点伤害。方向向右。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "PiercingShot01",
+          "description": "方向向右。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "Triangulate",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Triangulate00",
+          "description": "造成 %D% 点伤害。放在第 3 列时伤害翻倍。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/ColumnConditionDamageBehavior.gd",
+              "params": {
+                "TargetColumn": 2,
+                "BonusDamage": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MirrorStep",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "MirrorStep00",
+          "description": "获得 %S% 点护盾。方向向上。",
+          "movingDirection": [
+            0,
+            -1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "MirrorStep01",
+          "description": "松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SharpTurn",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "SharpTurn00",
+          "description": "造成 %D% 点伤害。方向向左。松动。",
+          "movingDirection": [
+            -1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GuidanceSystem",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "GuidanceSystem00",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 7,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "GuidanceSystem01",
+          "description": "获得 %S% 点护盾。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "GuidanceSystem02",
+          "description": "松动。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "Catapult",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "Catapult00",
+          "description": "造成 %D% 点伤害。方向向右。松动。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "Catapult01",
+          "description": "方向向右。",
+          "movingDirection": [
+            1,
+            0
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "SyncOrbit",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "SyncOrbit00",
+          "description": "造成 %D% 点伤害。抽 1 Block。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
+              "params": {
+                "DrawCount": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Singularity",
+      "description": "",
+      "rarity": 3,
+      "parts": [
+        {
+          "partId": "Singularity00",
+          "description": "造成 %D% 点伤害。一次性。只能放在网格正中央。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 20,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Singularity01",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 20,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Singularity02",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 20,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Singularity03",
+          "description": "造成 %D% 点伤害。一次性。只能放在网格正中央。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 20,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/PlacementRestrictionBehavior.gd",
+              "params": {
+                "TargetX": 2,
+                "TargetY": 1
+              }
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "Spark",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Spark00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GravityWave",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "GravityWave00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        },
+        {
+          "partId": "GravityWave01",
+          "description": "",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "EnergySiphon",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "EnergySiphon00",
+          "description": "造成 %D% 点伤害。抽 1 Block。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
+              "params": {
+                "DrawCount": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ArcaneShield",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "ArcaneShield00",
+          "description": "获得 %S% 点护盾。共鸣链中护盾翻倍。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusShieldBehavior.gd",
+              "params": {
+                "BonusPerDepth": 8
+              }
+            }
+          ]
+        },
+        {
+          "partId": "ArcaneShield01",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RandomSpark",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "RandomSpark00",
+          "description": "造成 3~12 点随机伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/RandomDamageBehavior.gd",
+              "params": {
+                "RandomMin": 3,
+                "RandomMax": 12
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StaticField",
+      "description": "",
+      "rarity": 1,
+      "parts": [
+        {
+          "partId": "StaticField00",
+          "description": "造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "UnstableRift",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "UnstableRift00",
+          "description": "造成 %D% 点伤害。施加 1 层随机负面 Stat。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 10,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RandomDebuffBehavior.gd",
+              "params": {
+                "DebuffLayers": 1
+              }
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "UnstableRift01",
+          "description": "",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        },
+        {
+          "partId": "UnstableRift02",
+          "description": "",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+        }
+      ]
+    },
+    {
+      "name": "StardustEcho",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "StardustEcho00",
+          "description": "获得 %S% 点护盾。共鸣链位置每 +1 护盾 +1。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/ChainBonusShieldBehavior.gd",
+              "params": {
+                "BonusPerDepth": 1
+              }
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Supernova",
+      "description": "",
+      "rarity": 3,
+      "parts": [
+        {
+          "partId": "Supernova00",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 15,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Supernova01",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 15,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Supernova02",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 15,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        },
+        {
+          "partId": "Supernova03",
+          "description": "造成 %D% 点伤害。一次性。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            1,
+            1
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 15,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ],
+          "exhaust": true
+        }
+      ]
+    },
+    {
+      "name": "EmberRekindle",
+      "description": "",
+      "rarity": 2,
+      "parts": [
+        {
+          "partId": "EmberRekindle00",
+          "description": "从弃牌堆回收 2 个一次性 Block 回手。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/RecallFromDiscardBehavior.gd",
+              "params": {
+                "RequireLoose": false,
+                "RequireExhaust": true,
+                "RecallCount": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sapling",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Sapling00",
+          "description": "小树苗。获得 %S% 点护盾。扎根（驻留）。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "baseShield": 3,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/RootBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ThornTrap",
+      "description": "",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "ThornTrap00",
+          "description": "荆棘陷阱。造成 %D% 点伤害。松动。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "baseDamage": 4,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            },
+            {
+              "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

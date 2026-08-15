@@ -12,6 +12,7 @@ const TRIGGER_META_KEY := "full_trigger_parts"
 
 @export var RequireLoose: bool = false
 @export var RecallCount: int = 1
+@export var EchoReward: int = 0  # >0 时全部件触发额外给玩家回响 +N（超新星前兆用）
 
 func create_action(block, part):
 	if block == null or part == null:
@@ -33,4 +34,32 @@ func create_action(block, part):
 			for i in RecallCount:
 				if not block_piles.recall_from_discard(RequireLoose):
 					break
+			if EchoReward > 0:
+				_add_echo(block, EchoReward)
 	, Enums.ActionType.Callback)
+
+## 给玩家回响 +N（EchoStat，星语术士资源）
+func _add_echo(block: Block, layers: int) -> void:
+	var tree := block.get_tree()
+	if tree == null:
+		return
+	for node in tree.get_nodes_in_group("Players"):
+		if node is Node2D:
+			var player := node as Node2D
+			var rendering = player.get_node("RenderingComponent")
+			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
+			if stats_comp == null:
+				return
+			if not stats_comp.has_status("Echo"):
+				var echo_def: Resource = load("res://resources/stat_defs/Echo.tres")
+				if echo_def == null:
+					printerr("FullTriggerRewardBehavior: Echo.tres not found!")
+					return
+				var stat: Stat = Stat.new()
+				stat.Definition = echo_def
+				stats_comp.add_status(stat)
+				stat.add_value(layers)
+			else:
+				stats_comp.get_status("Echo").add_value(layers)
+			GameLog.debug("FullTriggerRewardBehavior: Echo +" + str(layers))
+			return

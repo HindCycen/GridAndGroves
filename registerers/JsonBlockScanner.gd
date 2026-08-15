@@ -59,6 +59,7 @@ static func _create_part_data(entry: Dictionary) -> Dictionary:
 	part_data["baseDamage"] = entry.get("baseDamage", 0)
 	part_data["baseMagicNum"] = entry.get("baseMagicNum", 0)
 	part_data["baseShield"] = entry.get("baseShield", 0)
+	part_data["baseHeal"] = entry.get("baseHeal", 0)
 	part_data["exhaust"] = entry.get("exhaust", false)
 	part_data["description"] = entry.get("description", "")
 	

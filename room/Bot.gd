@@ -98,6 +98,8 @@ func _is_part_at_grid(part: BlockPart, grid_pos: Vector2i) -> bool:
 
 func _process_block_part(block: Block, part: BlockPart, resonance_depth: int = 0) -> void:
 	_battle_time.say_block_execute()
+	# 记录共鸣链深度到 Block meta（供 ChainBonusDamageBehavior 等链加成 Behavior 读取）
+	block.set_meta("resonance_depth", resonance_depth)
 	var move_dir := part.MovingDirection if part.MovingDirection != Vector2i.ZERO else Vector2i.DOWN
 	_current_direction = move_dir
 	if move_dir != Vector2i.DOWN:

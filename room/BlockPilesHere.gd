@@ -58,13 +58,16 @@ func send_block_to_discard(block: Block) -> void:
 
 ## 从弃牌堆回收 1 个 Block 到手牌（ShowingPile）
 ## require_loose 为 true 时只回收带松动标记的 Block（铁锈游侠"废品回收"语义）
+## require_exhaust 为 true 时只回收带一次性标记的 Block（余烬重燃语义）
 ## 回收成功返回 true；弃牌堆无可回收对象返回 false
-func recall_from_discard(require_loose: bool) -> bool:
+func recall_from_discard(require_loose: bool = false, require_exhaust: bool = false) -> bool:
 	var candidates: Array[Block] = []
 	for b in DiscardedPile.Pile:
 		if not is_instance_valid(b):
 			continue
 		if require_loose and not _has_loose_behavior(b):
+			continue
+		if require_exhaust and not _has_exhaust_behavior(b):
 			continue
 		candidates.append(b)
 	if candidates.size() == 0:
@@ -74,8 +77,28 @@ func recall_from_discard(require_loose: bool) -> bool:
 	DiscardedPile.remove_block(block)
 	block.global_position = Vector2.ZERO
 	ShowingPile.add_child(block)
-	GameLog.debug("BlockPilesHere: Recalled [" + (block.BlockName if not block.BlockName.is_empty() else "?") + "] from discard" + (" (loose)" if require_loose else ""))
+	GameLog.debug("BlockPilesHere: Recalled [" + (block.BlockName if not block.BlockName.is_empty() else "?") + "] from discard")
 	return true
+
+## 将场上 1 个玩家 Block 回手（移到 ShowingPile，不销毁）
+## 暗网契约"生命转换"的代价语义。返回是否成功
+func return_placed_to_hand() -> bool:
+	for b in PlacedPile.Pile:
+		if not is_instance_valid(b) or b is not Block:
+			continue
+		if b.Faction != Block.BlockFaction.Player:
+			continue
+		# 释放格子
+		_free_block_grid_cells(b)
+		PlacedPile.remove_block(b)
+		b.remove_from_group("placed_blocks")
+		disconnect_block_signals(b)
+		b.IsPlaced = false
+		b.global_position = Vector2.ZERO
+		ShowingPile.add_child(b)
+		GameLog.debug("BlockPilesHere: Returned [" + (b.BlockName if not b.BlockName.is_empty() else "?") + "] to hand")
+		return true
+	return false
 
 func _has_loose_behavior(block: Block) -> bool:
 	for part in block.get_parts():
@@ -84,6 +107,12 @@ func _has_loose_behavior(block: Block) -> bool:
 		for behavior in part.Behaviors:
 			if behavior is LooseBlockBehavior:
 				return true
+	return false
+
+func _has_exhaust_behavior(block: Block) -> bool:
+	for part in block.get_parts():
+		if part.Exhaust:
+			return true
 	return false
 
 func _ready() -> void:

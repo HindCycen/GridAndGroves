@@ -16,6 +16,7 @@ var Behaviors: Array = []
 var SpriteTexture: Texture2D
 var Damage: int
 var Shield: int
+var Heal: int
 var MagicNum: int
 var Exhaust: bool = false  # 一次性：触发后立即移出战斗（Bot 检测此标记）
 

@@ -172,6 +172,8 @@ func _visit_part(block: Block, part: BlockPart, grid_pos: Vector2i, chain_depth:
 func _process_block_part(block: Block, part: BlockPart, depth: int) -> void:
 	if _battle_time != null:
 		_battle_time.say_block_execute()
+	# 记录共鸣链深度到 Block meta（供链加成 Behavior 读取）
+	block.set_meta("resonance_depth", depth)
 	if part.Behaviors.size() == 0:
 		return
 	var should_exhaust := false

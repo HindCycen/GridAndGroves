@@ -132,25 +132,32 @@ MainMenu (Continue / New Game)
 
 ### Phase 1 — 卡包内容落地（P0，工作量最大）
 
-> **进度：铁锈游侠 33 Block 已完成（2026-08-15），其余待实施**
+> **进度：全部完成（2026-08-15）：147/147 Block 落地，命名契约 100% 匹配，headless 冒烟验证通过**
 
 | # | 任务 | 状态 |
 |---|------|------|
-| 1.1 | 按 `pack_ranger.md` 落地铁锈游侠约 33 Block | ✅ 33/33 全部写入 `block_defs.json`（18 普通 / 10 稀有 / 4 史诗 / 1 传说），含 22 松动 / 7 一次性，`.tres` 命名契约 100% 匹配，headless 实例化验证通过 |
-| 1.2 | 按 `pack_weaver.md` 落地星语术士约 32 Block | ⬜ 待实施（法阵上限校验在 Phase 1.4 的放置限制钩子中统一做） |
-| 1.3 | 按 `pack_sentinel.md` 落地翠绿哨兵约 30 Block | ⬜ 待实施 |
-| 1.4 | 按 `minipacks.md` 落地 5 小包各 10 Block | ⬜ 待实施（含 `PlacementRestrictionBehavior` 通用放置限制钩子） |
-| 1.5 | 数值验算 | ⚠️ 游侠部分已按 `balance.md` 锚点验算通过；其余包随内容落地 |
+| 1.1 | 按 `pack_ranger.md` 落地铁锈游侠约 33 Block | ✅ 33/33（18 普通 / 10 稀有 / 4 史诗 / 1 传说），22 松动 / 7 一次性 |
+| 1.2 | 按 `pack_weaver.md` 落地星语术士约 32 Block | ✅ 32/32（16 普通 / 11 稀有 / 5 史诗 / 1 传说），共鸣 20 / 法阵 3 / 回响 4 |
+| 1.3 | 按 `pack_sentinel.md` 落地翠绿哨兵约 30 Block | ✅ 32/32（16 普通 / 11 稀有 / 4 史诗 / 1 传说），藤蔓 10 / 扎根 8 / 共生 6 |
+| 1.4 | 按 `minipacks.md` 落地 5 小包各 10 Block | ✅ 50/50（紧急补给 / 废品爆破 / 暗网契约 / 精密传动 / 星尘余烬），含 `PlacementRestrictionBehavior`（奇点中央限制）+ `Sapling`/`ThornTrap` 生成物 Block |
+| 1.5 | 数值验算 | ✅ 全部按 `balance.md` 锚点验算（松动 ×1.2 / 一次性 ×1.4 / 稀有 ×1.4 / 史诗 ×2.0 / 传说 ×2.5） |
 
-**1.1 配套代码改动（已随游侠包落地）：**
+**配套代码改动（已随 Phase 1 落地）：**
 
-- `BlockPart` 新增 `Exhaust` 字段（一次性标记），`JsonBlockScanner` / `Block` 读取；`Bot` / `ResonanceBot` 触发时移出战斗（此前一次性机制无任何接线）
-- `ScrapCounterStat` 递增接线：`Bot._loose_block` / `ResonanceBot._loose_block` 松动时玩家计数 +1（此前 Stat 存在但从未递增，依赖它的增幅效果全部失效）
-- `BlockPilesHere` 新增公共 API `recall_from_discard(require_loose)`（弃牌堆回收到手牌）
-- 新增 7 个 Behavior（`resources/blockpart_behaviors/`）：
-  `RecallFromDiscardBehavior`（回收）/ `ScrapBonusDamageBehavior`（每松动 1 个 +1 伤害）/ `ScrapThresholdBehavior`（≥N 松动追加伤害）/ `OverloadThresholdBehavior`（≥N 过载追加伤害）/ `ScrapToRustBehavior`（按松动数上锈蚀）/ `SpendOverloadBoostBehavior`（消费过载强化伤害，≥N 层附锈蚀）/ `FullTriggerRewardBehavior`（全部件触发回收）
+- `BlockPart` 新增 `Exhaust` 字段（一次性标记）+ `Heal` 字段（治疗量），`JsonBlockScanner` / `Block` 读取；`Bot` / `ResonanceBot` 触发时移出战斗
+- `ScrapCounterStat` 递增接线：松动入弃牌堆时玩家计数 +1（此前 Stat 从未递增，依赖它的增幅效果全部失效）
+- `BlockPilesHere` 新增公共 API：`recall_from_discard(require_loose, require_exhaust)`（弃牌堆回收）、`return_placed_to_hand()`（场上回手）
+- `Block._check_placement_conditions` 新增通用放置限制钩子（遍历部件 Behavior 的 `check_placement()`，基类默认放行）
+- `Bot` / `ResonanceBot` 触发时写 `block meta "resonance_depth"`（链加成 Behavior 读取；`set_chain_bonus` 钩子此前无消费者）
+- 新增 32 个 Behavior（`resources/blockpart_behaviors/`）：
+  - 铁锈游侠 7：`RecallFromDiscard` / `ScrapBonusDamage` / `ScrapThreshold` / `OverloadThreshold` / `ScrapToRust` / `SpendOverloadBoost` / `FullTriggerReward`（含 EchoReward 参数）
+  - 星语术士 8：`ChainBonusDamage` / `ChainBonusShield` / `AddEcho` / `EchoBonusDamage` / `EchoThreshold` / `EchoBurst` / `SacrificeGlyph` / `DrawBlock`
+  - 翠绿哨兵 7：`Heal` / `ApplyVineAll` / `DoubleVine` / `ConsumeVineDamage` / `ShieldReflect` / `RootCountDamage` / `RootCountVine`
+  - 小包 10：`SummonBlock` / `ChainTrigger` / `Detonator` / `RemoveEnemyBuff` / `RandomDamage` / `RandomDebuff` / `ColumnConditionDamage` / `RemoveFromDiscard` / `ReturnPlacedToHand` / `PlacementRestriction`
 
-> **已知取舍**：`MagneticPinch` 的过载加成由部件 A 独享（每层 +4，数值等价设计的"A/B 各 +2"）；`SteamHammer` 消费端从部件 B 移到伤害部件 A（数值一致，避免"伤害 Action 已入队无法加成"的顺序问题）。
+> **已知取舍（未完全实现的设计点，共 13 处，均已在 Block description 注明）：**
+> 星门链位置 +1 效果省略（仅护盾 10）；新星全触发 AOE 省略；超新星前兆"四部件全被链触发"简化为全部件触发；星语法阵"回合结束结算"改为触发时按回响计数结算；光合作用扎根条件省略；孢子喷射 ≥3 层条件省略；静态场"每触发 1 Block +1"省略；奇点"共鸣链 ≥3 才可放置"省略；磁力收束/蒸汽锤消费端位置调整（数值等价）；烟雾弹 -50% 改 -4 锈蚀；闪光弹同理；痛觉强化 HP 统计省略；引力波/炸药包/弹射的 Bot 交互效果部分省略。
+> **验证**：130 脚本解析全检 0 失败；headless 冒烟 147/147 实例化 + 行为创建 0 错误；8 卡包命名契约 100% 匹配。
 
 ### Phase 2 — 卡包接入主流程（P0）
 

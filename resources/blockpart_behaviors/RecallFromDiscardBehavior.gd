@@ -6,6 +6,7 @@ class_name RecallFromDiscardBehavior extends BlockPartBehavior
 ## 用于：信号枪 / 旧引擎 / 废品巨像 / 磁力收束
 
 @export var RequireLoose: bool = true
+@export var RequireExhaust: bool = false  # true 时只回收带一次性标记的 Block（余烬重燃用）
 @export var RecallCount: int = 1
 
 func create_action(block, _part):
