@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="StatDef" format=3]
 
 [ext_resource type="Script" path="res://stats/StatDef.gd" id="1_statdef"]
+[ext_resource type="Texture2D" path="res://resources/stat_images/Rust.png" id="2_n8oqi"]
 [ext_resource type="Script" path="res://resources/stat_behaviors/RustStatBehavior.gd" id="2_rust"]
 
 [sub_resource type="Resource" id="Resource_rust"]
@@ -9,9 +10,8 @@ script = ExtResource("2_rust")
 [resource]
 script = ExtResource("1_statdef")
 Behavior = SubResource("Resource_rust")
-CanGoNegative = false
 Description = "每层减少敌人造成的伤害 1 点。上限 10 层。"
-Icon = null
+Icon = ExtResource("2_n8oqi")
 MaxValue = 10
 StatName = "Rust"
 RemoveOnBattleEnd = true

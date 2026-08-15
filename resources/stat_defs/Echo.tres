@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="StatDef" format=3]
 
 [ext_resource type="Script" path="res://stats/StatDef.gd" id="1_statdef"]
+[ext_resource type="Texture2D" path="res://resources/stat_images/Echo.png" id="2_40vp8"]
 [ext_resource type="Script" path="res://resources/stat_behaviors/EchoStatBehavior.gd" id="2_echo"]
 
 [sub_resource type="Resource" id="Resource_echo"]
@@ -9,9 +10,8 @@ script = ExtResource("2_echo")
 [resource]
 script = ExtResource("1_statdef")
 Behavior = SubResource("Resource_echo")
-CanGoNegative = false
 Description = "共鸣传播计数。可消费换取增益。回合结束清零。"
-Icon = null
+Icon = ExtResource("2_40vp8")
 MaxValue = 99
 StatName = "Echo"
 RemoveOnBattleEnd = true

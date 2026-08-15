@@ -16,7 +16,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -42,7 +42,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -71,7 +71,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 7,
           "behaviors": [
             {
@@ -100,7 +100,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -135,7 +135,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -164,7 +164,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -186,7 +186,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_right.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -215,7 +215,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -234,7 +234,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -260,7 +260,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/rust.png",
           "baseDamage": 3,
           "baseMagicNum": 1,
           "behaviors": [
@@ -296,7 +296,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -331,7 +331,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -353,7 +353,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -382,7 +382,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/yellow/gear.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -418,7 +418,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -447,7 +447,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 8,
           "behaviors": [
             {
@@ -474,7 +474,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -509,7 +509,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -531,7 +531,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_right.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -560,7 +560,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/rust.png",
           "baseDamage": 3,
           "baseMagicNum": 2,
           "behaviors": [
@@ -596,7 +596,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -618,7 +618,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -647,7 +647,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/recycle.png",
           "baseDamage": 7,
           "behaviors": [
             {
@@ -680,7 +680,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/rust.png",
           "baseDamage": 5,
           "baseMagicNum": 2,
           "behaviors": [
@@ -716,7 +716,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 8,
           "behaviors": [
             {
@@ -738,7 +738,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/yellow/gear.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -774,7 +774,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseShield": 6,
           "behaviors": [
             {
@@ -804,7 +804,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -835,7 +835,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 7,
           "behaviors": [
             {
@@ -857,7 +857,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 7,
           "behaviors": [
             {
@@ -886,7 +886,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -913,7 +913,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -933,7 +933,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -953,7 +953,7 @@
             1,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -980,7 +980,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/rust.png",
           "baseDamage": 4,
           "baseMagicNum": 3,
           "behaviors": [
@@ -1009,7 +1009,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/rust.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/ScrapToRustBehavior.gd"
@@ -1037,7 +1037,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 9,
           "behaviors": [
             {
@@ -1070,7 +1070,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -1089,7 +1089,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/recycle.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/RecallFromDiscardBehavior.gd",
@@ -1120,7 +1120,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 7,
           "behaviors": [
             {
@@ -1142,7 +1142,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_right.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -1164,7 +1164,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/chain.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/ChainReleaseBehavior.gd"
@@ -1189,7 +1189,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -1211,7 +1211,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/rust.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/OverloadToRustBehavior.gd"
@@ -1239,7 +1239,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 10,
           "behaviors": [
             {
@@ -1263,7 +1263,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
@@ -1285,7 +1285,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_right.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -1312,7 +1312,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -1336,7 +1336,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png"
         }
       ]
     },
@@ -1356,7 +1356,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -1384,7 +1384,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -1412,7 +1412,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -1440,7 +1440,7 @@
             1,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -1475,7 +1475,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 12,
           "behaviors": [
             {
@@ -1507,7 +1507,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 12,
           "behaviors": [
             {
@@ -1535,7 +1535,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
@@ -1559,7 +1559,7 @@
             1,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 6,
           "behaviors": [
             {
@@ -1591,7 +1591,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 7,
           "behaviors": [
             {
@@ -1617,7 +1617,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -1646,7 +1646,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 6,
           "behaviors": [
             {
@@ -1672,7 +1672,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
@@ -1703,7 +1703,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 8,
           "behaviors": [
             {
@@ -1730,7 +1730,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -1752,7 +1752,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -1781,7 +1781,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -1810,7 +1810,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -1832,7 +1832,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -1858,7 +1858,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 2,
           "behaviors": [
             {
@@ -1893,7 +1893,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 8,
           "behaviors": [
             {
@@ -1920,7 +1920,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -1939,7 +1939,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -1968,7 +1968,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_up.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -1994,7 +1994,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -2026,7 +2026,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -2045,7 +2045,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -2071,7 +2071,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -2091,7 +2091,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -2118,7 +2118,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 2,
           "behaviors": [
             {
@@ -2153,7 +2153,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -2175,7 +2175,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/ResonanceTriggerBehavior.gd"
@@ -2200,7 +2200,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 2,
           "behaviors": [
             {
@@ -2232,7 +2232,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 6,
           "behaviors": [
             {
@@ -2251,7 +2251,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/DrawBlockBehavior.gd",
@@ -2275,7 +2275,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -2304,7 +2304,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -2336,7 +2336,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -2358,7 +2358,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -2387,7 +2387,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseShield": 8,
           "behaviors": [
             {
@@ -2409,7 +2409,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -2435,7 +2435,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -2464,7 +2464,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2486,7 +2486,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2508,7 +2508,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2537,7 +2537,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 10,
           "behaviors": [
             {
@@ -2564,7 +2564,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2593,7 +2593,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2622,7 +2622,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2651,7 +2651,7 @@
             1,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2687,7 +2687,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/glyph.png",
           "baseShield": 7,
           "behaviors": [
             {
@@ -2719,7 +2719,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/sacrifice.png",
           "baseDamage": 15,
           "behaviors": [
             {
@@ -2749,7 +2749,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -2781,7 +2781,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -2813,7 +2813,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/glyph.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/EchoBurstBehavior.gd",
@@ -2847,7 +2847,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 18,
           "behaviors": [
             {
@@ -2867,7 +2867,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/sacrifice.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/SacrificeGlyphBehavior.gd"
@@ -2886,7 +2886,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -2912,7 +2912,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2937,7 +2937,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2962,7 +2962,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/echo.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -2994,7 +2994,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -3020,7 +3020,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseMagicNum": 3,
           "behaviors": [
             {
@@ -3049,7 +3049,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 7,
           "behaviors": [
             {
@@ -3075,7 +3075,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -3094,7 +3094,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -3120,7 +3120,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 5,
           "behaviors": [
             {
@@ -3159,7 +3159,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 3,
           "baseMagicNum": 2,
           "behaviors": [
@@ -3195,7 +3195,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 7,
           "behaviors": [
             {
@@ -3224,7 +3224,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -3253,7 +3253,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -3272,7 +3272,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -3298,7 +3298,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 4,
           "baseMagicNum": 1,
           "behaviors": [
@@ -3334,7 +3334,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 8,
           "behaviors": [
             {
@@ -3361,7 +3361,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 6,
           "behaviors": [
             {
@@ -3397,7 +3397,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 3,
           "behaviors": [
             {
@@ -3419,7 +3419,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 3,
           "behaviors": [
             {
@@ -3445,7 +3445,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 4,
           "baseMagicNum": 2,
           "behaviors": [
@@ -3479,7 +3479,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -3515,7 +3515,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 3,
           "baseMagicNum": 1,
           "behaviors": [
@@ -3548,7 +3548,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 6,
           "behaviors": [
             {
@@ -3577,7 +3577,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -3612,7 +3612,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 6,
           "behaviors": [
             {
@@ -3644,7 +3644,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 10,
           "behaviors": [
             {
@@ -3676,7 +3676,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/star4.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -3702,7 +3702,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/star4.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -3728,7 +3728,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/star4.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -3761,7 +3761,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/star4.png",
           "baseShield": 6,
           "behaviors": [
             {
@@ -3787,7 +3787,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/star4.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -3820,7 +3820,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 3,
           "baseMagicNum": 3,
           "behaviors": [
@@ -3846,7 +3846,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/DoubleVineBehavior.gd"
@@ -3872,7 +3872,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 9,
           "behaviors": [
             {
@@ -3894,7 +3894,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 7,
           "behaviors": [
             {
@@ -3923,7 +3923,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -3955,7 +3955,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 10,
           "behaviors": [
             {
@@ -3981,7 +3981,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 8,
           "behaviors": [
             {
@@ -4014,7 +4014,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -4050,7 +4050,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -4084,7 +4084,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseDamage": 12,
           "behaviors": [
             {
@@ -4120,7 +4120,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 7,
           "behaviors": [
             {
@@ -4142,7 +4142,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -4164,7 +4164,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 4,
           "behaviors": [
             {
@@ -4189,7 +4189,7 @@
             1,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/RootCountDamageBehavior.gd",
@@ -4220,7 +4220,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -4240,7 +4240,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/sprout.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/SummonBlockBehavior.gd",
@@ -4261,7 +4261,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -4287,7 +4287,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 10,
           "behaviors": [
             {
@@ -4309,7 +4309,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 10,
           "behaviors": [
             {
@@ -4331,7 +4331,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/RootCountVineBehavior.gd",
@@ -4355,7 +4355,7 @@
             1,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/JungleShelterBehavior.gd",
@@ -4386,7 +4386,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 8,
           "behaviors": [
             {
@@ -4416,7 +4416,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 5,
           "behaviors": [
             {
@@ -4448,7 +4448,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/card.png",
           "baseShield": 7,
           "behaviors": [
             {
@@ -4483,7 +4483,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 14,
           "behaviors": [
             {
@@ -4510,7 +4510,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/rust.png",
           "baseDamage": 4,
           "baseMagicNum": 4,
           "behaviors": [
@@ -4546,7 +4546,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -4568,7 +4568,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/drop.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
@@ -4593,7 +4593,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 4,
           "behaviors": [
             {
@@ -4625,7 +4625,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/card.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -4660,7 +4660,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -4689,7 +4689,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 6,
           "behaviors": [
             {
@@ -4711,7 +4711,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 2,
           "behaviors": [
             {
@@ -4740,7 +4740,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 8,
           "behaviors": [
             {
@@ -4767,7 +4767,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/vine.png",
           "baseDamage": 4,
           "baseMagicNum": 2,
           "behaviors": [
@@ -4800,7 +4800,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseDamage": 12,
           "behaviors": [
             {
@@ -4830,7 +4830,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/chain.png",
           "baseDamage": 7,
           "behaviors": [
             {
@@ -4852,7 +4852,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png"
         }
       ]
     },
@@ -4872,7 +4872,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -4901,7 +4901,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/rust.png",
           "baseShield": 6,
           "baseMagicNum": 4,
           "behaviors": [
@@ -4934,7 +4934,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 20,
           "behaviors": [
             {
@@ -4953,7 +4953,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/drop.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
@@ -4971,7 +4971,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png"
         }
       ]
     },
@@ -4991,7 +4991,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/detonator.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/DetonatorBehavior.gd"
@@ -5016,7 +5016,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/yellow/gear.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -5048,7 +5048,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -5067,7 +5067,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/dark/hack.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/RemoveEnemyBuffBehavior.gd"
@@ -5092,7 +5092,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/drop.png",
           "baseDamage": 10,
           "behaviors": [
             {
@@ -5121,7 +5121,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -5153,7 +5153,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/drop.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
@@ -5184,7 +5184,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_up.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -5213,7 +5213,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 12,
           "behaviors": [
             {
@@ -5232,7 +5232,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/dark/recycle.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/RemoveFromDiscardBehavior.gd"
@@ -5257,7 +5257,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/cross.png",
           "baseHeal": 10,
           "behaviors": [
             {
@@ -5289,7 +5289,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -5315,7 +5315,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/dark/hack.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -5347,7 +5347,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "baseDamage": 8,
           "behaviors": [
             {
@@ -5374,7 +5374,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/bolt.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/AddOverloadBehavior.gd",
@@ -5402,7 +5402,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/drop.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -5427,7 +5427,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/drop.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -5452,7 +5452,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/red/drop.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -5484,7 +5484,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/blue/move.png"
         }
       ]
     },
@@ -5504,7 +5504,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/blue/move.png"
         }
       ]
     },
@@ -5524,7 +5524,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_right.png",
           "baseDamage": 8,
           "behaviors": [
             {
@@ -5543,7 +5543,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/blue/move.png"
         }
       ]
     },
@@ -5563,7 +5563,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/move.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -5596,7 +5596,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -5615,7 +5615,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
@@ -5640,7 +5640,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_left.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -5669,7 +5669,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 7,
           "behaviors": [
             {
@@ -5689,7 +5689,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -5709,7 +5709,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/LooseBlockBehavior.gd"
@@ -5735,7 +5735,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_right.png",
           "baseDamage": 8,
           "behaviors": [
             {
@@ -5757,7 +5757,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/blue/move.png"
         }
       ]
     },
@@ -5777,7 +5777,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/card.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -5812,7 +5812,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 20,
           "behaviors": [
             {
@@ -5832,7 +5832,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 20,
           "behaviors": [
             {
@@ -5852,7 +5852,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 20,
           "behaviors": [
             {
@@ -5872,7 +5872,7 @@
             1,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/move.png",
           "baseDamage": 20,
           "behaviors": [
             {
@@ -5906,7 +5906,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
@@ -5935,7 +5935,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 6,
           "behaviors": [
             {
@@ -5957,7 +5957,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png"
         }
       ]
     },
@@ -5977,7 +5977,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/card.png",
           "baseDamage": 5,
           "behaviors": [
             {
@@ -6012,7 +6012,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/starburst.png",
           "baseShield": 8,
           "behaviors": [
             {
@@ -6034,7 +6034,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
           "baseShield": 4,
           "behaviors": [
             {
@@ -6060,7 +6060,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/dice.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/RandomDamageBehavior.gd",
@@ -6092,7 +6092,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 3,
           "behaviors": [
             {
@@ -6121,7 +6121,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/dice.png",
           "baseDamage": 10,
           "behaviors": [
             {
@@ -6147,7 +6147,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png"
         },
         {
           "partId": "UnstableRift02",
@@ -6160,7 +6160,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png"
+          "spriteTexture": "res://resources/blockpart_picture/green/blank.png"
         }
       ]
     },
@@ -6180,7 +6180,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/purple/starburst.png",
           "baseShield": 5,
           "behaviors": [
             {
@@ -6212,7 +6212,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 15,
           "behaviors": [
             {
@@ -6232,7 +6232,7 @@
             1,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 15,
           "behaviors": [
             {
@@ -6252,7 +6252,7 @@
             0,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 15,
           "behaviors": [
             {
@@ -6272,7 +6272,7 @@
             1,
             1
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 15,
           "behaviors": [
             {
@@ -6299,7 +6299,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/grey/PlainGreyBlock.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/recycle.png",
           "behaviors": [
             {
               "script": "res://resources/blockpart_behaviors/RecallFromDiscardBehavior.gd",
@@ -6329,7 +6329,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/blue/Shield.png",
+          "spriteTexture": "res://resources/blockpart_picture/brown/root.png",
           "baseShield": 3,
           "behaviors": [
             {
@@ -6358,7 +6358,7 @@
             0,
             0
           ],
-          "spriteTexture": "res://resources/blockpart_picture/green/Attack-G.png",
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
           "baseDamage": 4,
           "behaviors": [
             {
