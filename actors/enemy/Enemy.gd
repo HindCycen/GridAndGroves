@@ -32,6 +32,19 @@ func _ready() -> void:
 						stat.Definition = stat_def
 						stats_comp.add_status(stat)
 						stat.add_value(stat_def.MaxValue)
+	_update_intent_display()
+
+## 刷新头顶意图图标（数据来自 JSON 注册的 IntentDefinition.Icon）
+func _update_intent_display() -> void:
+	var icon_node := get_node_or_null("IntentIcon") as Sprite2D
+	if icon_node == null or _ai_component == null or Definition == null:
+		return
+	var intent: IntentDefinition = _ai_component.get_current_intent(Definition)
+	if intent != null and intent.Icon != null:
+		icon_node.texture = intent.Icon
+		icon_node.visible = true
+	else:
+		icon_node.visible = false
 
 func setup_ai(block_piles_here) -> void:
 	if _ai_component == null:
@@ -41,6 +54,7 @@ func setup_ai(block_piles_here) -> void:
 
 func execute_turn() -> void:
 	if _ai_component != null and Definition != null:
+		_update_intent_display()
 		_ai_component.execute_intent(Definition)
 
 func clear_blocks() -> void:

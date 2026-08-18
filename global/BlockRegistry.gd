@@ -53,7 +53,8 @@ func create_block(block_data: Dictionary) -> Block:
 
 ## 按稀有度权重随机抽取一个稀有度等级（0~3）
 ## 使用奖励随机流（reward RNG），保证存档可复现
-static func pick_random_rarity() -> int:
+## （实例方法：BlockRegistry 是 autoload 单例，保持 static 反而无法经单例名调用）
+func pick_random_rarity() -> int:
 	var total := 0.0
 	for rarity in RarityWeights:
 		total += RarityWeights[rarity]

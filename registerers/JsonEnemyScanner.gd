@@ -87,6 +87,12 @@ static func _create_intent_def(entry: Dictionary) -> IntentDefinition:
 	var intent_def := IntentDefinition.new()
 	intent_def.IntentName = entry.get("intentName", "")
 	intent_def.RepeatCount = entry.get("repeatCount", 1)
+	# 意图图标注册：res://resources/enemy_intents/icons/{IntentName}.png（程序化生成）
+	var icon_path := "res://resources/enemy_intents/icons/" + intent_def.IntentName + ".png"
+	if ResourceLoader.exists(icon_path):
+		intent_def.Icon = load(icon_path)
+	else:
+		GameLog.warn("JsonEnemyScanner: intent icon not found: " + icon_path)
 	
 	if entry.has("blockPlacements"):
 		var placements: Array = []

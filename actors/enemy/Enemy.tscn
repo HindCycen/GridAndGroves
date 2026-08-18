@@ -17,3 +17,7 @@ offset_bottom = 112.0
 
 [node name="EnemyPile" parent="." index="2" instance=ExtResource("3_pile")]
 unique_name_in_owner = true
+
+[node name="IntentIcon" type="Sprite2D" parent="." index="3"]
+position = Vector2(0, -140)
+scale = Vector2(2, 2)

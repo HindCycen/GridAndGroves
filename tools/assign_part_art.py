@@ -1,93 +1,82 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-GridAndGroves 部件图自动分配脚本
-================================
-按部件语义（行为类型 → 图标，阵营/用途 → 配色）为 block_defs.json 中
-所有部件自动分配 96×96 程序化部件图，替换原来的 7 张占位图。
+GridAndGroves 部件图自动分配脚本（包配色版）
+================================================
+按部件语义（行为类型 → 图标）与「所属卡包（→ 角色/包配色）」为 block_defs.json
+中所有部件自动分配 96×96 程序化部件图。
+
+配色规则（v2，需求：同一角色的所有牌颜色统一）：
+- 3 个主卡包 = 角色色：铁锈游侠→brown / 星语术士→purple / 翠绿哨兵→green，
+  包内所有部件（无论伤害/护盾/机制）统一使用该角色色调
+- 5 个小卡包各固定一色：紧急补给→yellow / 废品爆破→red / 暗网契约→dark /
+  精密传动→blue / 星尘余烬→purple
+- 敌人块（faction=1）→ grey
+- 基础卡 Strike/Defend → 使用手绘原型图（green/strike.png、blue/defend.png），不动
+- 其他无包块 → 按语义兜底色（伤害绿 / 护盾蓝 / 治疗绿 / 转向蓝 / 空白绿）
 
 用法：
-    python3 tools/assign_part_art.py          # 更新 block_defs.json 的 spriteTexture
+    python3 tools/assign_part_art.py            # 更新 block_defs.json 的 spriteTexture
     python3 tools/assign_part_art.py --dry-run  # 只打印统计不写入
 """
 
 import argparse
 import json
 import os
-
-from PIL import Image
+import re
 
 BASE = "res://resources/blockpart_picture"
 
-# 特殊行为 → 图标（dict 顺序即优先级，先匹配先得）
+# 特殊行为 → 图标（dict 顺序即优先级，先匹配先得；v2 只决定图标，不再决定配色）
 BEHAVIOR_ICONS = [
-    # 自伤（红色滴血最醒目，放最前）
-    ("DamagePlayerBehavior", ("drop", "red")),
-    # 治疗
-    ("HealBehavior", ("cross", "green")),
-    # 过载系（闪电）
-    ("AddOverloadBehavior", ("bolt", "green")),
-    ("SpendOverloadBehavior", ("bolt", "green")),
-    ("SpendOverloadBoostBehavior", ("bolt", "green")),
-    ("OverloadThresholdBehavior", ("bolt", "green")),
-    ("OverloadToRustBehavior", ("rust", "green")),
-    # 锈蚀系
-    ("ApplyRustBehavior", ("rust", "green")),
-    ("ScrapToRustBehavior", ("rust", "green")),
-    # 藤蔓系
-    ("ApplyVineBehavior", ("vine", "green")),
-    ("ApplyVineAllBehavior", ("vine", "green")),
-    ("DoubleVineBehavior", ("vine", "green")),
-    ("RootCountVineBehavior", ("vine", "green")),
-    ("ConsumeVineDamageBehavior", ("vine", "green")),
-    # 法阵 / 扎根
-    ("GlyphRootBehavior", ("glyph", "purple")),
-    ("RootBehavior", ("root", "brown")),
-    # 回响 / 共鸣系
-    ("AddEchoBehavior", ("echo", "purple")),
-    ("SpendEchoBehavior", ("echo", "purple")),
-    ("EchoBonusDamageBehavior", ("echo", "purple")),
-    ("EchoThresholdBehavior", ("echo", "purple")),
-    ("EchoBurstBehavior", ("echo", "purple")),
-    ("ResonanceTriggerBehavior", ("echo", "purple")),
-    ("ChainBonusDamageBehavior", ("starburst", "purple")),
-    ("ChainBonusShieldBehavior", ("starburst", "purple")),
-    # 抽牌 / 回收
-    ("DrawBlockBehavior", ("card", "green")),
-    ("RecallFromDiscardBehavior", ("recycle", "green")),
-    ("ReturnPlacedToHandBehavior", ("recycle", "green")),
-    ("RemoveFromDiscardBehavior", ("recycle", "dark")),
-    ("NatureCycleBehavior", ("recycle", "green")),
-    # 生成 / 孢子
-    ("SummonBlockBehavior", ("sprout", "brown")),
-    ("SporeBurstBehavior", ("starburst", "brown")),
-    # 链式
-    ("ChainReleaseBehavior", ("chain", "green")),
-    ("ChainTriggerBehavior", ("chain", "red")),
-    # 引爆 / 爆炸
-    ("DetonatorBehavior", ("detonator", "red")),
-    # 破盾 / 移除
-    ("RemoveEnemyBuffBehavior", ("hack", "dark")),
-    # 随机
-    ("RandomDamageBehavior", ("dice", "purple")),
-    ("RandomDebuffBehavior", ("dice", "purple")),
-    # 方向 / 位置条件
-    ("ColumnConditionDamageBehavior", ("move", "blue")),
-    ("PlacementRestrictionBehavior", ("move", "blue")),
-    # 献祭
-    ("SacrificeGlyphBehavior", ("sacrifice", "purple")),
-    # 反伤 / 庇护
-    ("ShieldReflectBehavior", ("shield", "blue")),
-    ("JungleShelterBehavior", ("shield", "blue")),
-    # 共生
-    ("SymbiosisBoostBehavior", ("star4", "green")),
-    # 废品回收
-    ("ScrapPayoffBehavior", ("gear", "yellow")),
-    ("ScrapBonusDamageBehavior", ("gear", "yellow")),
-    ("ScrapThresholdBehavior", ("gear", "yellow")),
+    ("DamagePlayerBehavior", "drop"),
+    ("HealBehavior", "cross"),
+    ("AddOverloadBehavior", "bolt"),
+    ("SpendOverloadBehavior", "bolt"),
+    ("SpendOverloadBoostBehavior", "bolt"),
+    ("OverloadThresholdBehavior", "bolt"),
+    ("OverloadToRustBehavior", "rust"),
+    ("ApplyRustBehavior", "rust"),
+    ("ScrapToRustBehavior", "rust"),
+    ("ApplyVineBehavior", "vine"),
+    ("ApplyVineAllBehavior", "vine"),
+    ("DoubleVineBehavior", "vine"),
+    ("RootCountVineBehavior", "vine"),
+    ("ConsumeVineDamageBehavior", "vine"),
+    ("GlyphRootBehavior", "glyph"),
+    ("RootBehavior", "root"),
+    ("AddEchoBehavior", "echo"),
+    ("SpendEchoBehavior", "echo"),
+    ("EchoBonusDamageBehavior", "echo"),
+    ("EchoThresholdBehavior", "echo"),
+    ("EchoBurstBehavior", "echo"),
+    ("ResonanceTriggerBehavior", "echo"),
+    ("ChainBonusDamageBehavior", "starburst"),
+    ("ChainBonusShieldBehavior", "starburst"),
+    ("DrawBlockBehavior", "card"),
+    ("RecallFromDiscardBehavior", "recycle"),
+    ("ReturnPlacedToHandBehavior", "recycle"),
+    ("RemoveFromDiscardBehavior", "recycle"),
+    ("NatureCycleBehavior", "recycle"),
+    ("SummonBlockBehavior", "sprout"),
+    ("SporeBurstBehavior", "starburst"),
+    ("ChainReleaseBehavior", "chain"),
+    ("ChainTriggerBehavior", "chain"),
+    ("DetonatorBehavior", "detonator"),
+    ("RemoveEnemyBuffBehavior", "hack"),
+    ("RandomDamageBehavior", "dice"),
+    ("RandomDebuffBehavior", "dice"),
+    ("ColumnConditionDamageBehavior", "move"),
+    ("PlacementRestrictionBehavior", "move"),
+    ("SacrificeGlyphBehavior", "sacrifice"),
+    ("ShieldReflectBehavior", "shield"),
+    ("JungleShelterBehavior", "shield"),
+    ("SymbiosisBoostBehavior", "star4"),
+    ("ScrapPayoffBehavior", "gear"),
+    ("ScrapBonusDamageBehavior", "gear"),
+    ("ScrapThresholdBehavior", "gear"),
 ]
 
-# 方向 → 图标
 DIR_ICONS = {
     (0, 1): "arrow_down",
     (1, 0): "arrow_right",
@@ -95,7 +84,24 @@ DIR_ICONS = {
     (-1, 0): "arrow_left",
 }
 
-DIR_ORDER = ["arrow_down", "arrow_right", "arrow_up", "arrow_left"]
+# ── 包 → 配色（v2：同一角色所有牌颜色统一） ──
+# .tres 文件名 → (卡包中文名, palette)
+PACK_PALETTES = {
+    "PackRanger.tres": ("铁锈游侠", "brown"),
+    "PackWeaver.tres": ("星语术士", "purple"),
+    "PackSentinel.tres": ("翠绿哨兵", "green"),
+    "MiniEmergencySupplies.tres": ("紧急补给", "yellow"),
+    "MiniJunkExplosion.tres": ("废品爆破", "red"),
+    "MiniDarkWebPact.tres": ("暗网契约", "dark"),
+    "MiniPrecisionDrive.tres": ("精密传动", "blue"),
+    "MiniStardustEmber.tres": ("星尘余烬", "purple"),
+}
+
+# 无包块的语义兜底色（v1 逻辑）
+SEMANTIC_FALLBACK = "green"
+
+# 使用手绘原型、不参与自动分配的基础卡
+HANDMADE_CARDS = {"Strike", "Defend"}
 
 
 def behavior_name(bh):
@@ -103,48 +109,95 @@ def behavior_name(bh):
 
 
 def icon_for_part(part):
-    """返回 (icon_name, palette) 或 None（保持原图）"""
+    """返回图标名（与配色解耦）"""
     bhv_names = [behavior_name(b) for b in part.get("behaviors", [])]
-    # 1. 特殊行为优先
-    for script_name, (icon, pal) in BEHAVIOR_ICONS:
+    for script_name, icon in BEHAVIOR_ICONS:
         if script_name in bhv_names:
-            return (icon, pal)
-    # 2. 纯伤害 → 方向箭头（green）
+            return icon
     dmg = part.get("baseDamage", 0)
     shd = part.get("baseShield", 0)
     heal = part.get("baseHeal", 0)
     if dmg > 0:
         md = tuple(part.get("movingDirection", [0, 1]))
-        icon = DIR_ICONS.get(md, "arrow_down")
-        return (icon, "green")
+        return DIR_ICONS.get(md, "arrow_down")
     if shd > 0:
-        return ("shield", "blue")
+        return "shield"
     if heal > 0:
-        return ("cross", "green")
-    # 3. 纯功能部件：有方向 → 转向图标；否则空白
+        return "cross"
     md = tuple(part.get("movingDirection", [0, 1]))
     if md != (0, 1):
-        return ("move", "blue")
-    return ("blank", "green")
+        return "move"
+    return "blank"
+
+
+# ── .tres 解析：BlockNames → 所属包 ──
+
+def parse_tres_block_names(path):
+    """从卡包 .tres 文本解析 PackName 与 BlockNames"""
+    try:
+        text = open(path, encoding="utf-8").read()
+    except OSError:
+        return None, []
+    m = re.search(r'PackName\s*=\s*"([^"]*)"', text)
+    pack_name = m.group(1) if m else ""
+    names = []
+    m2 = re.search(r'BlockNames\s*=\s*Array\[String\]\((\[[^\]]*\])\)', text)
+    if m2:
+        names = re.findall(r'"([^"]*)"', m2.group(1))
+    return pack_name, names
+
+
+def build_block_palette_map():
+    """返回 {block_name: palette}，块名全局唯一（命名契约）"""
+    mapping = {}
+    for dir_name in ("resources/block_packs", "resources/mini_packs"):
+        if not os.path.isdir(dir_name):
+            continue
+        for fname in sorted(os.listdir(dir_name)):
+            if not fname.endswith(".tres"):
+                continue
+            display, pal = PACK_PALETTES.get(fname, (None, None))
+            if pal is None:
+                continue
+            _, names = parse_tres_block_names(os.path.join(dir_name, fname))
+            for n in names:
+                if n in mapping:
+                    print(f"WARN: block '{n}' in multiple packs ({mapping[n]} vs {pal})")
+                mapping[n] = pal
+    return mapping
 
 
 def main():
-    ap = argparse.ArgumentParser(description="部件图自动分配")
+    ap = argparse.ArgumentParser(description="部件图自动分配（包配色）")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
+    block_palette = build_block_palette_map()
+    print(f"loaded {len(block_palette)} blocks into pack color mapping")
+
     path = "resources/block_defs.json"
-    data = json.load(open(path))
+    data = json.load(open(path, encoding="utf-8"))
     assigned = {}
+    skipped_handmade = 0
+    missing = 0
     for block in data["blocks"]:
+        name = block.get("name", "")
         faction = block.get("faction", 0)
+        if name in HANDMADE_CARDS:
+            skipped_handmade += 1
+            continue
         for part in block.get("parts", []):
-            icon, pal = icon_for_part(part)
+            icon = icon_for_part(part)
             if faction == 1:
                 pal = "grey"
+            elif name in block_palette:
+                pal = block_palette[name]
+            else:
+                pal = SEMANTIC_FALLBACK
             tex = f"{BASE}/{pal}/{icon}.png"
             if not os.path.exists(tex.replace("res://", "", 1)):
-                print(f"WARN: missing {tex} for {block['name']}/{part['partId']}")
+                print(f"WARN: missing {tex} for {name}/{part['partId']}")
+                missing += 1
                 continue
             part["spriteTexture"] = tex
             assigned.setdefault((icon, pal), 0)
@@ -154,7 +207,7 @@ def main():
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
             f.write("\n")
-    print("assigned", sum(assigned.values()), "parts:")
+    print(f"assigned {sum(assigned.values())} parts (handmade kept: {skipped_handmade}, missing: {missing}):")
     for (icon, pal), cnt in sorted(assigned.items(), key=lambda kv: -kv[1]):
         print(f"  {pal}/{icon}: {cnt}")
 
