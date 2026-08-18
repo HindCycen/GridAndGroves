@@ -4,6 +4,7 @@ class_name Room extends Node2D
 enum NonStageType { NONE, BATTLE, EVENT }
 
 var _health_label: Label
+var _gold_label: Label
 var _save_load: SaveLoad
 var _stage_room_label: Label
 var _back_to_stage_btn: TextureButton
@@ -28,6 +29,10 @@ func _ready() -> void:
 		if _stage_room_label != null:
 			_stage_room_label.visible = true
 		_update_stage_room_label()
+		_gold_label = %GoldLabel as Label
+		if _gold_label != null:
+			_gold_label.visible = true
+		_update_gold_label()
 	_update_health_from_save_load()
 	var player := get_tree().get_first_node_in_group("Players") as Player
 	if player != null:
@@ -74,6 +79,10 @@ func _update_health_from_save_load() -> void:
 func _update_health_display(current: int, max_val: int) -> void:
 	if _health_label != null:
 		_health_label.text = str(current) + "/" + str(max_val)
+
+func _update_gold_label() -> void:
+	if _gold_label != null and _save_load != null and _save_load.Data != null:
+		_gold_label.text = "Gold: " + str(_save_load.Data.Gold)
 
 ## 初始化 BackToStage 按钮
 func _setup_back_to_stage_btn() -> void:

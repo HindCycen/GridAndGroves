@@ -17,28 +17,41 @@ var _misc_rng_usage: int
 var _pile_rng_usage: int
 
 func get_map_rand(scope: int) -> int:
+	_ensure_rng_ready()
 	_map_rng_usage += 1
 	return _map_rng.randi_range(0, scope - 1)
 
 func get_monster_rand(scope: int) -> int:
+	_ensure_rng_ready()
 	_monster_rng_usage += 1
 	return _monster_rng.randi_range(0, scope - 1)
 
 func get_reward_rand(scope: int) -> int:
+	_ensure_rng_ready()
 	_reward_rng_usage += 1
 	return _reward_rng.randi_range(0, scope - 1)
 
 func get_chest_rand(scope: int) -> int:
+	_ensure_rng_ready()
 	_chest_rng_usage += 1
 	return _chest_rng.randi_range(0, scope - 1)
 
 func get_misc_rand(scope: int) -> int:
+	_ensure_rng_ready()
 	_misc_rng_usage += 1
 	return _misc_rng.randi_range(0, scope - 1)
 
 func get_pile_rand(scope: int) -> int:
+	_ensure_rng_ready()
 	_pile_rng_usage += 1
 	return _pile_rng.randi_range(0, scope - 1)
+
+## 防御：正常流程由 New Game / Continue（SaveLoad）初始化 RNG；
+## 若因任何路径遗漏导致未初始化，懒初始化避免空引用崩溃。
+func _ensure_rng_ready() -> void:
+	if _misc_rng == null:
+		init_seed(0)
+		init_rng()
 
 func get_current_seed() -> int:
 	return _current_seed

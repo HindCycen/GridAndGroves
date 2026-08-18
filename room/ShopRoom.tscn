@@ -1,0 +1,67 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://room/ShopRoom.gd" id="1"]
+[ext_resource type="PackedScene" path="res://room/Room.tscn" id="2_room"]
+
+[node name="ShopRoom" instance=ExtResource("2_room")]
+script = ExtResource("1")
+IsBossShop = false
+
+[node name="ShopTitle" type="Label" parent="."]
+offset_left = 60.0
+offset_top = 90.0
+offset_right = 400.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 40
+text = "商店"
+
+[node name="ItemsContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 60.0
+offset_top = 160.0
+offset_right = 560.0
+offset_bottom = 880.0
+theme_override_constants/separation = 12
+
+[node name="RerollBtn" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 60.0
+offset_top = 900.0
+offset_right = 560.0
+offset_bottom = 960.0
+theme_override_font_sizes/font_size = 22
+text = "重掷商品（3 G）"
+
+[node name="DeckTitle" type="Label" parent="."]
+offset_left = 640.0
+offset_top = 90.0
+offset_right = 1200.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 36
+text = "卡组（售卖）"
+
+[node name="DeckContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 640.0
+offset_top = 160.0
+offset_right = 1420.0
+offset_bottom = 880.0
+theme_override_constants/separation = 8
+
+[node name="ShopInfoLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = 640.0
+offset_top = 900.0
+offset_right = 1420.0
+offset_bottom = 960.0
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+
+[node name="LeaveShopBtn" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 1500.0
+offset_top = 900.0
+offset_right = 1840.0
+offset_bottom = 970.0
+theme_override_font_sizes/font_size = 28
+text = "离开商店"

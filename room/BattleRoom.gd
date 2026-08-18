@@ -147,20 +147,36 @@ func _on_victory() -> void:
 	_end_turn_button.disabled = true
 	_battle_time.say_battle_ended()
 	var is_boss := false
+	var reward_gold := 0
 	if _save_load != null and _save_load.Data != null:
-		is_boss = _save_load.Data.RoomCount >= 20
-	if is_boss:
-		GameLog.info("Boss killed! Advancing to next floor")
-	_save_load.save()
-	var timer := get_tree().create_timer(1.0)
-	timer.timeout.connect(func():
+		var room_count: int = _save_load.Data.RoomCount
+		is_boss = room_count >= 20
+		# 战后金币奖励 = 难度基准 + 随机浮动（balance.md：3~5 / 5~7，Boss 10~15）
+		# 使用 reward RNG 流，保证存档可复现
 		if is_boss:
-			_save_load.advance_to_next_floor()
-		var stage_scene := load("res://room/StageRoom.tscn") as PackedScene
-		var stage: StageRoom = stage_scene.instantiate()
-		get_tree().root.add_child(stage)
-		queue_free()
+			reward_gold = 10 + RngManager.get_reward_rand(6)
+		elif room_count > 6:
+			reward_gold = 5 + RngManager.get_reward_rand(3)
+		else:
+			reward_gold = 3 + RngManager.get_reward_rand(3)
+		_save_load.Data.Gold += reward_gold
+		GameLog.info("Victory reward: +" + str(reward_gold) + " gold (total: " + str(_save_load.Data.Gold) + ")")
+	if is_boss:
+		GameLog.info("Boss killed! Shop will be free, then advancing to next floor")
+	_end_turn_button.text = "Victory! +" + str(reward_gold) + " Gold"
+	_save_load.save()
+	# 每场战后进入商店（balance.md 主循环：胜利 → 金币 → 进入商店）
+	var timer := get_tree().create_timer(1.2)
+	timer.timeout.connect(func():
+		_enter_shop(is_boss)
 	)
+
+func _enter_shop(is_boss: bool) -> void:
+	var shop_scene := load("res://room/ShopRoom.tscn") as PackedScene
+	var shop: ShopRoom = shop_scene.instantiate()
+	shop.IsBossShop = is_boss
+	get_tree().root.add_child(shop)
+	queue_free()
 
 func _on_player_died() -> void:
 	if _is_game_over:

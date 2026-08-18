@@ -6370,6 +6370,58 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Strike",
+      "description": "造成 %D% 点伤害。",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Strike00",
+          "description": "造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/green/arrow_down.png",
+          "baseDamage": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Defend",
+      "description": "获得 %S% 点护盾。",
+      "rarity": 0,
+      "parts": [
+        {
+          "partId": "Defend00",
+          "description": "获得 %S% 点护盾。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/blue/shield.png",
+          "baseShield": 6,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/GrantShieldBehavior.gd"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
