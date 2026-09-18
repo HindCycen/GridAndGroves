@@ -26,8 +26,10 @@ func update(delta: float) -> void:
 	_trigger_after_damage_hooks()
 
 func _play_damage_vfx() -> void:
-	var target_node := target as Node2D
-	if target_node == null and source != null:
+	var target_node: Node2D = null
+	if is_instance_valid(target):
+		target_node = target as Node2D
+	if target_node == null:
 		var tree := _get_source_tree()
 		if tree != null:
 			var enemies := tree.get_nodes_in_group("Enemies")
@@ -42,8 +44,8 @@ func _play_damage_vfx() -> void:
 ## 应用伤害修正（锈蚀减伤等）
 func _apply_damage_modifiers(base_damage: int) -> int:
 	var modified: int = base_damage
-	# 检查目标是否有 RustStat
-	if target is Node2D:
+	# 检查目标是否有 RustStat（target 可能已被释放：敌人死亡后其他排队动作仍持有旧引用）
+	if is_instance_valid(target) and target is Node2D:
 		var rendering = target.get_node_or_null("RenderingComponent")
 		if rendering != null:
 			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
@@ -66,10 +68,10 @@ func _trigger_damage_hooks(period: int) -> void:
 		return
 	var stats_components := tree.get_nodes_in_group("stats_components")
 	for node in stats_components:
-		if node is StatsComponent:
+		if is_instance_valid(node) and node is StatsComponent:
 			var sc: StatsComponent = node as StatsComponent
 			for stat in sc.get_all_statuses():
-				if stat.Definition != null and stat.Definition.Behavior != null:
+				if stat != null and is_instance_valid(stat) and stat.Definition != null and stat.Definition.Behavior != null:
 					# 与 BattleTime._execute_stat_behaviors 相同：
 					# Behavior 为共享 Resource 实例，调用前先修正 belonging_stat
 					stat.Definition.Behavior.belonging_stat = stat
@@ -84,7 +86,7 @@ func _get_source_tree() -> SceneTree:
 	return null
 
 func _find_target_health() -> HealthComponent:
-	if target is Node2D:
+	if is_instance_valid(target) and target is Node2D:
 		var hc := _get_health_component(target)
 		if hc != null:
 			return hc
@@ -98,7 +100,7 @@ func _find_first_alive_enemy_health() -> HealthComponent:
 	if tree == null:
 		return null
 	for enemy in tree.get_nodes_in_group("Enemies"):
-		if enemy is Node2D:
+		if is_instance_valid(enemy) and enemy is Node2D:
 			var hc: HealthComponent = _get_health_component(enemy)
 			if hc != null and not hc.is_dead:
 				return hc

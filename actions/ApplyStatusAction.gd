@@ -17,7 +17,7 @@ func update(delta: float) -> void:
 	tick_duration(delta)
 	if not is_done:
 		return
-	if target is Node2D:
+	if is_instance_valid(target) and target is Node2D:
 		var target_node: Node2D = target as Node2D
 		var rendering = target_node.get_node_or_null("RenderingComponent")
 		if rendering != null and rendering.StatsComponentRef != null:

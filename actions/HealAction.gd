@@ -12,7 +12,7 @@ func update(delta: float) -> void:
 	tick_duration(delta)
 	if not is_done:
 		return
-	if target is Node2D:
+	if is_instance_valid(target) and target is Node2D:
 		var hc: HealthComponent = target.get_node_or_null("RenderingComponent/HealthComponent") as HealthComponent
 		if hc != null:
 			hc.heal(amount)

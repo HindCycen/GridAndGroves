@@ -8,11 +8,11 @@ func _init(vfx_node: Node2D, dur: float, parent_node: Node = null):
 	_vfx_node = vfx_node
 	_parent = parent_node
 	action_type = Enums.ActionType.VFX
-	if _vfx_node != null and _vfx_node.get_parent() == null:
+	if is_instance_valid(_vfx_node) and _vfx_node.get_parent() == null:
 		var target_parent := _parent
-		if target_parent == null and source != null:
+		if target_parent == null and is_instance_valid(source):
 			target_parent = source.get_tree().current_scene
-		if target_parent != null:
+		if target_parent != null and is_instance_valid(target_parent):
 			target_parent.add_child(_vfx_node)
 
 func update(delta: float) -> void:
