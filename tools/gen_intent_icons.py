@@ -26,9 +26,10 @@ OUT = os.path.join("resources", "enemy_intents", "icons")
 
 # 关键词 → (图标, 底色, 描边)
 KEYWORDS = [
-    (("attack", "lash", "hit", "strike", "smash"), ("sword", (148, 44, 36), (72, 16, 8))),      # 红：攻击
+    (("attack", "lash", "hit", "strike", "smash", "slam", "crush", "grip", "pounce",
+      "bite", "volley", "barrage", "whip", "punch", "claw", "fang", "burst"), ("sword", (148, 44, 36), (72, 16, 8))),  # 红：攻击
     (("guard", "defend", "shield", "block", "protect"), ("shield", (32, 128, 128), (0, 64, 96))),  # 蓝：防御
-    (("heal", "recover", "restore", "buff", "empower"), ("cross", (64, 128, 48), (24, 72, 20))),   # 绿：治疗/增益
+    (("heal", "recover", "restore", "buff", "empower", "bloom", "seed", "grow"), ("cross", (64, 128, 48), (24, 72, 20))),   # 绿：治疗/增益
     (("debuff", "weaken", "poison", "rust", "vine", "curse"), ("drop", (92, 62, 140), (38, 22, 76))),  # 紫：削弱
 ]
 DEFAULT = ("star4", (128, 112, 128), (0, 0, 0))  # 灰星：未知意图

@@ -140,14 +140,52 @@ resources/
 | `EnemyName` | `String` | 敌人名称 |
 | `MaxHealth` | `int` | 最大血量（默认 50） |
 | `AttackDamage` | `int` | 攻击力（默认 10） |
-| `EnemyImage` | `Texture2D` | 敌人贴图 |
+| `EnemyImage` | `Texture2D` | 敌人贴图（192×192 单帧，或 384×192 双帧 spritesheet） |
 | `IntentCycle` | `Array` | 行动循环（每回合按顺序执行） |
 | `InitialStats` | `Array` | 初始属性 |
+| `InitialStatValues` | `Array[int]` | 与 `InitialStats` 平行的初始数值（JSON 字段 `initialStatValues`，缺省用 StatDef.MaxValue） |
 
 > ⚠️ 敌人注册已改为 JSON 方案：`resources/enemy_defs.json` → `JsonEnemyScanner`。
 > 旧的 `.tres`（`resources/enemy_defs/Gonh.tres`）不再被加载，仅作为格式参考保留。
 
-**示例 `.tres`**（`resources/enemy_defs/Gonh.tres`）：
+**JSON 示例**（`resources/enemy_defs.json`，现行方案）：
+
+```json
+{
+  "enemies": [
+    {
+      "enemyName": "RustHound",
+      "maxHealth": 22,
+      "attackDamage": 4,
+      "enemyImage": "res://resources/enemy_images/RustHound.png",
+      "initialStats": ["res://resources/stat_defs/Shooting.tres"],
+      "initialStatValues": [5],
+      "intentCycle": [
+        {
+          "intentName": "HoundPounce",
+          "repeatCount": 2,
+          "blockPlacements": [
+            { "blockName": "EnemyAttackBlock", "gridPosition": [5, 1], "randomOffsetRange": 1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "stageCharts": {
+    "EgStageDef": {
+      "weakCharts": [{ "enemies": ["Gonh"] }],
+      "strongCharts": [{ "enemies": ["Gonh", "RustHound"] }],
+      "eliteCharts": [{ "enemies": ["RustColossus"] }],
+      "bossCharts": [{ "enemies": ["IronWarden"] }]
+    }
+  }
+}
+```
+
+> 敌人立绘可用 `python tools/gen_enemy_sprites.py` 生成（详见 `docs/美术管线.md`）；
+> 意图图标由 `python tools/gen_intent_icons.py` 按 `intentName` 关键词自动生成。
+
+**示例 `.tres`**（`resources/enemy_defs/Gonh.tres`，旧方案格式参考）：
 
 ```
 [gd_resource type="Resource" script_class="EnemyDefinition" format=3]
@@ -312,8 +350,8 @@ func create_action(block, part):
 | 0 | `None` | 无 | ✅ |
 | 1 | `HealPlayer` | 治疗玩家 | ✅ |
 | 2 | `DamagePlayer` | 伤害玩家 | ✅ |
-| 3 | `AddGold` | 加金币 | ⚠️ 枚举已定义，尚未实现（无金币系统） |
-| 4 | `RemoveGold` | 扣金币 | ⚠️ 同上 |
+| 3 | `AddGold` | 加金币 | ✅（`EventRoom.gd`） |
+| 4 | `RemoveGold` | 扣金币 | ✅（`EventRoom.gd`） |
 | 5 | `AddBlockToDeck` | 牌组加入方块 | ✅ |
 | 6 | `RemoveBlockFromDeck` | 牌组移除方块 | ✅ |
 
@@ -442,10 +480,10 @@ func execute_at(period: int) -> void:
 | `MiniPack` | `Resource` | 小卡包，`PackName` + `BlockNames: Array[String]`，为每局注入变化 |
 | `CardPool` | 运行时类 | 由 1 个主包 + 4 个随机小包合并去重（`MainPack`/`SelectedMiniPacks`） |
 
-> ⚠️ **当前状态：系统已实现但尚未接入游戏流程**。
-> `PackManager.build_card_pool()` / `CurrentCardPool` 目前没有任何调用方，
-> 主菜单没有卡包选择界面。接入时参考 `packs/CardPool.gd` 的接口
-> （`get_random_block_name()` / `get_random_block_names()` 用于战利品奖励）。
+> ✅ **当前状态：系统已接入游戏流程**。
+> `PackManager._ready()` 自动扫描目录注册卡包；主菜单选择主包后调用
+> `build_card_pool()` 构建卡池；`BattleRoom` 初始牌组校验、`ShopRoom` 商品上架
+> 均消费 `CurrentCardPool`；战败/通关时调用 `clear_card_pool()`。
 
 ---
 

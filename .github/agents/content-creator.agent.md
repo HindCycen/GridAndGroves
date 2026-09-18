@@ -49,10 +49,11 @@ You are a content creation specialist for the Grid and Groves Godot 4.7+ GDScrip
 3. Set `action_type` and `exhaust_source_block` if needed
 
 ### Enemy (敌人)
-1. Create `EnemyDefinition` .tres in `resources/enemy_defs/`
-2. Create `IntentDefinition` .tres in `resources/enemy_intents/`
-3. Add enemy image in `resources/enemy_images/`
-4. Or add entry to `resources/enemy_defs.json`
+1. Add entry to `resources/enemy_defs.json` `"enemies"` array（现行唯一方案），并在 `"stageCharts"` 中登记
+2. 立绘：运行 `python tools/gen_enemy_sprites.py --names <EnemyName>`（或手绘 192×192 / 384×192 双帧放入 `resources/enemy_images/`）
+3. 意图图标：运行 `python tools/gen_intent_icons.py` 自动按 `intentName` 关键词生成
+4. 敌人攻击方块使用 `EnemyAttackBlock`（5 伤）/ `EnemyHeavyAttackBlock`（8 伤）——**不要删除这两个 Block 定义**
+5. 旧方案（`EnemyDefinition` .tres + `IntentDefinition` .tres）已弃用，仅作格式参考
 
 ## Approach
 1. Understand what content is being requested

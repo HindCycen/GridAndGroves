@@ -81,11 +81,12 @@ editor_state()
 | `blocks/` | 方块系统（Block, BlockPart, BlockPartBehavior） |
 | `components/` | 可复用组件（Health, Shield, Stats, Pile, Tooltip 等） |
 | `global/` | Autoload 单例（GameLog, GridState, RngManager, BlockRegistry, PackManager, BattleTime, SaveLoad） |
-| `packs/` | 卡包系统（BlockPack, MiniPack, CardPool）— 已实现但尚未接入主流程 |
+| `packs/` | 卡包系统（BlockPack, MiniPack, CardPool）— 已接入主流程（主菜单选包 → 构建卡池 → 游戏结束清理） |
 | `registerers/` | JSON 扫描注册器（JsonBlockScanner, JsonEnemyScanner） |
 | `resources/` | Godot Resource 定义、.tres 数据文件、block_defs.json / enemy_defs.json |
-| `room/` | 房间系统（StageRoom, BattleRoom, EventRoom, Bot 等） |
+| `room/` | 房间系统（StageRoom, BattleRoom, EventRoom, ShopRoom, Bot 等） |
 | `stats/` | 属性系统（Stat, StatBehavior, StatDef） |
+| `tools/` | 程序化美术生成脚本（Python + Pillow，确定性输出） |
 | `vfx/` | 视觉特效 |
 | `planning/` | 设计文档（世界观、卡包设计、机制设计参考） |
 | `docs/` | 中文开发文档 |
@@ -93,9 +94,9 @@ editor_state()
 ### 关键类
 
 - **`BlockRegistry`** (Autoload): 方块注册与创建（`subscribe_block_def`, `create_block_by_name`）
-- **`PackManager`** (Autoload): 卡包注册与卡池构建（`subscribe_block_pack`, `build_card_pool`）— 尚未接入游戏流程
+- **`PackManager`** (Autoload): 卡包注册与卡池构建（`subscribe_block_pack`, `build_card_pool`；`_ready` 自动扫描卡包目录）
 - **`BattleTime`** (Autoload): 战斗事件总线（信号系统），触发 StatBehavior 钩子
-- **`SaveLoad`** (Autoload): 存档读写与玩家状态恢复
+- **`SaveLoad`** (Autoload): 存档读写与玩家状态恢复（含金币/卡池/层数/击杀）
 - **`GridState`** (Autoload): 网格状态管理
 - **`RngManager`** (Autoload): 多流随机数管理
 - **`GameLog`** (Autoload): 日志输出
@@ -106,10 +107,12 @@ editor_state()
 - **`BlockPartBehavior`**: 部件行为基类，返回 AbstractGameAction
 - **`BlockDef` / `BlockPartDef`**: 不再是 Resource 类，数据在 `resources/block_defs.json` 中由 JSON 扫描器构建
 - **`Stat`**: 属性节点，通过 StatBehavior 实现自动触发的状态效果
-- **`Room`**: 房间基类，被 StageRoom/BattleRoom/EventRoom 继承
+- **`Room`**: 房间基类，被 StageRoom/BattleRoom/EventRoom/ShopRoom 继承
 - **`BlockPack`**: 主卡包 Resource（`PackName` + `BlockNames`），对应角色核心卡池
 - **`MiniPack`**: 小卡包 Resource（`PackName` + `BlockNames`），为每局注入变化
 - **`CardPool`**: 运行时卡池，由 1 个 BlockPack + 4 个 MiniPack 合并去重而成
+- **`EnemyAttackBlock`**: 敌人意图放置的攻击方块（`faction: 1` + `DamagePlayerBehavior`）——**这是网格玩法核心，修改 `block_defs.json` 时严禁删除**
+- **`Victory` / `GameOver`**: 通关（第 3 层 Boss 后）与战败结算场景
 
 ### 战斗管线（TicTac 三段式）
 
@@ -190,35 +193,39 @@ BlockPartBehavior 的 `.gd` 代码文件保持不变，JSON 中通过 `"script"`
 2. 如有新行为逻辑，在 `resources/blockpart_behaviors/` 新建 `.gd` 文件
 3. **无需创建任何 `.tres` 文件**
 
-### 卡包注册（尚未接入主流程）
+### 卡包注册（已接入主流程）
 
-> ⚠️ 卡包系统（PackManager / BlockPack / MiniPack / CardPool）代码已实现，
-> 但**尚未接入游戏流程**：没有任何调用方，主菜单也没有卡包选择界面。
-> 以下为接入时参考的 API（注册入口建议放在游戏开局处，而非遗留的 registerer）：
+> ✅ 卡包系统（PackManager / BlockPack / MiniPack / CardPool）已接入游戏流程：
+> `PackManager._ready()` 自动扫描 `resources/block_packs/`、`resources/mini_packs/` 注册全部卡包；
+> `MainMenu` 提供卡包选择；`BattleRoom`/`ShopRoom` 消费 `CurrentCardPool`；战败/通关时清理。
 
 ```gdscript
-# 注册主卡包
+# 手动注册（一般不需要，_ready 已自动扫描目录）
 PackManager.subscribe_block_pack(load("res://resources/block_packs/MyPack.tres"))
-
-# 注册小卡包
 PackManager.subscribe_mini_pack(load("res://resources/mini_packs/MyMini.tres"))
 ```
 
 ### 运行时调用
 
 ```gdscript
-# 构建卡池（在开局时调用）
-PackManager.build_card_pool("战士卡包")
+# 构建卡池（主菜单选择主包时调用；自动随机 4 个小包）
+PackManager.build_card_pool("铁锈游侠")
 
-# 从卡池中随机获取 Block 名称（用于战利品奖励）
+# 从存档恢复卡池（Continue 流程）
+PackManager.restore_card_pool_from_save()
+
+# 从卡池中随机获取 Block 名称（商店上架 / 奖励）
 var reward_block_name: String = PackManager.CurrentCardPool.get_random_block_name()
-var reward_block: Block = BlockRegistry.create_block_by_name(reward_block_name)
 
-# 通过名称创建 Block 实例
-var block = BlockRegistry.create_block_by_name("DamageBlock")
+# 校验某 Block 是否在本局卡池内
+if PackManager.CurrentCardPool.contains_name("Strike"):
+    pass
+
+# 游戏结束（战败 / 通关）清理
+PackManager.clear_card_pool()
 ```
 
-## 卡包系统 (packs/) — 已实现但尚未接入
+## 卡包系统 (packs/) — 已接入
 
 ### 类体系
 
@@ -226,43 +233,23 @@ var block = BlockRegistry.create_block_by_name("DamageBlock")
 |------|------|------|
 | `BlockPack` | `class_name Resource` | 主卡包，`PackName` + `BlockNames: Array[String]`，对应角色核心卡池 |
 | `MiniPack` | `class_name Resource` | 小卡包，`PackName` + `BlockNames: Array[String]`，为每局注入变化 |
-| `CardPool` | 运行时类 | 由 1 个 BlockPack + 4 个随机 MiniPack 合并去重而成（`AllBlockNames` / `Count` / `get_random_block_name()` / `get_random_block_names()`） |
+| `CardPool` | 运行时类 | 由 1 个 BlockPack + 4 个随机 MiniPack 合并去重而成（`AllBlockNames` / `Count` / `contains_name()` / `get_random_block_name()` / `get_random_block_names()`） |
 
-> ✅ 卡包 `.tres` 已落地（Phase 0，2026-08-11）：3 主包 + 5 小包已创建于
-> `resources/block_packs/`、`resources/mini_packs/`（见 `planning/main-loop-repair-plan.md`）。
-> 但 `.tres` 中引用的 Block 名称（如 `RustyWrench`）尚未写入 `block_defs.json`
-> （Phase 1 待办），当前 `block_defs.json` 只包含 8 个示例 Block。
+> ✅ 3 主包（铁锈游侠 33 / 星语术士 32 / 翠绿哨兵 32）+ 5 小包（各 10）已创建，
+> 且全部 Block 名称已在 `block_defs.json` 中兑现（147/147，2026-08-15）。
+> 当前 `block_defs.json` 共 151 个 Block（147 卡包 + Strike/Defend/Sapling/ThornTrap）。
 
-### 生命周期（目标设计）
+### 生命周期（现行实现）
 
 ```
-开局 → 玩家从注册的 BlockPacks 中选择一个主卡包
+开局 → 主菜单列出已注册 BlockPacks，玩家选择一个主卡包
      → PackManager.build_card_pool(main_pack_name)
        └→ 从注册的 MiniPacks 中随机选 4 个
-       └→ 合并去重构建 CardPool
-       └→ 存入 PackManager.CurrentCardPool
-     → 整局游戏中只能使用卡池内的 BlockDef
-     → 游戏结束 → PackManager.clear_card_pool()
-```
-
-### 接入待办
-
-1. ✅ 创建主卡包与 MiniPack 的 `.tres` 资源（`resources/block_packs/`、`resources/mini_packs/`）— Phase 0 已完成（3 主包 + 5 小包）
-2. 在开局时注册卡包并调用 `build_card_pool()`（主菜单卡包选择界面）
-3. 初始牌组 / 战利品奖励改为从 `CurrentCardPool` 生成
-4. 游戏结束时调用 `clear_card_pool()`
-
-### 注册方式（待接入后参考）
-
-> ⚠️ 以下代码块仅为接入时的参考示例，当前没有任何调用方；
-> 遗留的 `AbstractBlockRegisterer` / `OriginalBlockRegisterer` 的 `register()` 已无调用方，不建议继续使用。
-
-```gdscript
-# 注册主卡包
-PackManager.subscribe_block_pack(load("res://resources/block_packs/MyPack.tres"))
-
-# 注册小卡包
-PackManager.subscribe_mini_pack(load("res://resources/mini_packs/MyMini.tres"))
+       └→ 合并去重构建 CardPool，存入 PackManager.CurrentCardPool
+       └→ 主包/小包名写入 SaveLoad.Data（Continue 时 restore_card_pool_from_save）
+     → 初始牌组读 StageDef.StartingDeck 并用 CurrentCardPool 校验
+     → 商店按稀有度从卡池上架商品
+     → 游戏结束（战败 / 通关）→ PackManager.clear_card_pool()
 ```
 
 ## Godot MCP 集成
@@ -276,10 +263,22 @@ PackManager.subscribe_mini_pack(load("res://resources/mini_packs/MyMini.tres"))
 - `docs/如何编写Resource文件.md` — Resource 类型和 .tres 文件编写指南
 - `docs/如何制作BlockAndStat内容.md` — Block/Stat 内容制作完整指南（含 JSON 注册说明）
 - `docs/StageRoom.md` — 楼层内循环系统文档
+- `docs/美术管线.md` — 程序化美术生成管线（工具用法、风格约定、验证方式）
 - `.github/instructions/card-pack-design.instructions.md` — 卡包设计核心原则（三个主包的设计差异、特性标签、设计禁忌）
 - `.github/instructions/godot-mcp.instructions.md` — Godot MCP 使用指南
 - `.github/instructions/architecture.instructions.md` — 架构详细说明
+- `planning/main-loop-repair-plan.md` — 主循环修补计划（含 2026-09-12 进度快照与遗留待办）
 - `planning/card_pack_design/` — 完整卡包设计示例（包含每个包的 Block 列表、新增 Behavior/Stat 建议）
+
+### 美术与内容生成
+
+- 所有程序化美术工具在 `tools/`（Python + Pillow），确定性输出、可重复运行：
+  - `gen_block_parts.py` — 96×96 部件图（8 配色 × 图标库）
+  - `gen_hand_icons.py` — 手绘原型提取
+  - `gen_stat_icons.py` / `gen_intent_icons.py` — 45×45 图标
+  - `gen_enemy_sprites.py` — 敌人立绘（192×192 两帧 spritesheet）
+  - `assign_part_art.py` — 按语义/卡包分配部件图到 `block_defs.json`
+- 新增/修改美术后运行 `python tools/gen_xxx.py` 重新生成，并用 Godot headless 加载校验（见 `docs/美术管线.md`）
 
 ### 卡包设计文件索引
 

@@ -1,7 +1,74 @@
 # 游戏主循环修补计划
 
 > 本文档描述当前项目与"正常 Roguelike 卡牌游戏主循环"及项目设计文档（`planning/`、`.github/copilot-instructions.md`）之间的差距，并给出分阶段的详细修补计划。
-> 状态：**Phase 0 已完成（2026-08-11），其余阶段待实施**
+> 状态：**Phase 0/1 已完成；Phase 2/3 大部分已落地（2026-08-18 起）；Phase 5 意图 UI 已完成。
+> 2026-09-12 完成 P0 闭环修补（敌人扩充/精英/楼层缩放/通关结局/StageCount 修复/EnemyAttackBlock 修复）。**
+
+---
+
+## 0. 进度快照（2026-09-12 核实）
+
+> 本节以**代码现实**为准，修正此前文档滞后与自相矛盾之处。核实手段：全库 grep + 文件通读 + Godot 4.7 headless 冒烟。
+
+| 计划项 | 实际状态 | 证据 |
+|--------|----------|------|
+| Phase 1 卡包内容 147 Block | ✅ 已完成（2026-08-15） | `resources/block_defs.json` 151 Block（147 卡包 + Strike/Defend/Sapling/ThornTrap） |
+| Phase 2 主菜单卡包选择 / 卡池构建 / Continue 恢复 | ✅ 已完成（2026-08-18） | `MainMenu.gd:26-85`、`PackManager.gd:70-113` |
+| Phase 2.3 初始牌组读 `StartingDeck` | ✅ 已完成 | `room/BattleRoom.gd:92-100`、`EgStageDef.tres` |
+| Phase 2.4 `clear_card_pool()` 游戏结束清理 | ✅ 已完成（2026-09-12 接线） | `BattleRoom._on_defeat/_on_victory`、`Victory.gd` |
+| Phase 3.1 金币存档 + 顶栏显示 | ✅ 已完成 | `DataResource.Gold`、`Room.gd:83-85` |
+| Phase 3.2 战后奖励 | ✅ 金币奖励已完成（2026-08-18）；**卡牌三选一改为商店购买**（设计变更） | `BattleRoom.gd:143-179`、`ShopRoom.gd` |
+| Phase 3.3 事件 AddGold/RemoveGold | ✅ 代码已支持（`EventRoom.gd:77-82`）；事件池仍为 3 个（待扩充） | `EgStageDef.tres` |
+| Phase 4 商店房间 | ⚠️ 部分：`ShopRoom` 已实现且每战必进；地图商店格（`IsShopCell`）未实现 | `ShopRoom.gd`（309 行） |
+| Phase 5.1 敌人数量 | ⚠️ 2026-09-12 扩充至 6 个（3 普通 + 1 精英 + 2 Boss） | `resources/enemy_defs.json` |
+| Phase 5.2 精英接入 | ✅ 已完成（2026-09-12）：roomCount 7~13 有 25% 概率抽 `eliteCharts` | `StageRoom.gd` |
+| Phase 5.3 楼层缩放 | ✅ 已完成（2026-09-12）：血量/攻击 +12%/层（`StageCount`） | `EnemyManager.gd`、`Enemy.gd` |
+| Phase 5.4 意图 UI | ✅ 已完成（2026-08-18） | `Enemy.gd:38-47`、`enemy_intents/icons/` |
+| Phase 6.1 通关结局 | ✅ 已完成（2026-09-12）：Stage 3 Boss 后进入 `Victory` | `ShopRoom.gd`、`Victory.gd/.tscn` |
+| Phase 6.2 Stat 三时期接线 | ⬜ 仍未实现 | `BattleTime.gd` 仅 7 信号 |
+| 旧计划未记录的问题 | ✅ 修复：① `EnemyAttackBlock` 曾丢失（敌人无法放置攻击方块）；② `StageCount` 每层双重 +1；③ 初始牌组不校验卡池 | 见下文各节 |
+
+**遗留真实待办（截至 2026-09-12）**：
+
+1. Phase 6.2 三个 Stat 时期接线（`OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied`）
+2. 事件池扩充（当前 3 个；宝箱事件尚未配置 AddGold 数值）
+3. 地图商店格（Phase 4.2）与商店格图片（Phase 4.3）——当前以"每战必进商店"替代
+4. 卡组规模约束：实现为商店侧 15~50（balance.md 标注 10~50，需产品决策统一口径）
+5. Phase 1 记录的 13 处设计省略（见 Phase 1 小节）
+6. 换层不切换 StageDef：所有楼层共用 `EgStageDef`（当前以敌人缩放体现难度，切换 StageDef 留待内容需要时再做）
+
+### 2026-09-12 修补记录（P0 闭环 + 美术管线）
+
+**修复的严重 Bug（此前均为静默/软锁级）**：
+
+| Bug | 影响 | 修复 |
+|-----|------|------|
+| `EnemyAttackBlock` 在 Phase 1 重写 JSON 时丢失 | 敌人 AI 放置攻击方块全部失败，网格战斗机制名存实亡 | 恢复 `EnemyAttackBlock`（5 伤）+ 新增 `EnemyHeavyAttackBlock`（8 伤） |
+| Boss 判定永不触发 | 最短路径终点进入时 `roomCount=19 < 20`，Boss 图表永不选取，玩家卡在终点格 | 终点格（右上角）强制 `bossCharts`，`_build_enemy_chart_for_room(room_count, is_boss_cell)` |
+| `advance_to_next_floor()` 赋 `[]` 给 `Array[int]` 字段报错 | 换层不清空地图 → 新楼层恢复上层死图（软锁） | 改用 `.clear()` 保留类型 |
+| `StageCount` 每层双重 +1 | 楼层计数/顶栏显示/缩放系数全部偏移 | 仅在 `StageRoom._generate_map()` 递增 |
+
+**新增内容与功能**：
+
+- 敌人 6 个：普通 `Gonh` / `RustHound` / `SporeCrawler`；精英 `RustColossus`；Boss `IronWarden` / `BloomMother`（含各自意图循环）
+- 楼层缩放：血量/攻击 = 基准 × (1 + 0.12 × (StageCount - 1))，`EnemyManager` 注入、`Enemy` 应用
+- 精英遭遇：roomCount 7~13 有 25% 概率抽 `eliteCharts`
+- 通关结局：`SaveLoad.FINAL_STAGE = 3`，第 3 层 Boss 后经商店进入 `Victory.tscn`（统计层数/房间/金币/击杀/卡组规模）
+- 初始牌组：读 `StartingDeck` 时用 `CurrentCardPool.contains_name()` 校验（基础卡豁免）
+- `clear_card_pool()` 接线（战败 + 通关）、击杀统计 `DataResource.KillCount`
+- 敌人立绘程序化生成器 `tools/gen_enemy_sprites.py`（2 帧动画）+ 意图图标扩充 + `docs/美术管线.md`
+
+**验证证据（Godot 4.7 headless）**：
+
+```
+134 脚本解析全检 → 0 失败
+冒烟 A: EnemyAttackBlock faction=1 parts=1 DamagePlayerBehavior=true; Heavy dmg=8
+冒烟 B: Stage3 IronWarden scaling=1.24 attack=12 maxhp=136
+冒烟 C: elite 13/40; final-cell boss=BloomMother
+冒烟 E: advance 后 StageCount=2（非 3）RoomCount=0
+冒烟 D: Victory 场景加载=true 卡池清理=true RunEnded=true
+主场景 --quit-after 5 → 无 ERROR
+```
 
 ---
 
@@ -51,20 +118,20 @@ MainMenu (Continue / New Game)
 → Boss → 下一层（敌人变强）→ … → 通关结算
 ```
 
-对照现状：
+对照现状（**2026-09-12 更新**，✅ 表示已解决）：
 
 | # | 标准循环环节 | 现状 | 严重度 |
 |---|--------------|------|--------|
-| 1 | 卡包/角色选择界面 | ❌ 主菜单直接 New Game，无任何选择 | 高 |
-| 2 | 卡池（主包 + 4 小包）构建 | ❌ `PackManager` 无任何调用方，`CardPool` 从未构建 | 高 |
-| 3 | 战后奖励（金币 + 卡牌三选一） | ❌ 胜利后静默回地图，无任何奖励 | 高 |
-| 4 | 游戏内经济（金币/商店/买卖/重掷） | ❌ 商店不存在；金币字段已加（Phase 0）但未接入 UI | 高 |
-| 5 | Boss 战与关卡递进 | ⚠️ 有 `bossCharts` 判定（roomCount ≥ 20）与 `advance_to_next_floor()`，但所有图表内容相同、换层后 StageDef 不变、**无通关结局** | 高 |
-| 6 | 敌人内容与意图可见性 | ⚠️ 只有 1 个敌人 Gonh（普通/精英/Boss 全是它）；`eliteCharts` 预留未用；敌人意图无 UI 展示（仅数据层） | 中 |
-| 7 | 难度曲线 | ❌ 无敌人强度随楼层缩放，无 Ascension 类系统 | 中 |
-| 8 | 卡组规模约束（10~50） | ❌ 无任何上下限检查 | 中 |
-| 9 | 事件多样性 | ⚠️ 仅 3 个事件；`AddGold/RemoveGold` ActionType 未实现 | 中 |
-| 10 | 结算画面 | ⚠️ GameOver 只有 Stage/Room 数字 | 低 |
+| 1 | 卡包/角色选择界面 | ✅ 已实现（`MainMenu.gd`，主包 3 选 1 + 随机 4 小包预览） | — |
+| 2 | 卡池（主包 + 4 小包）构建 | ✅ 已实现（`PackManager.build_card_pool` / `restore_card_pool_from_save`） | — |
+| 3 | 战后奖励 | ✅ 金币奖励已实现；卡牌获取并入战后商店（设计变更，取代"三选一"弹窗） | — |
+| 4 | 游戏内经济（金币/商店/买卖/重掷） | ✅ 已实现（`ShopRoom.gd`）+ 金币顶栏；⏳ 地图商店格未实现 | 低 |
+| 5 | Boss 战与关卡递进 | ✅ Boss 判定（roomCount ≥ 20）；✅ Stage 3 Boss 后通关结算 `Victory.tscn`；⏳ 换层不切换 StageDef（以缩放替代） | 低 |
+| 6 | 敌人内容与意图可见性 | ✅ 6 个敌人（3 普通 + 1 精英 + 2 Boss）+ 意图图标 UI；⏳ 敌人数量仍可继续扩充 | 低 |
+| 7 | 难度曲线 | ✅ 血量/攻击随楼层 +12%/层；尚无 Ascension 类系统 | 低 |
+| 8 | 卡组规模约束 | ⚠️ 商店侧 15~50（balance.md 写 10~50，口径待统一） | 低 |
+| 9 | 事件多样性 | ⚠️ 仅 3 个事件；`AddGold/RemoveGold` 已实现但宝箱事件未配置数值 | 中 |
+| 10 | 结算画面 | ✅ GameOver / Victory 均含 Stage/Room/Gold/击杀统计 | 低 |
 
 ---
 
@@ -73,32 +140,32 @@ MainMenu (Continue / New Game)
 ### 3.1 `.github/copilot-instructions.md`（卡包系统接入待办 4 项）
 
 - ✅ 卡包 `.tres` 已创建（Phase 0）：3 主包 + 5 小包（`resources/block_packs/`、`resources/mini_packs/`）
-- ❌ 开局未注册卡包、未调用 `build_card_pool()`；主菜单无卡包选择界面
-- ❌ 初始牌组/战利品不从 `CurrentCardPool` 生成——`BattleRoom._initialize_player_deck()` 仍为硬编码回退逻辑；`EgStageDef.tres` 已配 `StartingDeck`（Phase 0）
-- ❌ 游戏结束未调用 `clear_card_pool()`
+- ✅ 开局自动注册卡包（`PackManager._ready` 扫描目录）、主菜单卡包选择、`build_card_pool()` 已接通
+- ✅ 初始牌组读 `EgStageDef.StartingDeck`；✅ 已用 `CurrentCardPool.contains_name()` 校验非基础卡
+- ✅ 游戏结束（战败/通关）调用 `clear_card_pool()`
 
 ### 3.2 `planning/card_pack_design/balance.md`（完整经济规格）
 
-- ⚠️ 金币字段 `DataResource.Gold` 已加（默认 10）；战斗奖励、商店价格表、重掷费用未实现
-- ⚠️ 初始卡组基准已配（4 Strike + 4 Defend）；角色固有 + 角色能力 2 格待 Phase 2 动态追加
-- ❌ 离店检查（<10 自动补牌、>10 禁离店）未实现
+- ✅ 金币字段 `DataResource.Gold`（默认 10）；✅ 战斗奖励、✅ 商店价格表、✅ 重掷费用均已实现
+- ⚠️ 初始卡组基准已配（4 Strike + 4 Defend）；角色固有 + 角色能力 2 格仍未实现（待内容设计）
+- ⚠️ 离店检查已实现但为 15/50（无 <10 自动补牌；>50 禁离店），与本文档 <10/>10 的表述不一致，待产品口径统一
 - ⚠️ 两条 Scaling 路径（跨战斗 Stat 积累 / Bot 路径操控）机制已在代码层支持，但无对应 Block 内容
 
 ### 3.3 `planning/sts-design-reference.md` 第 9 章
 
-- ⚠️ 稀有度体系已入库（Phase 0）：JSON `rarity` 字段 + `Block.Rarity` + `BlockRegistry.RarityWeights` 权重表 + `pick_random_rarity()`；战利品加权逻辑待 Phase 3
-- ❌ "饥饿保护"（稀有保底）、Boss 意图可观察（无 UI）、Ascension 难度系统（+1~+10）均未实现
+- ✅ 稀有度体系已入库：JSON `rarity` 字段 + `Block.Rarity` + `BlockRegistry.RarityWeights` 权重表 + `pick_random_rarity()`，已用于商店上架
+- ⚠️ "饥饿保护"（稀有保底）、Ascension 难度系统（+1~+10）未实现；✅ Boss/精英意图图标可观察（敌人头顶 IntentIcon）
 - ⚠️ 跨战斗 Stat ≈ 10~15 个/局、"遗物类 Block 永久移除"——无内容支撑
 
 ### 3.4 `planning/card_pack_design/*.md`（内容层）
 
-- ❌ 3 主包（约 30~35 个/包）+ 5 小包（10 个/包）共约 140 个 Block 设计**未落地**——`block_defs.json` 仅 8 个 Block（7 示例 + 新增 Defend）
-- ⚠️ `technical.md` 中的游戏循环修改：松动/共鸣/驻留/过载**已实现**；`PlacementRestrictionBehavior`（放置限制钩子）**未实现**；法阵上限 2 / 扎根上限 3 等约束未实现
+- ✅ 3 主包（33/32/32）+ 5 小包（各 10）共 147 个 Block 已全部落地（2026-08-15）
+- ⚠️ `technical.md`：松动/共鸣/驻留/过载**已实现**；`PlacementRestrictionBehavior`（放置限制钩子）**已实现**（奇点中央限制）；法阵上限 2 / 扎根上限 3 约束**已实现**（`GlyphRootBehavior.can_place_glyph`）
 
 ### 3.5 其他文档注明的小缺口
 
-- `architecture.instructions.md`：`OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied` 三个时期**尚未接线**（Enums 与 BattleTime 均有定义但无信号发出）
-- `StageRoom.md`：`eliteCharts` 标注"为预留"——符合文档现状，但与设计目标（有精英战）有差距
+- `architecture.instructions.md`：`OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied` 三个时期**尚未接线**（Enums 与 BattleTime 均有定义但无信号发出）——**仍准确**
+- ✅ `eliteCharts` 已启用（2026-09-12）：roomCount 7~13 有 25% 概率进入精英战
 
 ---
 
@@ -107,12 +174,12 @@ MainMenu (Continue / New Game)
 | 阶段 | 主题 | 优先级 | 内容概要 | 状态 |
 |------|------|--------|----------|------|
 | Phase 0 | 数据层扩展 | P0 | 金币/卡池存档字段、Block 稀有度入库、Defend 补全、卡包 .tres、初始卡组配置 | ✅ 已完成 |
-| Phase 1 | 卡包内容落地 | P0 | 3 主包 + 5 小包约 140 个 Block 写入 `block_defs.json`（按设计文档 + 数值验算） | ⬜ |
-| Phase 2 | 卡包接入主流程 | P0 | 主菜单卡包选择界面、卡池构建、初始牌组/战利品从卡池生成、结束清理 | ⬜ |
-| Phase 3 | 战后奖励与经济 | P0 | 金币系统、战后奖励弹窗（金币+三选一）、事件补全 | ⬜ |
-| Phase 4 | 商店房间 | P1 | ShopRoom、地图商店格、买卖/重掷/离店检查 | ⬜ |
-| Phase 5 | 敌人与难度曲线 | P1 | 敌人内容扩充、精英接入、楼层缩放、意图 UI | ⬜ |
-| Phase 6 | 结局与打磨 | P2 | 通关判定与胜利结算、Stat 时期接线、结算统计增强、全量验证 | ⬜ |
+| Phase 1 | 卡包内容落地 | P0 | 3 主包 + 5 小包 147 个 Block 写入 `block_defs.json`（按设计文档 + 数值验算） | ✅ 已完成（2026-08-15） |
+| Phase 2 | 卡包接入主流程 | P0 | 主菜单卡包选择界面、卡池构建、初始牌组从卡池生成、结束清理 | ✅ 已完成（2026-09-12） |
+| Phase 3 | 战后奖励与经济 | P0 | 金币系统、战后奖励（金币 + 商店购买）、事件补全 | ✅ 金币/商店已完成；⏳ 事件池待扩充 |
+| Phase 4 | 商店房间 | P1 | ShopRoom 已实现（每战必进）；⏳ 地图商店格、商店格图片未做 | ⚠️ 大部分完成 |
+| Phase 5 | 敌人与难度曲线 | P1 | 6 敌人（3 普通/1 精英/2 Boss）、精英接入、楼层缩放、意图 UI | ✅ 已完成（2026-09-12） |
+| Phase 6 | 结局与打磨 | P2 | 通关判定与胜利结算、结算统计增强、全量验证 | ✅ 6.1/6.3/6.4 已完成；⬜ 6.2 Stat 三时期未接线 |
 
 ---
 
@@ -159,49 +226,49 @@ MainMenu (Continue / New Game)
 > 星门链位置 +1 效果省略（仅护盾 10）；新星全触发 AOE 省略；超新星前兆"四部件全被链触发"简化为全部件触发；星语法阵"回合结束结算"改为触发时按回响计数结算；光合作用扎根条件省略；孢子喷射 ≥3 层条件省略；静态场"每触发 1 Block +1"省略；奇点"共鸣链 ≥3 才可放置"省略；磁力收束/蒸汽锤消费端位置调整（数值等价）；烟雾弹 -50% 改 -4 锈蚀；闪光弹同理；痛觉强化 HP 统计省略；引力波/炸药包/弹射的 Bot 交互效果部分省略。
 > **验证**：130 脚本解析全检 0 失败；headless 冒烟 147/147 实例化 + 行为创建 0 错误；8 卡包命名契约 100% 匹配。
 
-### Phase 2 — 卡包接入主流程（P0）
+### Phase 2 — 卡包接入主流程（P0）✅ 已完成（2026-09-12 收尾）
 
-| # | 任务 | 涉及文件 |
-|---|------|----------|
-| 2.1 | 主菜单卡包选择界面 | `MainMenu.gd` + `MainMenu.tscn` 改造：展示 3 主包（名称/机制/风格简介），选中后显示 4 个随机小包与卡池预览 |
-| 2.2 | 开局注册与构建卡池 | `MainMenu.gd`：`subscribe_block_pack` / `subscribe_mini_pack` → `build_card_pool(主包名)` → 将主包/小包名写入 `SaveLoad.Data.MainPackName` / `SelectedMiniPackNames`；`New Game` 与 `Continue` 均走此路径（Continue 从存档恢复卡池） |
-| 2.3 | 初始牌组从 StageDef + 卡池生成 | `room/BattleRoom.gd`：`_initialize_player_deck()` 改为读 `StartingDeck`，并用 `PackManager.CurrentCardPool.contains_name()` 校验；从卡池生成"角色固有/能力"（`CardPool.get_random_block_name()`） |
-| 2.4 | 游戏结束清理 | `BattleRoom._on_defeat()` / GameOver 返回时调用 `PackManager.clear_card_pool()` |
+| # | 任务 | 涉及文件 | 状态 |
+|---|------|----------|------|
+| 2.1 | 主菜单卡包选择界面 | `MainMenu.gd` + `MainMenu.tscn` | ✅ 主包列表动态生成，选中后显示 4 个随机小包与卡池规模 |
+| 2.2 | 开局注册与构建卡池 | `MainMenu.gd`、`PackManager.gd` | ✅ 注册由 `PackManager._ready` 自动扫描完成；`build_card_pool` 写入存档；Continue 走 `restore_card_pool_from_save` |
+| 2.3 | 初始牌组从 StageDef + 卡池生成 | `room/BattleRoom.gd` | ✅ 读 `StartingDeck` 并用 `CurrentCardPool.contains_name()` 校验（非基础卡不在卡池时告警并回退）；"角色固有/能力"仍待内容设计 |
+| 2.4 | 游戏结束清理 | `BattleRoom._on_defeat()` / `Victory.gd` | ✅ 战败与通关均调用 `PackManager.clear_card_pool()` |
 
-### Phase 3 — 战后奖励与经济（P0）
+### Phase 3 — 战后奖励与经济（P0）✅ 核心已完成
 
-| # | 任务 | 涉及文件 |
-|---|------|----------|
-| 3.1 | 金币系统 | `SaveLoad.gd`（保存/恢复 `Gold`）、`Room.gd` 顶栏加金币显示 |
-| 3.2 | 战后奖励弹窗（新场景 `RewardPanel`） | `room/BattleRoom.gd` 胜利流程中插入：金币（weak 3~5 / strong 5~7 / boss 10~15，用 `get_reward_rand`）、卡牌三选一（`BlockRegistry.pick_random_rarity()` + `CardPool` 按稀有度筛选），可选"跳过"；结束时才 `_navigate_to_stage()` |
-| 3.3 | 事件补全 | `room/EventRoom.gd` 实现 `AddGold/RemoveGold`；`EgStageDef.tres` 扩充事件池（新增 5~8 个事件：加金币、删卡、加卡、受伤换 Stat 等） |
-| 3.4 | 奖励与存档联动 | 奖励选择写回 `PlayerDeckBlockNames`；`Room._exit_tree` 已自动 save |
+| # | 任务 | 涉及文件 | 状态 |
+|---|------|----------|------|
+| 3.1 | 金币系统 | `SaveLoad.gd`、`Room.gd` | ✅ 存档字段 + 顶栏显示 |
+| 3.2 | 战后奖励 | `room/BattleRoom.gd`、`room/ShopRoom.gd` | ✅ 金币（3~5 / 5~7 / 10~15）；**设计变更**：卡牌获取改为商店购买（按稀有度加权上架），未做"三选一"弹窗 |
+| 3.3 | 事件补全 | `room/EventRoom.gd`、`EgStageDef.tres` | ⚠️ `AddGold/RemoveGold` 已实现；事件池仍为 3 个，宝箱"Open"未配置数值 |
+| 3.4 | 奖励与存档联动 | `Room._exit_tree` | ✅ 自动 save |
 
-### Phase 4 — 商店房间（P1）
+### Phase 4 — 商店房间（P1）⚠️ 大部分完成
 
-| # | 任务 | 说明 |
-|---|------|------|
-| 4.1 | 新建 `ShopRoom` | `room/ShopRoom.gd/.tscn`，继承 Room：商品区（从 CardPool 按稀有度权重刷 4~6 件，价格 8-10 / 15-20 / 25-35 / 40-60）、重掷按钮（3 起 +1/次）、卖出区（打击/防御 1 金，其他半价）、离店检查（<10 补 Strike/Defend、>10 禁离店） |
-| 4.2 | 地图接入商店格 | `room/StageRoom.gd` + `DataResource` 增加 `IsShopCell` 数组与存档；`_enter_room` 分发到 ShopRoom；Boss 战后商店（0 金、不可重掷）由 `advance_to_next_floor()` 后首个房间触发 |
-| 4.3 | 商店格图片资源 | `room/room_pictures/ShopRoomBn.png`（参考现有 Bn 96×96） |
+| # | 任务 | 说明 | 状态 |
+|---|------|------|------|
+| 4.1 | 新建 `ShopRoom` | 商品区（4 件，Boss 5 件全免费）、重掷（3 起 +1/次）、卖出（基础卡 1 金/其他半价）、离店检查（15/50） | ✅ 已完成 |
+| 4.2 | 地图接入商店格 | `DataResource.IsShopCell` + `StageRoom` 分发 | ⬜ 未做；当前设计为"每战必进商店" |
+| 4.3 | 商店格图片资源 | `room/room_pictures/ShopRoomBn.png` | ⬜ 未做（无地图格则不需要） |
 
-### Phase 5 — 敌人与难度曲线（P1）
+### Phase 5 — 敌人与难度曲线（P1）✅ 已完成（2026-09-12）
 
-| # | 任务 | 说明 |
-|---|------|------|
-| 5.1 | 敌人内容扩充 | `resources/enemy_defs.json`：新增 2~3 个普通敌人（不同意图周期）+ 1 精英 + 2 个 Boss（各有 3+ 意图）；图片与意图资源放入 `enemy_images/`、`enemy_intents/` |
-| 5.2 | 精英接入 | `room/StageRoom.gd`：roomCount 7~13 区间有概率（约 25%，用 `get_monster_rand`）抽 `eliteCharts`；填充 eliteCharts 数据 |
-| 5.3 | 楼层缩放 | `EnemyManager.queue_attacks` / AI 处按 `StageCount` 对敌人伤害/血量乘系数（如 +10%/层，参考 Ascension +1）；`advance_to_next_floor()` 增加换 StageDef 的逻辑（后续楼层可配不同图表/事件池） |
-| 5.4 | 意图 UI | `actors/enemy/Enemy.tscn` 加头顶意图图标/文字（读 `AIComponent.get_current_intent()`，回合开始刷新），敌我双方均可观察 |
+| # | 任务 | 说明 | 状态 |
+|---|------|------|------|
+| 5.1 | 敌人内容扩充 | 6 个敌人：普通 Gonh / RustHound / SporeCrawler；精英 RustColossus；Boss IronWarden / BloomMother。立绘由 `tools/gen_enemy_sprites.py` 确定性生成 | ✅ |
+| 5.2 | 精英接入 | roomCount 7~13 有 25% 概率（`get_monster_rand`）抽 `eliteCharts` | ✅ |
+| 5.3 | 楼层缩放 | 血量/攻击 = 基准 × (1 + 0.12 × (StageCount - 1))，`EnemyManager` 注入、`Enemy` 应用 | ✅（换 StageDef 仍不做） |
+| 5.4 | 意图 UI | 头顶 IntentIcon，执行前刷新 | ✅（2026-08-18 已完成） |
 
-### Phase 6 — 结局与打磨（P2）
+### Phase 6 — 结局与打磨（P2）⚠️ 6.2 待做
 
-| # | 任务 | 说明 |
-|---|------|------|
-| 6.1 | 通关判定与胜利结算画面 | 定义最终层（如 StageCount ≥ 3 或专属 StageDef 的 bossCharts 打完）→ 新 `Victory.tscn`（统计：层数/房间数/金币/击杀） |
-| 6.2 | 接线剩余 Stat 时期 | `global/BattleTime.gd` 增加 `before_block_apply` / `after_block_apply` / `status_applied` 信号与 `say_*` 方法；在 `GrantShieldBehavior`（或护盾获取处）与 `StatsComponent.add_status` 处发出 |
-| 6.3 | GameOver 统计增强 | 回合数/击杀数/金币显示 |
-| 6.4 | 全量验证 | 静态分析零 Error；新 Game → 选择卡包 → 战斗 → 奖励 → 商店 → Boss → 通关全链路手测；旧存档 Continue 兼容性测试 |
+| # | 任务 | 说明 | 状态 |
+|---|------|------|------|
+| 6.1 | 通关判定与胜利结算画面 | Stage 3 Boss 战后 → `Victory.tscn`（层数/房间数/金币/击杀/卡组规模） | ✅ |
+| 6.2 | 接线剩余 Stat 时期 | `before_block_apply` / `after_block_apply` / `status_applied` 信号 + 发出点 | ⬜ 未做 |
+| 6.3 | GameOver 统计增强 | Stage/Room/Gold/击杀 | ✅ |
+| 6.4 | 全量验证 | 静态解析全检 + headless 冒烟（新敌人/精英抽取/缩放/胜利流转） | ✅（见各阶段验证记录） |
 
 ---
 
@@ -213,12 +280,12 @@ Phase 0（数据层） → Phase 1（内容） → Phase 2（卡包接入） →
                                                           ↘ Phase 6（结局，依赖 3、5）
 ```
 
-**建议执行顺序**：0 → 1 → 2 → 3 为主链路，完成即形成"可选卡包 → 战斗 → 奖励 → 消费"的完整循环；4、5 可与 3 并行；6 最后。
+**已按序完成**：0 → 1 → 2 → 3 → 5 → 6（主链路"选卡包 → 战斗 → 奖励 → 消费 → Boss → 通关"已打通）。
 
-**可裁剪项**（若时间有限，可推迟到下一迭代）：
-- Phase 1 可先落地铁锈游侠 + 5 小包（打通"游侠"一条主线），其余两包后续迭代
-- Phase 4（商店）可先用"战后简单奖励 + 事件金币消耗"顶替
-- Phase 6.3（GameOver 统计增强）为锦上添花
+**剩余可选项**：
+- Phase 6.2（Stat 三时期）——需要新内容消费时再做
+- Phase 3.3 事件池扩充、Phase 4.2 地图商店格——内容迭代
+- Phase 1 遗留 13 处设计省略——按设计优先级逐个补
 
 ---
 
@@ -227,11 +294,11 @@ Phase 0（数据层） → Phase 1（内容） → Phase 2（卡包接入） →
 | 阶段 | 任务数 | 预估规模 | 状态 |
 |------|--------|----------|------|
 | Phase 0 | 5 | 小（半天） | ✅ 已完成 |
-| Phase 1 | 5 | 最大（约 140 Block 落地 + 验算，2~3 天） | ⬜ |
-| Phase 2 | 4 | 中 | ⬜ |
-| Phase 3 | 4 | 中 | ⬜ |
-| Phase 4 | 3 | 中 | ⬜ |
-| Phase 5 | 4 | 中 | ⬜ |
-| Phase 6 | 4 | 小~中 | ⬜ |
+| Phase 1 | 5 | 最大（147 Block 落地 + 验算） | ✅ 已完成 |
+| Phase 2 | 4 | 中 | ✅ 已完成 |
+| Phase 3 | 4 | 中 | ✅ 核心（事件池待扩充） |
+| Phase 4 | 3 | 中 | ⚠️ 商店本体完成，地图格未做 |
+| Phase 5 | 4 | 中 | ✅ 已完成 |
+| Phase 6 | 4 | 小~中 | ✅ 除 6.2 外完成 |
 
-> 合计约 29 个任务，主链路（Phase 0~3）约 18 个任务。
+> 主链路 18 个任务全部闭环；剩余为内容迭代项。

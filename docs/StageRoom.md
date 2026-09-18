@@ -6,12 +6,16 @@
 通过点击地图上的格子(ButtonNode, Bn)进入 BattleRoom 或 EventRoom,
 完成后返回 StageRoom, 推进房间进度。
 
+`Room` 的四个子类：`BattleRoom` / `EventRoom` / `StageRoom` / `ShopRoom`。
+战斗胜利后进入 `ShopRoom`（不直接回地图），从商店离开后才返回地图。
+
 ## 类层次结构
 
 ```
 Room (res://room/Room.gd)
 ├── BattleRoom (res://room/BattleRoom.gd) — 战斗房间
 ├── EventRoom (res://room/EventRoom.gd) — 事件房间
+├── ShopRoom (res://room/ShopRoom.gd) — 战后商店（每场胜利必经）
 └── StageRoom (res://room/StageRoom.gd) — 楼层地图
 ```
 
@@ -48,8 +52,10 @@ Room (res://room/Room.gd)
 - 单击 BattleRoomBn:
   - 根据 roomCount 选择敌人图表（`resources/enemy_defs.json` 的 `stageCharts`）:
     - roomCount >= 20: 使用 `bossCharts`
+    - roomCount 7~13 且有 25% 概率（`monsterRand`）: 使用 `eliteCharts`（精英战）
     - roomCount > 6: 使用 `strongCharts`
-    - roomCount ≤ 6: 使用 `weakCharts`（`eliteCharts` 为预留）
+    - roomCount ≤ 6: 使用 `weakCharts`
+  - 敌人血量/攻击按楼层缩放：`×(1 + 0.12 × (StageCount - 1))`（在 EnemyManager 注入）
   - 使用 `monsterRand` 从对应图表中随机选择一组敌人
   - 实例化 BattleRoom 并跳转
 - 单击 EventRoomBn: 实例化 EventRoom 并跳转
@@ -57,7 +63,8 @@ Room (res://room/Room.gd)
 ### BattleRoom
 - 继承自 Room，每次进入计入房间数
 - 通过 EnemyChart 生成敌人
-- 胜利(OnVictory)后回到 StageRoom (等待 1 秒)
+- 胜利(OnVictory)后进入 ShopRoom（等待 1.2 秒）
+- 战败 → GameOver（第 3 层 Boss 战胜利 → ShopRoom 离店时进入 Victory 通关结算）
 
 ### EventRoom
 - 继承自 Room，每次进入计入房间数

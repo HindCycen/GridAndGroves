@@ -20,9 +20,11 @@ applyTo: "**/*.gd"
 | GridState | `global/GridState.gd` | 网格状态管理 |
 | RngManager | `global/RngManager.gd` | 多流随机数管理 |
 | BlockRegistry | `global/BlockRegistry.gd` | 方块/敌人注册与创建 |
-| PackManager | `global/PackManager.gd` | 卡包注册与卡池构建（尚未接入游戏流程） |
+| PackManager | `global/PackManager.gd` | 卡包注册与卡池构建（`_ready` 自动扫描目录；已接入主流程） |
 | BattleTime | `global/BattleTime.gd` | 战斗信号总线，StatBehavior 触发器 |
-| SaveLoad | `global/SaveLoad.gd` | 存档读写与玩家状态恢复 |
+| SaveLoad | `global/SaveLoad.gd` | 存档读写与玩家状态恢复（含金币/卡池/层数/击杀） |
+
+> ⚠️ `ActionManager` 不是 Autoload，而是由 BattleRoom 在战斗场景中创建的运行时节点。
 
 ## 动作系统 (actions/)
 
@@ -53,7 +55,7 @@ applyTo: "**/*.gd"
 - 敌人与楼层图表通过 `JsonEnemyScanner.scan_and_register()` 从 `resources/enemy_defs.json` 注册
 - `BlockRegistry._ready()` 自动调用 `auto_register_blocks()` / `auto_register_enemies()`
 - `registerers/` 下 `AbstractBlockRegisterer` / `OriginalBlockRegisterer` 为历史遗留，`register()` 已无调用方
-- 卡包（`PackManager.subscribe_block_pack()` / `subscribe_mini_pack()` / `build_card_pool()`）已实现但**尚未接入游戏流程**
+- 卡包（`PackManager.subscribe_block_pack()` / `subscribe_mini_pack()` / `build_card_pool()`）已接入游戏流程：主菜单选择 → 构建卡池 → 商店/初始牌组消费 → 游戏结束清理
 
 ## BlockDef JSON 注册格式
 
