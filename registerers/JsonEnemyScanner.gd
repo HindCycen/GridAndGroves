@@ -71,6 +71,13 @@ static func _create_enemy_def(entry: Dictionary) -> EnemyDefinition:
 				GameLog.err("JsonEnemyScanner: StatDef not found: " + str(stat_path) + " for enemy '" + entry.enemyName + "'")
 		enemy_def.InitialStats = stats
 	
+	# 初始 Stat 数值（可选，缺省用 StatDef.MaxValue）
+	if entry.has("initialStatValues"):
+		var values: Array[int] = []
+		for v in entry.initialStatValues:
+			values.append(int(v))
+		enemy_def.InitialStatValues = values
+	
 	# 构建意图循环
 	if entry.has("intentCycle"):
 		var intents: Array = []

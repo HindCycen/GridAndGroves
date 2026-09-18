@@ -21,6 +21,12 @@ func spawn_from_chart(chart: EnemyChartDef) -> void:
 	if chart == null or chart.EnemyDefs == null:
 		_enemies = []
 		return
+	# 楼层缩放：血量 / 攻击 = 基准 × (1 + 0.12 × (StageCount - 1))
+	# （参考 Ascension 的线性难度曲线；StageCount 从 1 开始）
+	var stage_count: int = 1
+	if SaveLoad != null and SaveLoad.Data != null:
+		stage_count = maxi(SaveLoad.Data.StageCount, 1)
+	var scaling: float = 1.0 + 0.12 * (stage_count - 1)
 	var index := 0
 	for enemy_def in chart.EnemyDefs:
 		if enemy_def == null:
@@ -28,9 +34,10 @@ func spawn_from_chart(chart: EnemyChartDef) -> void:
 		var enemy_scene := load("res://actors/enemy/Enemy.tscn") as PackedScene
 		var enemy := enemy_scene.instantiate() as Enemy
 		enemy.Definition = enemy_def
+		enemy.ScalingMultiplier = scaling
 		enemy.position = Vector2(1300 + index * 200, 150 + (index % 2) * 200)
 		add_child(enemy)
-		GameLog.debug("SpawnFromChart: Spawned enemy " + enemy_def.EnemyName + " at (" + str(enemy.position.x) + ", " + str(enemy.position.y) + ")")
+		GameLog.debug("SpawnFromChart: Spawned enemy " + enemy_def.EnemyName + " at (" + str(enemy.position.x) + ", " + str(enemy.position.y) + ") scaling x" + str(snappedf(scaling, 0.01)))
 		index += 1
 	_refresh_enemy_list()
 	for enemy in _enemies:
@@ -100,6 +107,9 @@ func count_alive() -> int:
 	return count
 
 func _on_enemy_died() -> void:
+	# 击杀统计（结算画面用）
+	if SaveLoad != null and SaveLoad.Data != null:
+		SaveLoad.Data.KillCount += 1
 	enemy_died.emit()
 	if are_all_dead():
 		all_enemies_defeated.emit()

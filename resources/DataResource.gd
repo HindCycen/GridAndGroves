@@ -24,3 +24,4 @@ class_name DataResource extends Resource
 @export var LastNonStageRoomEnemyNames: Array[String] = []
 @export var MainPackName: String = ""
 @export var SelectedMiniPackNames: Array[String] = []
+@export var KillCount: int = 0

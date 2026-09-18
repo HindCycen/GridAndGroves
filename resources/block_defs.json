@@ -1,6 +1,60 @@
 {
   "blocks": [
     {
+      "name": "EnemyAttackBlock",
+      "description": "敌方攻击方块。对玩家造成 %D% 点伤害。",
+      "rarity": 0,
+      "faction": 1,
+      "parts": [
+        {
+          "partId": "EnemyAttackPart",
+          "description": "对玩家造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/sword.png",
+          "baseDamage": 5,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EnemyHeavyAttackBlock",
+      "description": "敌方重型攻击方块。对玩家造成 %D% 点伤害。",
+      "rarity": 0,
+      "faction": 1,
+      "parts": [
+        {
+          "partId": "EnemyHeavyAttackPart",
+          "description": "对玩家造成 %D% 点伤害。",
+          "movingDirection": [
+            0,
+            1
+          ],
+          "partialPosition": [
+            0,
+            0
+          ],
+          "spriteTexture": "res://resources/blockpart_picture/grey/bomb.png",
+          "baseDamage": 8,
+          "behaviors": [
+            {
+              "script": "res://resources/blockpart_behaviors/DamagePlayerBehavior.gd"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "RustyWrench",
       "description": "",
       "rarity": 0,

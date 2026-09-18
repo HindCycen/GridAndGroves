@@ -92,7 +92,12 @@ func _initialize_player_deck() -> void:
 	var stage_def: StageDef = _get_stage_def()
 	var starting_deck: Array[String] = stage_def.StartingDeck if stage_def != null else []
 	if starting_deck != null and starting_deck.size() > 0:
+		var pool = PackManager.CurrentCardPool
 		for block_name in starting_deck:
+			# 基础卡（打击/防御）不属于任何卡包，不做卡池校验
+			if pool != null and not _is_basic_card(block_name) and not pool.contains_name(block_name):
+				GameLog.err("InitializePlayerDeck: block [" + block_name + "] is not in the current card pool, skipped")
+				continue
 			var block: Block = BlockRegistry.create_block_by_name(block_name)
 			if block != null:
 				player_pile.add_block(block)
@@ -108,6 +113,12 @@ func _initialize_player_deck() -> void:
 		player_pile.add_block(BlockRegistry.create_block_by_name("Growing"))
 		player_pile.add_block(BlockRegistry.create_block_by_name("Shield"))
 	GameLog.debug("Player deck initialized, total " + str(player_pile.Count) + " cards")
+
+## 基础卡名单：不参与卡池校验（与 ShopRoom.BASIC_CARD_NAMES 保持一致）
+const BASIC_CARD_NAMES: Array[String] = ["Strike", "Defend"]
+
+func _is_basic_card(block_name: String) -> bool:
+	return BASIC_CARD_NAMES.has(block_name)
 
 func _get_stage_def() -> StageDef:
 	var path: String = _save_load.Data.StageDefPath if _save_load != null and _save_load.Data != null else ""
@@ -192,6 +203,8 @@ func _on_defeat() -> void:
 	_end_turn_button.disabled = true
 	_bot.stop_patrol()
 	_battle_time.say_battle_ended()
+	# 本局结束：清理运行时卡池
+	PackManager.clear_card_pool()
 	var timer := get_tree().create_timer(1.5)
 	timer.timeout.connect(func():
 		var game_over_scene := load("res://GameOver.tscn") as PackedScene

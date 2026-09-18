@@ -4,8 +4,11 @@ func _ready() -> void:
 	var data: DataResource = SaveLoad.Data
 	var stage_count: int = data.StageCount if data != null else 1
 	var room_count: int = data.RoomCount if data != null else 0
+	var gold: int = data.Gold if data != null else 0
+	var kills: int = data.KillCount if data != null else 0
 	var stats_label := %StatsLabel as Label
-	stats_label.text = "Stage: " + str(stage_count) + "    Room: " + str(room_count)
+	stats_label.text = "Stage: " + str(stage_count) + "    Room: " + str(room_count) \
+		+ "\nGold: " + str(gold) + "    Kills: " + str(kills)
 	var btn := %ReturnButton as Button
 	btn.pressed.connect(func():
 		var menu_scene := load("res://MainMenu.tscn") as PackedScene

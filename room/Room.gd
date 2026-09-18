@@ -64,9 +64,10 @@ func _exit_tree() -> void:
 func _update_stage_room_label() -> void:
 	if _stage_room_label == null:
 		return
-	var player: Player = get_tree().get_first_node_in_group("Players") as Player
-	var rc: int = player.RoomCount if player != null else (_save_load.Data.RoomCount if _save_load != null and _save_load.Data != null else 0)
-	var sc: int = player.StageCount if player != null else (_save_load.Data.StageCount if _save_load != null and _save_load.Data != null else 0)
+	# 以 DataResource 为准：所有 RoomCount/StageCount 的修改都直接写 Data，
+	# Player 上的字段只是每次 Room._ready 时的镜像，可能滞后一帧
+	var rc: int = _save_load.Data.RoomCount if _save_load != null and _save_load.Data != null else 0
+	var sc: int = _save_load.Data.StageCount if _save_load != null and _save_load.Data != null else 0
 	_stage_room_label.text = "Stage: " + str(sc) + "    Room: " + str(rc)
 
 func _on_health_changed(current: int, max_val: int) -> void:

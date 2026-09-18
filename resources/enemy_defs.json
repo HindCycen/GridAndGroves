@@ -8,6 +8,7 @@
       "initialStats": [
         "res://resources/stat_defs/Shooting.tres"
       ],
+      "initialStatValues": [10],
       "intentCycle": [
         {
           "intentName": "PlaceAttackAtCenter",
@@ -34,21 +35,329 @@
           ]
         }
       ]
+    },
+    {
+      "enemyName": "RustHound",
+      "maxHealth": 22,
+      "attackDamage": 4,
+      "enemyImage": "res://resources/enemy_images/RustHound.png",
+      "initialStats": [
+        "res://resources/stat_defs/Shooting.tres"
+      ],
+      "initialStatValues": [5],
+      "intentCycle": [
+        {
+          "intentName": "HoundPounce",
+          "repeatCount": 2,
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [5, 1],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [5, 3],
+              "randomOffsetRange": 1
+            }
+          ]
+        },
+        {
+          "intentName": "SavageLash",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [3, 2],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [6, 2],
+              "randomOffsetRange": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "enemyName": "SporeCrawler",
+      "maxHealth": 26,
+      "attackDamage": 3,
+      "enemyImage": "res://resources/enemy_images/SporeCrawler.png",
+      "initialStats": [
+        "res://resources/stat_defs/Shooting.tres"
+      ],
+      "initialStatValues": [6],
+      "intentCycle": [
+        {
+          "intentName": "SporeBurst",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 1],
+              "randomOffsetRange": 2
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 3],
+              "randomOffsetRange": 2
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [4, 2],
+              "randomOffsetRange": 2
+            }
+          ]
+        },
+        {
+          "intentName": "CrawlingBite",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [5, 2],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [5, 0],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [3, 4],
+              "randomOffsetRange": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "enemyName": "RustColossus",
+      "maxHealth": 70,
+      "attackDamage": 8,
+      "enemyImage": "res://resources/enemy_images/RustColossus.png",
+      "initialStats": [
+        "res://resources/stat_defs/Shooting.tres"
+      ],
+      "initialStatValues": [8],
+      "intentCycle": [
+        {
+          "intentName": "ColossusSlam",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [4, 2],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [4, 0],
+              "randomOffsetRange": 1
+            }
+          ]
+        },
+        {
+          "intentName": "RustVolley",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 0],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 2],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 4],
+              "randomOffsetRange": 0
+            }
+          ]
+        },
+        {
+          "intentName": "CrushingAdvance",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [5, 1],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [5, 3],
+              "randomOffsetRange": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "enemyName": "IronWarden",
+      "maxHealth": 110,
+      "attackDamage": 10,
+      "enemyImage": "res://resources/enemy_images/IronWarden.png",
+      "initialStats": [
+        "res://resources/stat_defs/Shooting.tres"
+      ],
+      "initialStatValues": [10],
+      "intentCycle": [
+        {
+          "intentName": "WardenBarrage",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [4, 0],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [4, 2],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [4, 4],
+              "randomOffsetRange": 0
+            }
+          ]
+        },
+        {
+          "intentName": "WardenGrip",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 1],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 3],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [6, 1],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [6, 3],
+              "randomOffsetRange": 0
+            }
+          ]
+        },
+        {
+          "intentName": "WardenCrush",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [6, 0],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [6, 2],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [6, 4],
+              "randomOffsetRange": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "enemyName": "BloomMother",
+      "maxHealth": 100,
+      "attackDamage": 9,
+      "enemyImage": "res://resources/enemy_images/BloomMother.png",
+      "initialStats": [
+        "res://resources/stat_defs/Shooting.tres"
+      ],
+      "initialStatValues": [10],
+      "intentCycle": [
+        {
+          "intentName": "BloomSeeds",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [2, 2],
+              "randomOffsetRange": 2
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [3, 1],
+              "randomOffsetRange": 2
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [3, 3],
+              "randomOffsetRange": 2
+            }
+          ]
+        },
+        {
+          "intentName": "BlossomWhip",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [5, 0],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [5, 2],
+              "randomOffsetRange": 0
+            },
+            {
+              "blockName": "EnemyAttackBlock",
+              "gridPosition": [5, 4],
+              "randomOffsetRange": 0
+            }
+          ]
+        },
+        {
+          "intentName": "BloomOvergrow",
+          "blockPlacements": [
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [4, 1],
+              "randomOffsetRange": 1
+            },
+            {
+              "blockName": "EnemyHeavyAttackBlock",
+              "gridPosition": [4, 3],
+              "randomOffsetRange": 1
+            }
+          ]
+        }
+      ]
     }
   ],
   "stageCharts": {
     "EgStageDef": {
       "weakCharts": [
-        { "enemies": ["Gonh"] }
+        { "enemies": ["Gonh"] },
+        { "enemies": ["RustHound"] },
+        { "enemies": ["SporeCrawler"] },
+        { "enemies": ["Gonh", "RustHound"] }
       ],
       "strongCharts": [
-        { "enemies": ["Gonh"] }
+        { "enemies": ["Gonh", "SporeCrawler"] },
+        { "enemies": ["RustHound", "RustHound"] },
+        { "enemies": ["Gonh", "RustHound", "SporeCrawler"] }
       ],
       "eliteCharts": [
-        { "enemies": ["Gonh"] }
+        { "enemies": ["RustColossus"] },
+        { "enemies": ["RustColossus", "Gonh"] }
       ],
       "bossCharts": [
-        { "enemies": ["Gonh"] }
+        { "enemies": ["IronWarden"] },
+        { "enemies": ["BloomMother"] }
       ]
     }
   }

@@ -272,13 +272,28 @@ func _auto_top_up(need: int) -> void:
 func _leave_shop() -> void:
 	if _save_load == null:
 		return
-	# Boss 战后商店离店 → 进入下一层
+	# Boss 战后商店离店 → 通关判定 / 进入下一层
 	if IsBossShop:
+		if _save_load.Data != null and _save_load.Data.StageCount >= SaveLoad.FINAL_STAGE:
+			_go_victory()
+			return
 		_save_load.advance_to_next_floor()
 	_save_load.save()
 	var stage_scene := load("res://room/StageRoom.tscn") as PackedScene
 	var stage: StageRoom = stage_scene.instantiate()
 	get_tree().root.add_child(stage)
+	queue_free()
+
+## 通关结算：结束本局（删档）、清理卡池、进入 Victory 画面
+func _go_victory() -> void:
+	PackManager.clear_card_pool()
+	SaveLoad.RunEnded = true
+	if _save_load != null:
+		_save_load.save()  # RunEnded = true 时内部会删除存档文件
+	GameLog.info("\n=== Victory! Run completed at stage " + str(_save_load.Data.StageCount) + " ===")
+	var victory_scene := load("res://Victory.tscn") as PackedScene
+	var victory: Node = victory_scene.instantiate()
+	get_tree().root.add_child(victory)
 	queue_free()
 
 # ── 辅助 ──

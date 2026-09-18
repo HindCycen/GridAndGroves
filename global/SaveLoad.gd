@@ -1,6 +1,8 @@
 extends Node
 
 const DEFAULT_SAVE_PATH := "user://savegame.tres"
+## 最终层：在第 FINAL_STAGE 层击败 Boss 后即通关
+const FINAL_STAGE := 3
 
 ## 本局是否已结束（玩家战败）。为 true 时不再写档，并删除存档文件。
 static var RunEnded: bool = false
@@ -169,12 +171,16 @@ func reset_for_new_game() -> void:
 	GridState.init_grids()
 
 func advance_to_next_floor() -> void:
-	Data.StageCount += 1
+	# 注意：StageCount 的递增由 StageRoom._generate_map() 在新地图生成时统一执行，
+	# 这里不再自增（否则每层会被 +2）。种子按"即将进入的楼层"计算。
+	var next_stage: int = Data.StageCount + 1
 	Data.RoomCount = 0
-	Data.GridClickable = []
-	Data.GridLeft = []
-	Data.GridIsBattleCell = []
+	# 用 clear() 而非赋 []：DataResource 中这些是 Array[int] 类型字段，
+	# 直接赋无类型的 [] 会在运行时报 "Invalid assignment" 并静默失败（旧版软锁 bug）
+	Data.GridClickable.clear()
+	Data.GridLeft.clear()
+	Data.GridIsBattleCell.clear()
 	GridState.init_grids()
-	RngManager.init_seed(Data.Seed + Data.StageCount * 7919)
+	RngManager.init_seed(Data.Seed + next_stage * 7919)
 	RngManager.init_rng()
 	save()

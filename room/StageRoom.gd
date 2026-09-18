@@ -60,8 +60,13 @@ func _generate_map() -> void:
 				IsBattleCell[col][row] = true
 			else:
 				IsBattleCell[col][row] = RngManager.get_map_rand(2) == 0
+	# StageCount 的唯一递增点：每当一张全新地图被生成（新游戏 / 换层清空后重建）时 +1。
+	# 旧修复：此前 advance_to_next_floor() 也 +1，导致每层 StageCount 被双加。
 	if _save_load != null and _save_load.Data != null and (_save_load.Data.GridClickable == null or _save_load.Data.GridClickable.size() == 0):
 		_save_load.Data.StageCount += 1
+		var player := get_tree().get_first_node_in_group("Players") as Player
+		if player != null:
+			player.StageCount = _save_load.Data.StageCount
 
 func _try_restore_map_from_save() -> bool:
 	var data: DataResource = _save_load.Data if _save_load != null else null
@@ -176,7 +181,11 @@ func _enter_room(col: int, row: int) -> void:
 	_save_load.save()
 	if is_battle:
 		var room_count: int = _save_load.Data.RoomCount if _save_load != null and _save_load.Data != null else 0
-		var chart_def := _build_enemy_chart_for_room(room_count)
+		# 右上角 (Cols-1, 0) 是每层的终点战斗格：必定为 Boss 战。
+		# 注意：图表在选择时 roomCount 尚未自增（BattleRoom._ready 才 +1），
+		# 最短路径终点处的 roomCount 为 19，因此不能依赖 roomCount >= 20 判 Boss。
+		var is_final_cell: bool = (col == Cols - 1 and row == 0)
+		var chart_def := _build_enemy_chart_for_room(room_count, is_final_cell)
 		var battle_scene := load("res://room/BattleRoom.tscn") as PackedScene
 		var battle := battle_scene.instantiate() as BattleRoom
 		battle.EnemyChart = chart_def
@@ -198,13 +207,18 @@ func _enter_room(col: int, row: int) -> void:
 ## 从 JSON enemy_defs.json 中的 stageCharts 配置构建 EnemyChartDef
 ##
 ## 根据房间序号决定难度等级，从对应图表中随机选取一组敌人。
+## is_boss_cell 为 true（每层右上角终点格）时必抽 bossCharts；
+## roomCount 7~13 区间有 25% 概率进入精英战（eliteCharts）。
 ## 回退策略: 若 JSON 中未配置对应图表，返回空 EnemyChartDef。
-func _build_enemy_chart_for_room(room_count: int) -> EnemyChartDef:
+func _build_enemy_chart_for_room(room_count: int, is_boss_cell: bool = false) -> EnemyChartDef:
 	var chart_key: String
 	var stage_key: String = StageDefRef.resource_path.get_file().get_basename() if StageDefRef != null else "exampleStage"
 	
-	if room_count >= 20:
+	if is_boss_cell or room_count >= 20:
 		chart_key = "bossCharts"
+	elif room_count >= 7 and room_count <= 13 and RngManager.get_monster_rand(100) < 25:
+		# 精英遭遇：25% 概率（monster RNG 流，存档可复现）
+		chart_key = "eliteCharts"
 	elif room_count > 6:
 		chart_key = "strongCharts"
 	else:
