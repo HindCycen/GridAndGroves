@@ -29,9 +29,14 @@ func _ready() -> void:
 	_create_ghost_sprites()
 
 func _process(_delta: float) -> void:
-	if IsPressed and not InputLocked and Faction == BlockFaction.Player:
-		global_position = get_global_mouse_position()
-		_update_ghost()
+	if not IsPressed or Faction != BlockFaction.Player or InputLocked:
+		return
+	global_position = get_global_mouse_position()
+	_update_ghost()
+	# 兜底释放：快速甩动时鼠标已移出所有部件，Area2D 收不到 release 事件，
+	# 方块会一直粘在鼠标上无法放置。以按键状态为准补一次释放。
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_release_pressed()
 
 func _load_parts() -> void:
 	if PartDatas.size() == 0:
@@ -82,6 +87,12 @@ func _on_part_pressed(n: Node) -> void:
 func _on_part_released(n: Node) -> void:
 	if not _parts.has(n) or InputLocked or Faction != BlockFaction.Player:
 		return
+	if not IsPressed:
+		return
+	_release_pressed()
+
+## 松开拖拽并尝试放置（供 Area2D release 事件与按键兜底共用）
+func _release_pressed() -> void:
 	IsPressed = false
 	_hide_ghost()
 	if _check_placement_conditions():

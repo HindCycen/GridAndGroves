@@ -28,6 +28,9 @@ var _items_container: VBoxContainer
 var _deck_container: VBoxContainer
 var _leave_btn: Button
 var _reroll_btn: Button
+var _preview_holder: Node2D
+var _preview_title: Label
+var _preview_block: Block
 
 func _ready() -> void:
 	super()
@@ -44,6 +47,8 @@ func _ready() -> void:
 	_reroll_btn = %RerollBtn as Button
 	if _reroll_btn != null:
 		_reroll_btn.pressed.connect(_on_reroll_pressed)
+	_preview_holder = get_node_or_null("PreviewPanel/PreviewHolder") as Node2D
+	_preview_title = get_node_or_null("PreviewPanel/PreviewTitle") as Label
 	_generate_items()
 	_refresh_ui()
 
@@ -108,6 +113,7 @@ func _refresh_items_ui() -> void:
 		var block_name: String = item["name"]
 		btn.mouse_entered.connect(func():
 			_show_tooltip(btn, _describe_block(block_name))
+			_show_preview(block_name)
 		)
 		btn.mouse_exited.connect(_hide_tooltips)
 		var captured_item: Dictionary = item
@@ -150,6 +156,10 @@ func _refresh_deck_ui() -> void:
 		var captured_name: String = block_name
 		sell_btn.pressed.connect(func(): _on_sell_pressed(captured_name))
 		row.add_child(sell_btn)
+		# 悬停卡组条目 / 卖出按钮时预览该 Block 的完整形状
+		row.mouse_entered.connect(func(): _show_preview(captured_name))
+		sell_btn.mouse_entered.connect(func(): _show_preview(captured_name))
+		label.mouse_entered.connect(func(): _show_preview(captured_name))
 		_deck_container.add_child(row)
 
 # ── 购买 / 重掷 / 售卖 ──
@@ -249,15 +259,16 @@ func _on_leave_pressed() -> void:
 	if data == null:
 		return
 	var deck: Array = data.PlayerDeckBlockNames
-	if deck.size() < DECK_MIN:
-		var need := DECK_MIN - deck.size()
-		_auto_top_up(need)
-		_show_info("卡组不足 " + str(DECK_MIN) + " 张，已自动补入 " + str(need) + " 张打击/防御")
-		_refresh_ui()
-		return
 	if deck.size() > DECK_MAX:
 		_show_info("卡组超过 " + str(DECK_MAX) + " 张，请先售卖到 " + str(DECK_MAX) + " 张以内")
 		return
+	if _leave_btn != null:
+		_leave_btn.disabled = true
+	if deck.size() < DECK_MIN:
+		var need := DECK_MIN - deck.size()
+		_auto_top_up(need)
+		GameLog.info("ShopRoom: 卡组不足 " + str(DECK_MIN) + " 张，已自动补入 " + str(need) + " 张打击/防御并离店")
+	# 补牌后立即离店（不再停留），避免"卖出打防 → 离店补牌 → 再卖出"的刷金币循环
 	_leave_shop()
 
 ## 自动补打击/防御到下限：尽量均衡，不能均衡时防御更多
@@ -322,3 +333,41 @@ func _hide_tooltips() -> void:
 			t.hide()
 			t.queue_free()
 	_active_tooltips.clear()
+
+# ── 卡牌预览 ──
+
+## 在右侧预览面板中展示 Block 的完整形状；悬停各个部件可查看部件提示
+func _show_preview(block_name: String) -> void:
+	if _preview_holder == null:
+		return
+	_clear_preview()
+	var def: Dictionary = BlockRegistry.BlockDefs.get(block_name, {})
+	var rarity: int = int(def.get("rarity", 0))
+	if _preview_title != null:
+		_preview_title.text = block_name + "  [" + RARITY_NAMES[rarity] + "]"
+	var block: Block = BlockRegistry.create_block_by_name(block_name)
+	if block == null:
+		return
+	_preview_holder.add_child(block)
+	# Block 原点在部件 (0,0) 处，用部件包围盒中心对齐预览区中心
+	block.position = -_block_bounds_center(block)
+	_preview_block = block
+
+func _clear_preview() -> void:
+	if is_instance_valid(_preview_block):
+		# 立即隐藏，避免 queue_free 到帧末前与新旧预览同屏
+		_preview_block.visible = false
+		_preview_block.queue_free()
+	_preview_block = null
+
+func _block_bounds_center(block: Block) -> Vector2:
+	var bounds := Rect2()
+	var first := true
+	for part in block.get_parts():
+		var part_rect := Rect2(part.position - Vector2(48, 48), Vector2(96, 96))
+		if first:
+			bounds = part_rect
+			first = false
+		else:
+			bounds = bounds.merge(part_rect)
+	return bounds.get_center() if not first else Vector2.ZERO
