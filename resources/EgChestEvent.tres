@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EventDef" format=3]
+
+[ext_resource type="Script" path="res://resources/EventDef.gd" id="1"]
+[ext_resource type="Script" path="res://resources/EventChoiceDef.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_choice1"]
+script = ExtResource("2")
+ActionType = 3
+ActionValue = 25
+Description = "[Y]{Find gold}[/Y]"
+Name = "Open"
+ResultDescription = "The chest contains 25 gold!"
+metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
+
+[sub_resource type="Resource" id="SubResource_choice2"]
+script = ExtResource("2")
+Description = "[B]{Walk away}[/B]"
+Name = "Leave"
+ResultDescription = "You leave the chest alone."
+metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
+
+[resource]
+script = ExtResource("1")
+Choices = [SubResource("SubResource_choice1"), SubResource("SubResource_choice2")]
+EventDesc = "A locked chest sits in the corner."

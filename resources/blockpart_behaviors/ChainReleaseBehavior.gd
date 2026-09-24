@@ -54,6 +54,8 @@ func _chain_release(block: Block, block_piles: BlockPilesHere) -> void:
 
 func _is_block_at_grid(block_node: Block, grid_pos: Vector2i) -> bool:
 	for p in block_node.get_parts():
+		if p.IsSpent:
+			continue
 		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
 		var coord: Vector2i = GridState.get_grid_coords(gp)
 		if coord == grid_pos:
@@ -62,6 +64,8 @@ func _is_block_at_grid(block_node: Block, grid_pos: Vector2i) -> bool:
 
 func _has_loose_behavior(block_node: Block) -> bool:
 	for p in block_node.get_parts():
+		if p.IsSpent:
+			continue
 		if p.Behaviors.size() == 0:
 			continue
 		for behavior in p.Behaviors:
@@ -70,17 +74,11 @@ func _has_loose_behavior(block_node: Block) -> bool:
 	return false
 
 func _release_loose_block(block_node: Block, block_piles: BlockPilesHere) -> void:
-	# 释放格子
-	for p in block_node.get_parts():
-		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
-		var coord: Vector2i = GridState.get_grid_coords(gp)
-		if coord.x >= 0 and coord.y >= 0:
-			GridState.restore_grid_state(coord.x, coord.y)
-	# 从放置堆移除并进入弃牌堆（统一走公共 API）
-	block_piles.remove_block_from_placed(block_node)
-	block_node.remove_from_group("placed_blocks")
-	block_piles.send_block_to_discard(block_node)
-	GameLog.debug("ChainReleaseBehavior: Released adjacent loose block " + str(block_node.BlockName if not block_node.BlockName.is_empty() else "") + " to discard")
+	# 部件级释放：仅释放该 Block 的松动部件（不触发效果、不计废品）；
+	# 全部件离场时 Block 自动进入弃牌堆
+	if not block_piles.release_loose_parts(block_node):
+		return
+	GameLog.debug("ChainReleaseBehavior: Released adjacent loose parts of " + str(block_node.BlockName if not block_node.BlockName.is_empty() else ""))
 
 func _is_out_of_bounds(pos: Vector2i) -> bool:
 	return pos.x < 0 or pos.x > 6 or pos.y < 0 or pos.y > 4

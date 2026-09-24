@@ -18,7 +18,7 @@ func _ready() -> void:
 	btn_container.add_child(_continue_btn)
 	btn_container.add_child(_make_button("New Game", _on_new_game_pressed))
 	btn_container.add_child(_make_button("Quit", get_tree().quit))
-	_continue_btn.disabled = not ResourceLoader.exists("user://savegame.tres")
+	_continue_btn.disabled = not FileAccess.file_exists(SaveLoad.DEFAULT_SAVE_PATH)
 	_setup_pack_select()
 
 ## 卡包选择面板：主卡包 3 选 1 → 系统随机 4 个小卡包 → 开始冒险
@@ -66,7 +66,62 @@ func _on_continue_pressed() -> void:
 		var first_pack: String = PackManager.BlockPacks.keys()[0] if not PackManager.BlockPacks.is_empty() else ""
 		if not first_pack.is_empty():
 			PackManager.build_card_pool(first_pack)
-	_enter_stage()
+	_enter_saved_room()
+
+## 根据存档中的 CurrentRoomType 恢复现场（Boss 商店/战斗/事件中途退出后继续不再丢流程）
+func _enter_saved_room() -> void:
+	var data: DataResource = SaveLoad.Data
+	if data == null:
+		_enter_stage()
+		return
+	match data.CurrentRoomType:
+		Enums.RoomType.Battle:
+			_enter_battle_from_save(data)
+		Enums.RoomType.Event:
+			_enter_event_from_save(data)
+		Enums.RoomType.Shop:
+			_enter_shop_from_save(data)
+		_:
+			_enter_stage()
+
+func _enter_battle_from_save(data: DataResource) -> void:
+	var chart_def := EnemyChartDef.new()
+	chart_def.EnemyDefs = []
+	for enemy_name in data.CurrentRoomEnemyNames:
+		var enemy_def: EnemyDefinition = BlockRegistry.get_enemy_def(enemy_name)
+		if enemy_def != null:
+			chart_def.EnemyDefs.append(enemy_def)
+	if chart_def.EnemyDefs.is_empty():
+		GameLog.err("MainMenu: saved battle has no valid enemies, falling back to stage")
+		_enter_stage()
+		return
+	var battle_scene := load("res://room/BattleRoom.tscn") as PackedScene
+	var battle := battle_scene.instantiate() as BattleRoom
+	battle.EnemyChart = chart_def
+	battle.IsFinalBossCell = data.CurrentRoomIsBossCell
+	get_tree().root.add_child(battle)
+	queue_free()
+
+func _enter_event_from_save(data: DataResource) -> void:
+	var event_def: EventDef = null
+	if not data.CurrentRoomEventPath.is_empty():
+		event_def = load(data.CurrentRoomEventPath) as EventDef
+	if event_def == null:
+		GameLog.err("MainMenu: saved event def is missing, falling back to stage")
+		_enter_stage()
+		return
+	var event_scene := load("res://room/EventRoom.tscn") as PackedScene
+	var event_room := event_scene.instantiate() as EventRoom
+	event_room.EventDefRef = event_def
+	get_tree().root.add_child(event_room)
+	queue_free()
+
+func _enter_shop_from_save(data: DataResource) -> void:
+	var shop_scene := load("res://room/ShopRoom.tscn") as PackedScene
+	var shop: ShopRoom = shop_scene.instantiate()
+	shop.IsBossShop = data.CurrentRoomIsBossShop
+	get_tree().root.add_child(shop)
+	queue_free()
 
 func _on_pack_selected(pack_name: String) -> void:
 	if SaveLoad.Data == null:

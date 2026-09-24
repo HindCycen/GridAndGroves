@@ -7,7 +7,7 @@ class_name ResonanceBot extends Node2D
 ## 特殊方向处理：遇到非向下方向时中断共鸣，召唤主 Bot
 
 signal resonance_completed
-signal summon_bot_requested(target_pos: Vector2i, new_direction: Vector2i)
+signal summon_bot_requested(target_pos: Vector2i, new_direction: Vector2i, chain_depth: int)
 
 var _block_piles_here: BlockPilesHere
 var _battle_time: BattleTime
@@ -18,6 +18,7 @@ var _triggered_blocks: Array = []
 var _special_direction_found: bool = false
 var _summon_target: Vector2i
 var _summon_direction: Vector2i
+var _summon_depth: int = 0
 var _is_running: bool = false
 
 func _ready() -> void:
@@ -75,7 +76,7 @@ func _execute_resonance_chain(source_block: Block) -> void:
 	# 遍历结束
 	if _special_direction_found:
 		GameLog.debug("ResonanceBot: Summoning main Bot to (" + str(_summon_target.x) + ", " + str(_summon_target.y) + ")")
-		emit_signal("summon_bot_requested", _summon_target, _summon_direction)
+		emit_signal("summon_bot_requested", _summon_target, _summon_direction, _summon_depth)
 	else:
 		GameLog.debug("ResonanceBot: Chain completed")
 		emit_signal("resonance_completed")
@@ -119,7 +120,11 @@ func _find_resonance_parts_at_distance(source_cells: Array[Vector2i], distance: 
 					if not _has_any_resonance(block):
 						continue
 
+					# 按“部件”维度收集候选：同一 Block 的多个共鸣部件都应被触发
+					# （不再因为命中一个部件就跳过整个 Block）
 					for part in block.get_parts():
+						if part.IsSpent:
+							continue
 						if not _has_resonance_behavior(part):
 							continue
 						if not _is_part_at(part, pos):
@@ -127,9 +132,6 @@ func _find_resonance_parts_at_distance(source_cells: Array[Vector2i], distance: 
 						if _triggered_parts.has(part):
 							continue
 						candidates.append({"block": block, "part": part, "grid_pos": pos})
-
-					_triggered_blocks.append(block)
-					break
 
 	# 排序：列优先 (x)→同列行优先 (y)
 	candidates.sort_custom(func(a, b):
@@ -147,20 +149,20 @@ func _visit_part(block: Block, part: BlockPart, grid_pos: Vector2i, chain_depth:
 	var move_dir := part.MovingDirection if part.MovingDirection != Vector2i.ZERO else Vector2i.DOWN
 	GameLog.debug("ResonanceBot: Visit (" + str(grid_pos.x) + "," + str(grid_pos.y) + ") dir=(" + str(move_dir.x) + "," + str(move_dir.y) + ")")
 
-	# 特殊方向：非向下 → 中断并召唤主 Bot
+	_triggered_parts.append(part)
+
+	# 先执行部件自身效果（与主 Bot 一致：方向部件同样结算伤害/护盾等）
+	_process_block_part(block, part, chain_depth)
+
+	# 特殊方向：非向下 → 中断并召唤主 Bot 到目标格（链深度继续传递）
 	if move_dir != Vector2i.DOWN:
 		var target := grid_pos + move_dir
 		if not _is_out_of_bounds(target):
 			_special_direction_found = true
 			_summon_target = target
 			_summon_direction = move_dir
-			_triggered_parts.append(part)
+			_summon_depth = chain_depth
 			return
-
-	_triggered_parts.append(part)
-
-	# 执行部件效果（沿用主 Bot 的 _process_block_part 逻辑）
-	_process_block_part(block, part, chain_depth)
 
 	# 增加回响
 	var tree := get_tree()
@@ -174,7 +176,7 @@ func _process_block_part(block: Block, part: BlockPart, depth: int) -> void:
 		_battle_time.say_block_execute()
 	# 记录共鸣链深度到 Block meta（供链加成 Behavior 读取）
 	block.set_meta("resonance_depth", depth)
-	if part.Behaviors.size() == 0:
+	if part.IsSpent:
 		return
 	var should_exhaust := false
 	var has_loose := false
@@ -196,11 +198,11 @@ func _process_block_part(block: Block, part: BlockPart, depth: int) -> void:
 			if action.exhaust_source_block():
 				should_exhaust = true
 	if has_loose and block.Faction == Block.BlockFaction.Player:
-		# 延迟到该 Block 的所有 Action 执行完毕后再松动，避免 Action 引用已离场的 Block
+		# 松动是部件级：仅该部件落场；延迟到 Action 执行完再处理
 		if ActionManager.Instance != null:
-			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _loose_block(block)))
+			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _fall_loose_part(block, part)))
 		else:
-			_loose_block(block)
+			_fall_loose_part(block, part)
 	elif should_exhaust and block.Faction == Block.BlockFaction.Player:
 		if ActionManager.Instance != null:
 			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _exhaust_block(block)))
@@ -212,6 +214,8 @@ func _process_block_part(block: Block, part: BlockPart, depth: int) -> void:
 func _get_block_cells(block: Block) -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
 	for p in block.get_parts():
+		if p.IsSpent:
+			continue
 		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
 		var coord: Vector2i = GridState.get_grid_coords(gp)
 		if coord.x >= 0 and coord.y >= 0:
@@ -229,6 +233,8 @@ func _is_checked(list: Array[Vector2i], pos: Vector2i) -> bool:
 
 func _is_block_at(block: Block, grid_pos: Vector2i) -> bool:
 	for p in block.get_parts():
+		if p.IsSpent:
+			continue
 		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
 		var coord: Vector2i = GridState.get_grid_coords(gp)
 		if coord == grid_pos:
@@ -250,6 +256,8 @@ func _has_resonance_behavior(part: BlockPart) -> bool:
 
 func _has_any_resonance(block: Block) -> bool:
 	for p in block.get_parts():
+		if p.IsSpent:
+			continue
 		if _has_resonance_behavior(p):
 			return true
 	return false
@@ -268,23 +276,17 @@ func _exhaust_block(block: Block) -> void:
 		block.get_parent().remove_child(block)
 	block.queue_free()
 
-func _loose_block(block: Block) -> void:
-	var tree := get_tree()
-	if tree == null:
+## 松动部件落场：仅该部件离场；全部件离场时 Block 进弃牌堆（部件级松动，同主 Bot）
+func _fall_loose_part(block: Block, part: BlockPart) -> void:
+	if _block_piles_here == null or not is_instance_valid(block) or part == null:
 		return
-	for p in block.get_parts():
-		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
-		var coord: Vector2i = GridState.get_grid_coords(gp)
-		if coord.x >= 0 and coord.y >= 0:
-			GridState.restore_grid_state(coord.x, coord.y)
-	_block_piles_here.remove_block_from_placed(block)
-	block.remove_from_group("placed_blocks")
-	# 进弃牌堆（统一走 BlockPilesHere 公共 API）
-	_block_piles_here.send_block_to_discard(block)
-	# 废品计数 +1（ScrapCounterStat，供增幅效果读取）
+	if part.IsSpent:
+		return
+	var discarded := _block_piles_here.fall_loose_part(block, part)
+	# 废品计数 +1：每个松动部件落场各计一次（四段 Block = +4）
 	_increment_scrap_counter(block)
-	# 触发废品回收（ScrapPayoffBehavior）
-	_trigger_scrap_payoff(block)
+	if discarded:
+		_trigger_scrap_payoff(block)
 
 ## 玩家 ScrapCounterStat +1（本回合松动触发计数）
 func _increment_scrap_counter(block: Block) -> void:
@@ -359,3 +361,6 @@ func _cleanup() -> void:
 	if _animated_sprite_2d != null:
 		_animated_sprite_2d.stop()
 	visible = false
+	# 链结束后回收节点，避免长战斗/多次共鸣累积大量隐藏节点与信号连接
+	if is_inside_tree():
+		queue_free()

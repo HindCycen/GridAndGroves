@@ -4933,7 +4933,10 @@
               "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
             },
             {
-              "script": "res://resources/blockpart_behaviors/DamageEnemyBehavior.gd"
+              "script": "res://resources/blockpart_behaviors/DamageAllEnemiesBehavior.gd",
+              "params": {
+                "DamageAmount": 3
+              }
             }
           ]
         }

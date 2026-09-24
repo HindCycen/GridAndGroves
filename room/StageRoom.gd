@@ -21,6 +21,8 @@ var _pulsing_cells: Array = []
 func _ready() -> void:
 	super()
 	Current = self
+	if _save_load != null and _save_load.Data != null:
+		_save_load.Data.CurrentRoomType = Enums.RoomType.Stage
 	if not MapGenerated:
 		var loaded_from_save := _try_restore_map_from_save()
 		if not loaded_from_save:
@@ -189,6 +191,7 @@ func _enter_room(col: int, row: int) -> void:
 		var battle_scene := load("res://room/BattleRoom.tscn") as PackedScene
 		var battle := battle_scene.instantiate() as BattleRoom
 		battle.EnemyChart = chart_def
+		battle.IsFinalBossCell = is_final_cell
 		get_tree().root.add_child(battle)
 		queue_free()
 	else:
@@ -207,14 +210,14 @@ func _enter_room(col: int, row: int) -> void:
 ## 从 JSON enemy_defs.json 中的 stageCharts 配置构建 EnemyChartDef
 ##
 ## 根据房间序号决定难度等级，从对应图表中随机选取一组敌人。
-## is_boss_cell 为 true（每层右上角终点格）时必抽 bossCharts；
+## is_boss_cell 为 true（每层右上角终点格）时必抽 bossCharts（Boss 判定与 RoomCount 解耦）；
 ## roomCount 7~13 区间有 25% 概率进入精英战（eliteCharts）。
 ## 回退策略: 若 JSON 中未配置对应图表，返回空 EnemyChartDef。
 func _build_enemy_chart_for_room(room_count: int, is_boss_cell: bool = false) -> EnemyChartDef:
 	var chart_key: String
 	var stage_key: String = StageDefRef.resource_path.get_file().get_basename() if StageDefRef != null else "exampleStage"
 	
-	if is_boss_cell or room_count >= 20:
+	if is_boss_cell:
 		chart_key = "bossCharts"
 	elif room_count >= 7 and room_count <= 13 and RngManager.get_monster_rand(100) < 25:
 		# 精英遭遇：25% 概率（monster RNG 流，存档可复现）

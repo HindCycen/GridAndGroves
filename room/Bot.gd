@@ -1,5 +1,8 @@
 class_name Bot extends Node2D
 
+## 单回合共鸣 Bot 生成上限：防止病态共鸣网络导致无限生成/递归
+const MAX_RESONANCE_SPAWNS_PER_TURN := 24
+
 var _animated_sprite_2d: AnimatedSprite2D
 var _battle_time: BattleTime
 var _block_piles_here: BlockPilesHere
@@ -8,6 +11,7 @@ var _current_grid_pos: Vector2i
 var _ending_turn: bool
 var _patrol_timer: SceneTreeTimer
 var _stopped: bool
+var _resonance_spawn_count: int
 
 func _ready() -> void:
 	_battle_time = get_tree().root.get_node("BattleTime")
@@ -21,6 +25,7 @@ func start_patrol() -> void:
 	_stopped = false
 	_ending_turn = false
 	_current_direction = Vector2i.DOWN
+	_resonance_spawn_count = 0
 	visible = true
 	_animated_sprite_2d.play("bot_animation")
 	_schedule_next_step()
@@ -30,6 +35,9 @@ func stop_patrol() -> void:
 	_go_to_starter_point()
 
 func _schedule_next_step() -> void:
+	# 先取消旧定时器，避免共鸣打断后出现多个计时器并发（Bot 双倍步进）
+	if _patrol_timer != null and is_instance_valid(_patrol_timer) and _patrol_timer.timeout.is_connected(_on_patrol_timer_timeout):
+		_patrol_timer.timeout.disconnect(_on_patrol_timer_timeout)
 	_patrol_timer = get_tree().create_timer(1.0)
 	_patrol_timer.timeout.connect(_on_patrol_timer_timeout)
 
@@ -82,6 +90,8 @@ func _enqueue_block_actions_at(grid_pos: Vector2i, resonance_depth: int = 0) -> 
 		if not is_instance_valid(block):
 			continue
 		for part in block.get_parts():
+			if part.IsSpent:
+				continue
 			if not _is_part_at_grid(part, grid_pos):
 				continue
 			GameLog.debug("Bot detected BlockPart at (" + str(grid_pos.x) + ", " + str(grid_pos.y) + ")")
@@ -104,7 +114,7 @@ func _process_block_part(block: Block, part: BlockPart, resonance_depth: int = 0
 	_current_direction = move_dir
 	if move_dir != Vector2i.DOWN:
 		GameLog.debug("  Bot direction changed to (" + str(move_dir.x) + ", " + str(move_dir.y) + ")")
-	if part.Behaviors.size() == 0:
+	if part.IsSpent:
 		return
 	var should_exhaust := false
 	var has_loose := false
@@ -129,14 +139,16 @@ func _process_block_part(block: Block, part: BlockPart, resonance_depth: int = 0
 			if action.exhaust_source_block():
 				should_exhaust = true
 	# 处理 Block 生命周期：松动 > 耗尽 > 留在网格
+	# 松动是“部件级”的：被触发的松动部件自身落场（释放其格子），
+	# 同一 Block 的其余部件保留到回合结束（由 clear_player_round 统一处理）。
 	# 延迟到该 Block 本 tick 的所有 Action 执行完毕后再处理，
 	# 避免已入队的 Action 引用已离开场景树的 Block 而报错/失效
 	if has_loose and block.Faction == Block.BlockFaction.Player:
-		GameLog.debug("  Block " + str(block.BlockName if not block.BlockName.is_empty() else "") + " loosened, entering discard pile")
+		GameLog.debug("  Loose part " + str(part.PartId) + " falls off the grid")
 		if ActionManager.Instance != null:
-			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _loose_block(block)))
+			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _fall_loose_part(block, part)))
 		else:
-			_loose_block(block)
+			_fall_loose_part(block, part)
 	elif should_exhaust and block.Faction == Block.BlockFaction.Player:
 		GameLog.debug("  Block " + str(block.BlockName if not block.BlockName.is_empty() else "") + " exhausted, removed from battle")
 		if ActionManager.Instance != null:
@@ -190,6 +202,8 @@ func _has_block_at(grid_pos: Vector2i) -> bool:
 		if not is_instance_valid(block):
 			continue
 		for part in block.get_parts():
+			if part.IsSpent:
+				continue
 			var coords: Vector2i = GridState.get_grid_coords(GridState.find_nearest_grid_point(part.global_position))
 			if coords == grid_pos:
 				return true
@@ -197,26 +211,20 @@ func _has_block_at(grid_pos: Vector2i) -> bool:
 
 # ---- 松动 (Loose) 机制 ----
 
-## 将松动 Block 从网格释放，放入弃牌堆
-func _loose_block(block: Block) -> void:
-	var tree := get_tree()
-	if tree == null:
+## 松动部件落场：仅该部件离场并释放其格子；
+## 同一 Block 的其余部件保留到回合结束（clear_player_round 统一处理）。
+## 最后一个部件离场时把 Block 送入弃牌堆，并触发废品回收。
+func _fall_loose_part(block: Block, part: BlockPart) -> void:
+	if _block_piles_here == null or not is_instance_valid(block) or part == null:
 		return
-	# 释放所有占用的格子
-	for p in block.get_parts():
-		var grid_point: Vector2 = GridState.find_nearest_grid_point(p.global_position)
-		var coords: Vector2i = GridState.get_grid_coords(grid_point)
-		if coords.x >= 0 and coords.y >= 0:
-			GridState.restore_grid_state(coords.x, coords.y)
-	# 从放置堆中移除
-	_block_piles_here.remove_block_from_placed(block)
-	block.remove_from_group("placed_blocks")
-	# 将 Block 移入弃牌堆
-	_enter_discard_pile(block, tree)
-	# 废品计数 +1（ScrapCounterStat，供 Scrap Shot / Scrap Torrent / Rust Bomb 等增幅效果读取）
+	if part.IsSpent:
+		return
+	var discarded := _block_piles_here.fall_loose_part(block, part)
+	# 废品计数 +1：每个松动部件落场各计一次（四段 Block = +4，供 Scrap Shot / Rust Bomb 等增幅读取）
 	_increment_scrap_counter(block)
-	# 触发废品回收（ScrapPayoffBehavior）
-	_trigger_scrap_payoff(block)
+	if discarded:
+		# 触发废品回收（ScrapPayoffBehavior）
+		_trigger_scrap_payoff(block)
 
 ## 玩家 ScrapCounterStat +1（本回合松动触发计数）
 func _increment_scrap_counter(block: Block) -> void:
@@ -284,10 +292,16 @@ func _has_resonance_behavior(part: BlockPart) -> bool:
 
 ## 生成 ResonanceBot 处理共鸣链
 func _spawn_resonance_bot(source_block: Block, start_depth: int) -> void:
+	# 单回合生成上限：防止病态共鸣网络无限生成
+	if _resonance_spawn_count >= MAX_RESONANCE_SPAWNS_PER_TURN:
+		GameLog.warn("Bot: resonance spawn cap reached, skipping nested resonance")
+		_resume_after_resonance()
+		return
+	_resonance_spawn_count += 1
 	# 停止巡逻
 	_stopped = true
 	visible = false
-	if _patrol_timer != null and is_instance_valid(_patrol_timer):
+	if _patrol_timer != null and is_instance_valid(_patrol_timer) and _patrol_timer.timeout.is_connected(_on_patrol_timer_timeout):
 		_patrol_timer.timeout.disconnect(_on_patrol_timer_timeout)
 
 	var scene := load("res://room/ResonanceBot.tscn") as PackedScene
@@ -323,15 +337,16 @@ func _resume_after_resonance() -> void:
 	_schedule_next_step()
 
 ## 共鸣链遇到特殊方向 → 召唤主 Bot 到目标位置
-func _on_resonance_summon(target_pos: Vector2i, new_direction: Vector2i) -> void:
+## chain_depth 继续沿链传递，保证共鸣链深度上限（< 3）仍然生效，避免 A↔B 互指时无限递归
+func _on_resonance_summon(target_pos: Vector2i, new_direction: Vector2i, chain_depth: int = 0) -> void:
 	var target_has_block: bool = GridState.get_grid_state(target_pos.x, target_pos.y) == Enums.GridStateEnum.Occupied
 	_release_cell_safely(_current_grid_pos)
 	_current_grid_pos = target_pos
 	_current_direction = new_direction
 	global_position = GridState.get_grid_pos(_current_grid_pos)
 	GridState.set_grid_state(_current_grid_pos.x, _current_grid_pos.y, Enums.GridStateEnum.Occupied)
-	GameLog.debug("Bot: Summoned to (" + str(target_pos.x) + ", " + str(target_pos.y) + ") dir=(" + str(new_direction.x) + ", " + str(new_direction.y) + ")")
-	# 检查目标位置是否有 Block
+	GameLog.debug("Bot: Summoned to (" + str(target_pos.x) + ", " + str(target_pos.y) + ") dir=(" + str(new_direction.x) + ", " + str(new_direction.y) + ") depth=" + str(chain_depth))
+	# 检查目标位置是否有 Block（沿用当前链深度，由 _enqueue 决定是否继续生成共鸣 Bot）
 	if target_has_block:
-		_enqueue_block_actions_at(target_pos)
+		_enqueue_block_actions_at(target_pos, chain_depth)
 	_resume_after_resonance()

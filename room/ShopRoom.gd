@@ -34,6 +34,10 @@ var _preview_block: Block
 
 func _ready() -> void:
 	super()
+	# 记录当前房间（Continue 恢复现场用）
+	if _save_load != null and _save_load.Data != null:
+		_save_load.Data.CurrentRoomType = Enums.RoomType.Shop
+		_save_load.Data.CurrentRoomIsBossShop = IsBossShop
 	# 商店是战后的必经流程，不提供返回地图按钮（BackToStage 隐藏）
 	var back_btn := %BackToStageBtn as TextureButton
 	if back_btn != null:
@@ -283,6 +287,8 @@ func _auto_top_up(need: int) -> void:
 func _leave_shop() -> void:
 	if _save_load == null:
 		return
+	# 商店已结算：清空返回目标，防止地图返回按钮重进已结算战斗/事件
+	clear_back_target()
 	# Boss 战后商店离店 → 通关判定 / 进入下一层
 	if IsBossShop:
 		if _save_load.Data != null and _save_load.Data.StageCount >= SaveLoad.FINAL_STAGE:

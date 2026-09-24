@@ -5,3 +5,4 @@ enum GridStateEnum { Free, Unable, Occupied }
 enum StatExecuteAt { OnBattleStarted, OnBattleEnded, OnTurnStarted, OnTurnEnded, OnPreBlockExecute, OnBlockExecute, OnPostBlockExecute, OnBeforeDamageApply, OnAfterDamageApply, OnBeforeBlockApply, OnAfterBlockApply, OnStatusApplied }
 enum TicTacPhase { PreBlockExecute, BlockExecute, PostBlockExecute }
 enum EventActionType { None, HealPlayer, DamagePlayer, AddGold, RemoveGold, AddBlockToDeck, RemoveBlockFromDeck }
+enum RoomType { Stage, Battle, Event, Shop }

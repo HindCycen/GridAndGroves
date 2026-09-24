@@ -56,6 +56,60 @@ func send_block_to_discard(block: Block) -> void:
 		block.get_parent().remove_child(block)
 	DiscardedPile.add_block(block)
 
+## 部件级松动：标记该部件离场并释放其占用的格子。
+## 返回 true 表示该 Block 的所有部件均已离场、Block 已进入弃牌堆。
+func fall_loose_part(block: Block, part: BlockPart) -> bool:
+	if block == null or part == null:
+		return false
+	return _fall_parts(block, [part])
+
+## 链式释放：释放该 Block 的所有松动部件（不触发效果、不计废品）。
+## 返回 true 表示 Block 已进入弃牌堆。
+func release_loose_parts(block: Block) -> bool:
+	if block == null:
+		return false
+	var targets: Array[BlockPart] = []
+	for p in block.get_parts():
+		if p.IsSpent:
+			continue
+		if _part_has_loose(p):
+			targets.append(p)
+	if targets.is_empty():
+		return false
+	return _fall_parts(block, targets)
+
+func _fall_parts(block: Block, parts: Array) -> bool:
+	if block == null:
+		return false
+	for part in parts:
+		if part == null or part.IsSpent:
+			continue
+		part.mark_spent()
+		_free_part_grid_cells(part)
+	var all_spent := true
+	for p in block.get_parts():
+		if not p.IsSpent:
+			all_spent = false
+			break
+	if all_spent:
+		_free_block_grid_cells(block)
+		block.remove_from_group("placed_blocks")
+		send_block_to_discard(block)
+		return true
+	return false
+
+func _part_has_loose(part: BlockPart) -> bool:
+	for behavior in part.Behaviors:
+		if behavior is LooseBlockBehavior:
+			return true
+	return false
+
+func _free_part_grid_cells(part: BlockPart) -> void:
+	var grid_pos: Vector2 = GridState.find_nearest_grid_point(part.global_position)
+	var coords: Vector2i = GridState.get_grid_coords(grid_pos)
+	if coords.x >= 0 and coords.y >= 0:
+		GridState.restore_grid_state(coords.x, coords.y)
+
 ## 从弃牌堆回收 1 个 Block 到手牌（ShowingPile）
 ## require_loose 为 true 时只回收带松动标记的 Block（铁锈游侠"废品回收"语义）
 ## require_exhaust 为 true 时只回收带一次性标记的 Block（余烬重燃语义）
@@ -215,6 +269,8 @@ func _on_showing_pile_child_added(node: Node) -> void:
 		return
 	var block := node as Block
 	block.IsPlaced = false
+	# 回到手牌时复位所有部件的离场状态（松动落场的部件重新可用）
+	block.reset_all_parts()
 	if block.placed.is_connected(_on_block_placed):
 		block.placed.disconnect(_on_block_placed)
 	block.placed.connect(_on_block_placed)

@@ -42,11 +42,13 @@ func _play_damage_vfx() -> void:
 			tree.current_scene.add_child(vfx)
 
 ## 应用伤害修正（锈蚀减伤等）
+## 锈蚀（Rust）是施加在敌人身上的减益：按“攻击方”的 Rust 层数降低其造成的伤害。
+## 攻击方可能是敌人本体（直接攻击），也可能是敌人放置的攻击 Block（owner_enemy meta）。
 func _apply_damage_modifiers(base_damage: int) -> int:
 	var modified: int = base_damage
-	# 检查目标是否有 RustStat（target 可能已被释放：敌人死亡后其他排队动作仍持有旧引用）
-	if is_instance_valid(target) and target is Node2D:
-		var rendering = target.get_node_or_null("RenderingComponent")
+	var attacker := _find_attacking_actor()
+	if attacker != null:
+		var rendering = attacker.get_node_or_null("RenderingComponent")
 		if rendering != null:
 			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
 			if stats_comp != null and stats_comp.has_status("Rust"):
@@ -55,6 +57,24 @@ func _apply_damage_modifiers(base_damage: int) -> int:
 				modified = maxi(1, modified - rust_layers)
 				GameLog.debug("DamageAction: RustStat reduced damage from " + str(base_damage) + " to " + str(modified))
 	return modified
+
+## 解析造成本次伤害的敌人单位：
+## - source 是敌人本体 → 直接返回
+## - source 是敌人放置的 Block（带 owner_enemy meta）→ 返回其归属敌人
+## - 玩家 Block / 无效引用 → null（玩家没有锈蚀）
+func _find_attacking_actor() -> Node2D:
+	if source == null or not is_instance_valid(source):
+		return null
+	if source is Enemy:
+		return source as Node2D
+	if source is Block:
+		# 注意：Godot 的 get_meta(key, null) 在缺失时仍会报错，必须先 has_meta 判断
+		if not source.has_meta("owner_enemy"):
+			return null
+		var owner_enemy: Variant = source.get_meta("owner_enemy")
+		if owner_enemy != null and is_instance_valid(owner_enemy) and owner_enemy is Node2D:
+			return owner_enemy as Node2D
+	return null
 
 func _trigger_before_damage_hooks() -> void:
 	_trigger_damage_hooks(Enums.StatExecuteAt.OnBeforeDamageApply)

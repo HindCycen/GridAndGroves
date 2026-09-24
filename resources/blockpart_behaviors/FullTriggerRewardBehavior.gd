@@ -17,18 +17,19 @@ const TRIGGER_META_KEY := "full_trigger_parts"
 func create_action(block, part):
 	if block == null or part == null:
 		return null
-	# 记录本部件已触发（按 PartId 去重）
-	var triggered: Array = block.get_meta(TRIGGER_META_KEY, [])
-	if not triggered.has(part.PartId):
-		triggered.append(part.PartId)
-		block.set_meta(TRIGGER_META_KEY, triggered)
 	# 在创建时捕获 BlockPilesHere（回调执行时 Block 可能已被移出场景树）
 	var block_piles := block.get_parent() as BlockPilesHere
 	if block_piles == null:
 		return null
 	var total_parts: int = block.get_parts().size()
 	return CallbackAction.new(func():
+		if not is_instance_valid(block_piles) or not is_instance_valid(block):
+			return
+		# 在 Action 真正执行时才记录本次触发（避免未执行的 Action 污染计数）
 		var recorded: Array = block.get_meta(TRIGGER_META_KEY, [])
+		if not recorded.has(part.PartId):
+			recorded.append(part.PartId)
+			block.set_meta(TRIGGER_META_KEY, recorded)
 		if recorded.size() >= total_parts:
 			GameLog.debug("FullTriggerRewardBehavior: all " + str(total_parts) + " parts triggered, recalling from discard")
 			for i in RecallCount:
@@ -36,6 +37,8 @@ func create_action(block, part):
 					break
 			if EchoReward > 0:
 				_add_echo(block, EchoReward)
+			# 结算后清空记录：下一次“全部件触发”需重新累计，避免每次部件触发都重复奖励
+			block.remove_meta(TRIGGER_META_KEY)
 	, Enums.ActionType.Callback)
 
 ## 给玩家回响 +N（EchoStat，星语术士资源）

@@ -12,7 +12,7 @@ applyTo: "**/*.gd"
 | 特性标签 | 生命周期 | 适用包 |
 |---------|---------|--------|
 | 默认（无标签） | 被触发后留在网格，回合结束清理 | 星语术士、通用 |
-| **松动 (Loose)** | 被触发后**立即离开网格**，释放格子 | 铁锈游侠 |
+| **松动 (Loose)** | 被触发的**部件**立即离开网格并释放其格子；同一 Block 其他部件留到回合结束 | 铁锈游侠 |
 | **驻留 (Root/Glyph)** | 回合结束**不消失**（`PreventsClear = true`），长期占格 | 翠绿哨兵、星语术士 |
 
 ### 网格基本盘
@@ -25,15 +25,15 @@ applyTo: "**/*.gd"
 
 ## 铁锈游侠 — 高速腾挪 & 资源循环
 
-**核心循环**：放置松动 Block → Bot 触发 → 释放格子 → 过载积累 → 消费爆发 → 废品回收
+**核心循环**：放置松动 Block → Bot 触发松动部件 → 释放格子 → 过载积累 → 消费爆发 → 废品回收
 
 | 机制 | 实现方式 |
 |------|---------|
-| **松动 (Loose)** | `LooseBlockBehavior`：触发后释放网格格位，Block 进入弃牌堆，不销毁 |
+| **松动 (Loose)** | `LooseBlockBehavior`：**部件级**——被触发的部件自身落场并释放其格子；同一 Block 其余部件留到回合结束统一清理；全部件落场时 Block 进入弃牌堆（不销毁） |
 | **过载 (Overload)** | `OverloadStat`：每触发一个带过载标签的 Block +1，`SpendOverloadBehavior` 消费层数换增益，层数归零。`OnTurnEnded` 未消费层数清零。**非固定阈值触发**，而是攒-花循环 |
-| **锈蚀 (Rust)** | `RustStat`：`OnBeforeDamageApply` 每层减伤 1，上限 10 层，战斗结束清除 |
+| **锈蚀 (Rust)** | `RustStat`：按**攻击方**结算——每层使该敌人造成的伤害 -1（含其放置的攻击 Block），上限 10 层，战斗结束清除 |
 | **废品回收 (Scrap Recovery)** | `ScrapPayoffBehavior`：松动 Block 进入弃牌堆时触发额外效果（抽 Block/加过载/上锈蚀）|
-| **链式释放 (Chain Release)** | `ChainReleaseBehavior`：松动 Block 触发时同时释放相邻松动 Block（不造成伤害，仅释放格子）|
+| **链式释放 (Chain Release)** | `ChainReleaseBehavior`：松动部件触发时同时释放相邻 Block 的松动部件（不造成伤害、不计废品，仅释放格子）|
 
 **避免的设计**：
 - ❌ 固定阈值过载奖励（Bot 跑满 35 格必然达成）
@@ -82,15 +82,15 @@ EnqueueBlockActions(block, depth):
 | 标签 | 代码入口 | 行为 |
 |------|---------|------|
 | 一次性 (Exhaust) | `action.exhaust_source_block = true` | 触发后 Block 移出战斗并销毁 |
-| 松动 (Loose) | `LooseBlockBehavior` | 触发后释放网格格子，Block 进入弃牌堆 |
+| 松动 (Loose) | `LooseBlockBehavior` | 部件级：被触发的部件落场并释放其格子；其余部件回合结束清理；全部件落场后 Block 进弃牌堆 |
 | 驻留/扎根/法阵 (Root/Glyph) | `BlockPartBehavior.PreventsClear = true` | 回合结束不清除，留在网格上 |
 | 共鸣 (Resonance) | `ResonanceTriggerBehavior` | 触发时传播到相邻共鸣 Block |
 | 过载 (Overload) | 标签+ `OverloadStat` 递增 | 触发时过载层数 +1 |
 | 回响 (Echo) | `EchoStat` 递增 | 共鸣传播时回响层数 +1 |
-| 锈蚀 (Rust) | `ApplyRustBehavior` + `RustStat` | 给敌人施加减伤 debuff |
+| 锈蚀 (Rust) | `ApplyRustBehavior` + `RustStat` | 给敌人施加减伤 debuff（按攻击方结算，含其攻击 Block） |
 | 藤蔓 (Vine) | `ApplyVineBehavior` + `VineStat` | 给敌人施加持续伤害 debuff |
 | 废品回收 (Scrap Recovery) | `ScrapPayoffBehavior` | 松动进弃牌堆时触发额外效果 |
-| 链式释放 (Chain Release) | `ChainReleaseBehavior` | 触发时释放相邻松动 Block（仅释放格子）|
+| 链式释放 (Chain Release) | `ChainReleaseBehavior` | 释放相邻 Block 的松动部件（仅释放格子）|
 | 孢子蔓延 (Spore Spread) | `SporeBurstBehavior` | 藤蔓达阈值时爆发 |
 | 丛林庇护 (Jungle Shelter) | `JungleShelterBehavior` | 扎根增强相邻 Block |
 | 自然循环 (Nature's Cycle) | `NatureCycleBehavior` | 扎根被清除时回收 |

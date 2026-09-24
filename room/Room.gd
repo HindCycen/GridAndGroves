@@ -134,6 +134,7 @@ func _save_non_stage_room_info() -> void:
 		# 保存敌人名称列表
 		var enemy_names: Array[String] = []
 		var battle := self as BattleRoom
+		data.LastNonStageRoomIsBossCell = battle.IsFinalBossCell
 		if battle.EnemyChart != null and battle.EnemyChart.EnemyDefs != null:
 			for def in battle.EnemyChart.EnemyDefs:
 				var enemy_def := def as EnemyDefinition
@@ -149,6 +150,23 @@ func _save_non_stage_room_info() -> void:
 		else:
 			data.LastNonStageRoomEventDefPath = ""
 		data.LastNonStageRoomEnemyNames = []
+
+## 房间已结算/不可再返回时清空“返回上一房间”的目标，
+## 防止通过地图返回按钮重复进入已结算房间刷奖励
+func clear_back_target() -> void:
+	if _save_load == null or _save_load.Data == null:
+		return
+	var data: DataResource = _save_load.Data
+	data.LastNonStageRoomType = NonStageType.NONE
+	data.LastNonStageRoomEnemyNames.clear()
+	data.LastNonStageRoomEventDefPath = ""
+	data.LastNonStageRoomIsBossCell = false
+
+## 结算后禁用返回地图按钮（胜利/失败/事件已选择）
+func disable_back_to_stage() -> void:
+	if _back_to_stage_btn != null:
+		_back_to_stage_btn.visible = false
+		_back_to_stage_btn.disabled = true
 
 ## 导航到 StageRoom
 func _navigate_to_stage() -> void:
@@ -172,6 +190,7 @@ func _navigate_to_previous_battle(data: DataResource) -> void:
 	var battle_scene := load("res://room/BattleRoom.tscn") as PackedScene
 	var battle := battle_scene.instantiate() as BattleRoom
 	battle.EnemyChart = chart_def
+	battle.IsFinalBossCell = data.LastNonStageRoomIsBossCell
 	get_tree().root.add_child(battle)
 	queue_free()
 
@@ -182,7 +201,10 @@ func _navigate_to_previous_event(data: DataResource) -> void:
 	if not event_def_path.is_empty():
 		event_def = load(event_def_path) as EventDef
 	if event_def == null:
-		event_def = load("res://resources/EgHealEvent.tres") as EventDef
+		# 事件资源缺失时不再静默回退到治疗事件（会变成无限回血漏洞），直接回地图
+		GameLog.err("BackToStage: Cannot load event def [" + event_def_path + "], returning to stage")
+		_navigate_to_stage()
+		return
 	var event_scene := load("res://room/EventRoom.tscn") as PackedScene
 	var event_room := event_scene.instantiate() as EventRoom
 	event_room.EventDefRef = event_def

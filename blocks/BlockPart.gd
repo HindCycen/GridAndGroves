@@ -19,6 +19,7 @@ var Shield: int
 var Heal: int
 var MagicNum: int
 var Exhaust: bool = false  # 一次性：触发后立即移出战斗（Bot 检测此标记）
+var IsSpent: bool = false  # 已离场（松动落场）：隐藏且不再被 Bot 触发/占格
 
 func _ready() -> void:
 	var shape2d := RectangleShape2D.new()
@@ -63,3 +64,17 @@ func _on_mouse_entered() -> void:
 
 func _on_mouse_exited() -> void:
 	_tooltip_component.hide()
+
+## 标记该部件离场（松动落场）：隐藏自身并禁用交互与检测
+func mark_spent() -> void:
+	IsSpent = true
+	visible = false
+	_detecting_area.input_pickable = false
+	if _tooltip_component != null:
+		_tooltip_component.hide()
+
+## 复位离场状态（Block 回到手牌重新可用时调用）
+func reset_spent() -> void:
+	IsSpent = false
+	visible = true
+	_detecting_area.input_pickable = true

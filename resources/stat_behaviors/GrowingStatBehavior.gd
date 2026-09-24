@@ -12,8 +12,11 @@ func heal_player() -> void:
 			var player := node as Node2D
 			var health: HealthComponent = player.get_node("RenderingComponent/HealthComponent")
 			if health != null:
-				health.heal(12)
-				print("GrowingStatBehavior: Healed 12 HP, current HP: ", health.CurrentHealth, "/", health.MaxHealth)
+				var amount: int = stat.CurrentValue
+				if amount <= 0:
+					return
+				health.heal(amount)
+				GameLog.debug("GrowingStatBehavior: Healed " + str(amount) + " HP, current HP: " + str(health.CurrentHealth) + "/" + str(health.MaxHealth))
 
 func get_execute_periods() -> Array[int]:
 	return [Enums.StatExecuteAt.OnBattleEnded]

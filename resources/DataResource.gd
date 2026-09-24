@@ -25,3 +25,12 @@ class_name DataResource extends Resource
 @export var MainPackName: String = ""
 @export var SelectedMiniPackNames: Array[String] = []
 @export var KillCount: int = 0
+## 当前所在房间类型（见 Enums.RoomType：0=Stage 1=Battle 2=Event 3=Shop）
+## 用于 Continue 时恢复现场（Boss 商店/战斗中途退出不再丢流程）
+@export var CurrentRoomType: int = 0
+@export var CurrentRoomIsBossShop: bool = false
+@export var CurrentRoomIsBossCell: bool = false
+@export var CurrentRoomEnemyNames: Array[String] = []
+@export var CurrentRoomEventPath: String = ""
+## 地图返回按钮指向的上一场战斗是否为终点 Boss 格
+@export var LastNonStageRoomIsBossCell: bool = false

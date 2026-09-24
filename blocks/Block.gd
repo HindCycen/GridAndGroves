@@ -23,6 +23,18 @@ var OriginalPos: Vector2
 func get_parts() -> Array[BlockPart]:
 	return _parts.duplicate()
 
+## 是否存在已离场（松动落场）的部件
+func has_spent_part() -> bool:
+	for part in _parts:
+		if part.IsSpent:
+			return true
+	return false
+
+## 复位所有部件的离场状态（Block 回到手牌/重新抽到时调用）
+func reset_all_parts() -> void:
+	for part in _parts:
+		part.reset_spent()
+
 func _ready() -> void:
 	OriginalPos = global_position
 	_load_parts()
@@ -153,6 +165,8 @@ func _finalize_placement() -> void:
 
 func _occupy_all_part_grids() -> void:
 	for part in _parts:
+		if part.IsSpent:
+			continue
 		var grid_point: Vector2 = GridState.find_nearest_grid_point(part.global_position)
 		var grid_index: Vector2i = GridState.get_grid_coords(grid_point)
 		if grid_index.x >= 0 and grid_index.y >= 0:
@@ -160,6 +174,8 @@ func _occupy_all_part_grids() -> void:
 
 func _lift_from_grid() -> void:
 	for part in _parts:
+		if part.IsSpent:
+			continue
 		var grid_point: Vector2 = GridState.find_nearest_grid_point(part.global_position)
 		var grid_index: Vector2i = GridState.get_grid_coords(grid_point)
 		if grid_index.x >= 0 and grid_index.y >= 0:
@@ -169,12 +185,16 @@ func _lift_from_grid() -> void:
 
 func _are_all_parts_in_grid_bounds() -> bool:
 	for part in _parts:
+		if part.IsSpent:
+			continue
 		if not GridState.is_point_in_grid(part.global_position):
 			return false
 	return true
 
 func _are_all_cells_free() -> bool:
 	for part in _parts:
+		if part.IsSpent:
+			continue
 		var nearest: Vector2 = GridState.find_nearest_grid_point(part.global_position)
 		if not GridState.is_point_in_grid(nearest):
 			return false
@@ -211,6 +231,9 @@ func _show_ghost_at_snapped_position() -> void:
 	for i in _ghost_sprites.size():
 		var ghost := _ghost_sprites[i]
 		var part := _parts[i]
+		if part.IsSpent:
+			ghost.visible = false
+			continue
 		ghost.global_position = snapped_center + part.PartialPosition * 96
 		ghost.visible = true
 

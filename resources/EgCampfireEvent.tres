@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EventDef" format=3]
+
+[ext_resource type="Script" path="res://resources/EventDef.gd" id="1"]
+[ext_resource type="Script" path="res://resources/EventChoiceDef.gd" id="2"]
+
+[sub_resource type="Resource" id="SubResource_choice1"]
+script = ExtResource("2")
+ActionType = 1
+ActionValue = 20
+Description = "[G]{Heal 20 HP}[/G]"
+Name = "Rest"
+ResultDescription = "You rest by the fire and recover 20 HP."
+metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
+
+[sub_resource type="Resource" id="SubResource_choice2"]
+script = ExtResource("2")
+ActionType = 2
+ActionValue = 10
+Description = "[R]{Take 10 damage}[/R]"
+Name = "Train"
+ResultDescription = "You push your limits and take 10 damage."
+metadata/_custom_type_script = "res://resources/EventChoiceDef.gd"
+
+[resource]
+script = ExtResource("1")
+Choices = [SubResource("SubResource_choice1"), SubResource("SubResource_choice2")]
+EventDesc = "You found a mysterious campfire. What will you do?"

@@ -2,7 +2,45 @@
 
 > 本文档描述当前项目与"正常 Roguelike 卡牌游戏主循环"及项目设计文档（`planning/`、`.github/copilot-instructions.md`）之间的差距，并给出分阶段的详细修补计划。
 > 状态：**Phase 0/1 已完成；Phase 2/3 大部分已落地（2026-08-18 起）；Phase 5 意图 UI 已完成。
-> 2026-09-12 完成 P0 闭环修补（敌人扩充/精英/楼层缩放/通关结局/StageCount 修复/EnemyAttackBlock 修复）。**
+> 2026-09-12 完成 P0 闭环修补（敌人扩充/精英/楼层缩放/通关结局/StageCount 修复/EnemyAttackBlock 修复）。
+> 2026-09-24 完成一轮稳定性/防刷修复与"松动"部件级重做（见下节）。**
+
+---
+
+## 0.0 2026-09-24 修复记录（稳定性 / 防刷 / 部件级松动）
+
+**流程与经济漏洞**
+
+| 问题 | 修复 |
+|------|------|
+| BackToStage 可重复进入已结算战斗/事件刷奖励 | 结算后 `disable_back_to_stage()` + `clear_back_target()`；胜利即写入商店房状态 |
+| Boss 判定双轨（图表用终点格、奖励/换层用 RoomCount）导致终点战被当普通战而卡死 | `BattleRoom.IsFinalBossCell` 显式标记（随存档持久化），奖励/免费商店/换层统一使用 |
+| Continue 不恢复现场（中途退出丢战斗/Boss 商店） | `DataResource.CurrentRoomType` 等字段 + 各房间 `_ready` 写入 + `MainMenu._enter_saved_room()` 恢复 |
+| 事件可把血量打到 0 且不死（0 血无敌） | `HealthComponent.set_current_health` 补发 `died`；EventRoom 判死进入 GameOver；BattleRoom 开局 0 血兜底判负 |
+| 存档删除后 ResourceLoader 缓存命中导致 Continue 复活旧局 | `SaveLoad.load` / `MainMenu` 改用 `FileAccess.file_exists` |
+
+**战斗机制**
+
+| 问题 | 修复 |
+|------|------|
+| 锈蚀按被击方结算（方向反了） | `DamageAction` 改为按**攻击方**减伤；敌人放置的攻击 Block 通过 `owner_enemy` meta 归属 |
+| 临时 Stat（RemoveOnBattleEnd）跨战斗泄漏 | 存档过滤 + 恢复时清理 + 战斗 `_exit_tree` 清理 |
+| 网格占格跨战斗泄漏 | `BattleRoom._ready` 调 `GridState.init_occupy_state()` |
+| FullTriggerReward meta 永不复位 | 奖励结算后 `remove_meta`，且改为回调执行时记录 |
+| 共鸣链深度丢失（A↔B 可无限递归）+ Bot 定时器重复调度 | 召唤透传 chain_depth + 单回合生成上限 24；`_schedule_next_step` 先取消旧定时器；ResonanceBot 结束后回收 |
+| 共鸣按 Block 去重导致多部件只触发一个 | 改为按部件去重/触发 |
+| FragGrenade 部件重复挂载单体伤害（AOE 未实现） | 新增 `DamageAllEnemiesBehavior`（全体 3 伤） |
+
+**松动（Loose）重做为部件级**
+
+- `BlockPart.IsSpent` + `mark_spent()/reset_spent()`；`BlockPilesHere.fall_loose_part()/release_loose_parts()`
+- Bot/ResonanceBot：被触发的松动部件自身落场并释放其格子；同一 Block 其余部件回合结束清理；全部件落场时 Block 进弃牌堆
+- 废品计数按部件计：每个松动部件落场 +1（四段 Block = +4）
+- `ChainReleaseBehavior` 改为释放相邻 Block 的松动部件（不触发效果、不计废品）
+
+**其他内容修复**：事件拆分为独立 `.tres`（`EgCampfireEvent` / `EgChestEvent` / `EgPotionEvent`，宝箱补 AddGold 25）；`AddBlockToDeck` 改用当前卡池随机 Block；`GrowingStatBehavior` 按层数治疗；事件后顶栏血量即时刷新；`BattleRoom` 兜底牌组改用真实基础卡。
+
+**验证**：135+ 脚本解析全检 0 失败；headless 冒烟 8 项全通过；实机流程验证（选包→地图→战斗→中途返回→重进→胜利→商店→Continue 恢复商店→Boss 商店换层/通关）无报错。
 
 ---
 

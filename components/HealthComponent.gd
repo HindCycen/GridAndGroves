@@ -52,8 +52,13 @@ func set_current_health(value: int) -> void:
 	if value < 0:
 		printerr("Current health cannot be negative")
 		return
+	var was_dead := is_dead
 	CurrentHealth = mini(value, MaxHealth)
 	health_changed.emit(CurrentHealth, MaxHealth)
+	# 直接置为 0（如事件伤害/存档恢复）时同样需要发出死亡信号，
+	# 否则 take_damage 会因 is_dead 提前返回，玩家将永远无敌
+	if is_dead and not was_dead:
+		died.emit()
 
 func _resolve_shield_component() -> ShieldComponent:
 	var shield := get_node_or_null("%ShieldComponent")

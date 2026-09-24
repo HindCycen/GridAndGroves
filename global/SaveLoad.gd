@@ -31,7 +31,8 @@ func _remove_save_file(path: String) -> void:
 		GameLog.info("SaveLoad: Run ended, removed save file")
 
 func load(path := DEFAULT_SAVE_PATH) -> void:
-	if not ResourceLoader.exists(path):
+	# 用 FileAccess 而非 ResourceLoader.exists：存档删除后 ResourceLoader 可能仍返回缓存命中
+	if not FileAccess.file_exists(path):
 		GameLog.info("SaveLoad: Save file not found (" + path + "), using default data")
 		return
 	var loaded := ResourceLoader.load(path)
@@ -73,9 +74,13 @@ func sync_from_game_state() -> void:
 		var stat_names: Array[String] = []
 		var stat_values: Array[int] = []
 		for s in stats:
-			if s.Definition != null and s.Definition.StatName != null:
-				stat_names.append(s.Definition.StatName)
-				stat_values.append(s.CurrentValue)
+			if s.Definition == null or s.Definition.StatName == null:
+				continue
+			# 战斗内临时 Stat（RemoveOnBattleEnd）不写入存档，避免中途退出战斗后跨场残留
+			if s.Definition.RemoveOnBattleEnd:
+				continue
+			stat_names.append(s.Definition.StatName)
+			stat_values.append(s.CurrentValue)
 		Data.PlayerStatNames = stat_names
 		Data.PlayerStatValues = stat_values
 
@@ -120,20 +125,25 @@ func restore_player_stats(player: Player) -> void:
 	if rend == null or rend.StatsComponentRef == null:
 		return
 	var stats_comp: StatsComponent = rend.StatsComponentRef
+	# 先移除战斗内临时 Stat（可能来自中途退出战斗/旧存档的残留），
+	# 保证新战斗从干净的临时状态开始
+	for existing in stats_comp.get_all_statuses():
+		if existing != null and existing.Definition != null and existing.Definition.RemoveOnBattleEnd:
+			stats_comp.remove_status(existing.Definition.StatName)
 	if Data.PlayerStatNames == null or Data.PlayerStatValues == null:
 		return
 	var count = mini(Data.PlayerStatNames.size(), Data.PlayerStatValues.size())
 	for i in count:
-		var stat = stats_comp.get_status(Data.PlayerStatNames[i])
-		if stat != null:
-			stat.set_value(Data.PlayerStatValues[i])
-		else:
-			var stat_def := load("res://resources/stat_defs/" + Data.PlayerStatNames[i] + ".tres") as StatDef
-			if stat_def != null:
-				stat = Stat.new()
-				stat.Definition = stat_def
-				stats_comp.add_status(stat)
-				stat.set_value(Data.PlayerStatValues[i])
+		var stat_name: String = Data.PlayerStatNames[i]
+		var stat = stats_comp.get_status(stat_name)
+		if stat == null:
+			var stat_def := load("res://resources/stat_defs/" + stat_name + ".tres") as StatDef
+			if stat_def == null or stat_def.RemoveOnBattleEnd:
+				continue
+			stat = Stat.new()
+			stat.Definition = stat_def
+			stats_comp.add_status(stat)
+		stat.set_value(Data.PlayerStatValues[i])
 
 func save_stage_map() -> void:
 	var stage: StageRoom = StageRoom.Current if has_node("/root/StageRoom") else null

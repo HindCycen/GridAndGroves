@@ -11,6 +11,9 @@ var _player: Player
 var _player_health: HealthComponent
 var _round_number: int
 @export var EnemyChart: EnemyChartDef
+## 是否为每层终点 Boss 格战斗（由 StageRoom 注入并随存档恢复）——
+## Boss 奖励 / 免费商店 / 换层判定全部以此为准，不再依赖可增减的 RoomCount
+@export var IsFinalBossCell: bool = false
 
 func _ready() -> void:
 	super()
@@ -35,6 +38,9 @@ func _ready() -> void:
 		_player_health.died.connect(_on_player_died)
 	_battle_resolved = false
 	_is_game_over = false
+	# 每场战斗重置网格占格：上一场残留的方块随房间销毁，占格必须一并复位，
+	# 否则新战斗会出现“看不见的占用格”
+	GridState.init_occupy_state()
 	_enemy_manager.initialize(_player, _block_piles_here)
 	_enemy_manager.all_enemies_defeated.connect(_on_all_enemies_defeated)
 	if EnemyChart != null and EnemyChart.EnemyDefs != null:
@@ -44,6 +50,7 @@ func _ready() -> void:
 	if enemy_count == 0:
 		GameLog.err("No enemies! Please configure EnemyChart.")
 		return
+	_persist_current_room()
 	_end_turn_button.text = "End Turn"
 	_end_turn_button.pressed.connect(_on_end_turn_pressed)
 	_battle_time.turn_ended.connect(_on_bot_turn_ended)
@@ -53,6 +60,10 @@ func _ready() -> void:
 	_render_unable_grid_cells()
 	_setup_pile_viewer_buttons()
 	_round_number = 0
+	# 存档恢复出 0 血（例如事件扣血后未判死）时直接判负，避免“0 血无敌”
+	if _player_health != null and _player_health.is_dead:
+		_on_player_died()
+		return
 	_start_player_turn()
 
 func _on_all_enemies_defeated() -> void:
@@ -61,7 +72,24 @@ func _on_all_enemies_defeated() -> void:
 	_bot.stop_patrol()
 	_on_victory()
 
+## 写入“当前所在房间”存档信息（Continue 恢复现场用）
+func _persist_current_room() -> void:
+	if _save_load == null or _save_load.Data == null:
+		return
+	var data: DataResource = _save_load.Data
+	data.CurrentRoomType = Enums.RoomType.Battle
+	data.CurrentRoomIsBossCell = IsFinalBossCell
+	data.CurrentRoomEnemyNames.clear()
+	if EnemyChart != null and EnemyChart.EnemyDefs != null:
+		for def in EnemyChart.EnemyDefs:
+			var enemy_def := def as EnemyDefinition
+			if enemy_def != null:
+				data.CurrentRoomEnemyNames.append(enemy_def.EnemyName)
+
 func _exit_tree() -> void:
+	# 中途退出战斗（BackToStage / 退出游戏）时也清理战斗内临时 Stat，
+	# 防止 RemoveOnBattleEnd 状态被 Room._exit_tree 写档后跨战斗残留
+	_cleanup_temp_stats()
 	if ActionManager.Instance != null:
 		ActionManager.Instance.clear()
 	if _battle_time != null:
@@ -104,14 +132,11 @@ func _initialize_player_deck() -> void:
 			else:
 				GameLog.err("InitializePlayerDeck: Cannot find block [" + block_name + "]")
 	else:
-		for i in 3:
-			player_pile.add_block(BlockRegistry.create_block_by_name("DamageBlock"))
-		for i in 2:
-			player_pile.add_block(BlockRegistry.create_block_by_name("ExampleMoveRight"))
-		for i in 2:
-			player_pile.add_block(BlockRegistry.create_block_by_name("ExampleBlock"))
-		player_pile.add_block(BlockRegistry.create_block_by_name("Growing"))
-		player_pile.add_block(BlockRegistry.create_block_by_name("Shield"))
+		# 兜底牌组：仅使用真实存在的基础卡（旧的 DamageBlock/ExampleMoveRight 等已不存在）
+		for i in 4:
+			player_pile.add_block(BlockRegistry.create_block_by_name("Strike"))
+		for i in 4:
+			player_pile.add_block(BlockRegistry.create_block_by_name("Defend"))
 	GameLog.debug("Player deck initialized, total " + str(player_pile.Count) + " cards")
 
 ## 基础卡名单：不参与卡池校验（与 ShopRoom.BASIC_CARD_NAMES 保持一致）
@@ -156,12 +181,14 @@ func _on_victory() -> void:
 	GameLog.info("\n=== Victory! All enemies defeated! ===")
 	_end_turn_button.text = "Victory!"
 	_end_turn_button.disabled = true
+	# 结算后禁止返回地图：否则可重复进入已结算战斗刷金币
+	disable_back_to_stage()
+	clear_back_target()
 	_battle_time.say_battle_ended()
-	var is_boss := false
+	var is_boss: bool = IsFinalBossCell
 	var reward_gold := 0
 	if _save_load != null and _save_load.Data != null:
 		var room_count: int = _save_load.Data.RoomCount
-		is_boss = room_count >= 20
 		# 战后金币奖励 = 难度基准 + 随机浮动（balance.md：3~5 / 5~7，Boss 10~15）
 		# 使用 reward RNG 流，保证存档可复现
 		if is_boss:
@@ -172,6 +199,10 @@ func _on_victory() -> void:
 			reward_gold = 3 + RngManager.get_reward_rand(3)
 		_save_load.Data.Gold += reward_gold
 		GameLog.info("Victory reward: +" + str(reward_gold) + " gold (total: " + str(_save_load.Data.Gold) + ")")
+		# 立即把“当前房间”推进到商店：即使此刻退出游戏，Continue 也进入商店，
+		# 不会重打 Boss 重复领奖
+		_save_load.Data.CurrentRoomType = Enums.RoomType.Shop
+		_save_load.Data.CurrentRoomIsBossShop = is_boss
 	if is_boss:
 		GameLog.info("Boss killed! Shop will be free, then advancing to next floor")
 	_end_turn_button.text = "Victory! +" + str(reward_gold) + " Gold"
@@ -179,7 +210,8 @@ func _on_victory() -> void:
 	# 每场战后进入商店（balance.md 主循环：胜利 → 金币 → 进入商店）
 	var timer := get_tree().create_timer(1.2)
 	timer.timeout.connect(func():
-		_enter_shop(is_boss)
+		if is_instance_valid(self):
+			_enter_shop(is_boss)
 	)
 
 func _enter_shop(is_boss: bool) -> void:
@@ -201,6 +233,7 @@ func _on_defeat() -> void:
 	GameLog.info("\n=== Defeat! Player has been defeated! ===")
 	_end_turn_button.text = "Defeat..."
 	_end_turn_button.disabled = true
+	disable_back_to_stage()
 	_bot.stop_patrol()
 	_battle_time.say_battle_ended()
 	# 本局结束：清理运行时卡池
@@ -214,6 +247,10 @@ func _on_defeat() -> void:
 	)
 
 func _on_battle_ended_cleanup() -> void:
+	_cleanup_temp_stats()
+
+## 移除战斗内临时 Stat（RemoveOnBattleEnd）
+func _cleanup_temp_stats() -> void:
 	if not is_instance_valid(_player):
 		return
 	var rend = _player.get_node_or_null("RenderingComponent")
@@ -225,8 +262,9 @@ func _on_battle_ended_cleanup() -> void:
 		if s.Definition != null and s.Definition.RemoveOnBattleEnd:
 			temp_stats.append(s)
 	for stat in temp_stats:
-		GameLog.info("Battle ended, removing temp status [" + stat.Definition.StatName + "]")
-		stats_comp.remove_status(stat.Definition.StatName)
+		if stats_comp.has_status(stat.Definition.StatName):
+			GameLog.info("Battle ended, removing temp status [" + stat.Definition.StatName + "]")
+			stats_comp.remove_status(stat.Definition.StatName)
 
 func _on_all_enemy_attacks_resolved() -> void:
 	if _is_game_over:
