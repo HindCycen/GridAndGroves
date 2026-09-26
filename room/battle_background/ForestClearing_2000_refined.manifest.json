@@ -1,0 +1,32 @@
+{
+  "init": "room\\battle_background\\ForestClearing_2000.png",
+  "out": "room\\battle_background\\ForestClearing_2000_refined.png",
+  "prompt": "pixel art forest clearing, flat shading, limited palette, crisp pixels, dithering, trees, bushes, distant hills, retro game background",
+  "negative": "blurry, anti-aliased, smooth gradient, soft shading, 3d render, photorealistic, photo, text, watermark, signature, jpeg artifacts, depth of field, motion blur",
+  "seed": 20260926,
+  "denoise": 0.45,
+  "steps": 32,
+  "cfg": 6.5,
+  "control_scale": 1.0,
+  "lora": "redmond15",
+  "lora_scale": 1.0,
+  "keep": [
+    [
+      216,
+      456,
+      936,
+      984
+    ]
+  ],
+  "clean": 3,
+  "work": "1024x576",
+  "grid": "640x360",
+  "scale": 3,
+  "palette": "resources/palette/gg256.json",
+  "models": {
+    "sd15": "models\\sd15",
+    "controlnet": "controlnet_canny",
+    "lora": "C:\\Users\\HindCycen\\gg-ai\\models\\lora_redmond15\\PixelArtRedmond15V-PixelArt-PIXARFK.safetensors"
+  },
+  "time": "2026-09-26T18:31:43"
+}
