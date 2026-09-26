@@ -28,14 +28,3 @@ func _on_status_removed(status_name: String) -> void:
 		icon.detach()
 		_stat_icons.erase(status_name)
 		icon.queue_free()
-
-func get_health() -> int:
-	var hc := get_node("HealthComponent") as HealthComponent
-	return hc.CurrentHealth if hc != null else 0
-
-func get_shield() -> int:
-	var sc := get_node("ShieldComponent") as ShieldComponent
-	return sc.CurrentShield if sc != null else 0
-
-func get_stat() -> Array:
-	return StatsComponentRef.get_all_statuses()

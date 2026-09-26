@@ -28,39 +28,20 @@ func create_payoff_action(block: Block, part, block_piles: BlockPilesHere) -> Ab
 	, Enums.ActionType.Callback)
 
 func _trigger_payoff(block: Block, part, block_piles: BlockPilesHere) -> void:
-	var tree := block_piles.get_tree() if block_piles != null and block_piles.is_inside_tree() else null
+	if block_piles == null or not is_instance_valid(block_piles):
+		return
+	var tree := block_piles.get_tree()
 	if tree == null:
 		return
 	match PayoffType:
 		"overload":
-			_add_player_overload(tree, block)
+			block_piles.add_player_stat("Overload", PayoffAmount)
 		"rust":
 			_apply_rust_to_enemies(tree, block)
 		"shield":
 			_grant_shield(tree, block)
 		"draw":
 			_draw_block(block_piles)
-
-func _add_player_overload(tree: SceneTree, block: Block) -> void:
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var player := node as Node2D
-			var rendering = player.get_node("RenderingComponent")
-			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
-			if stats_comp != null:
-				if stats_comp.has_status("Overload"):
-					var overload: Stat = stats_comp.get_status("Overload")
-					overload.add_value(PayoffAmount)
-					GameLog.debug("ScrapPayoffBehavior: Added " + str(PayoffAmount) + " overload from scrap recovery")
-				else:
-					# 自动创建 Overload Stat
-					var overload_def: Resource = load("res://resources/stat_defs/Overload.tres")
-					if overload_def != null:
-						var stat: Stat = Stat.new()
-						stat.Definition = overload_def
-						stats_comp.add_status(stat)
-						stat.add_value(PayoffAmount)
-			return
 
 func _apply_rust_to_enemies(tree: SceneTree, block: Block) -> void:
 	var rust_def: Resource = load("res://resources/stat_defs/Rust.tres")

@@ -98,7 +98,7 @@ func _enqueue_block_actions_at(grid_pos: Vector2i, resonance_depth: int = 0) -> 
 			_process_block_part(block, part, resonance_depth)
 			# 共鸣连锁：部件带 ResonanceTriggerBehavior → 生成 ResonanceBot 处理
 			if _has_resonance_behavior(part) and resonance_depth < 3:
-				_spawn_resonance_bot(block, resonance_depth + 1)
+				_spawn_resonance_bot(block, resonance_depth + 1, part)
 			return
 
 func _is_part_at_grid(part: BlockPart, grid_pos: Vector2i) -> bool:
@@ -145,30 +145,10 @@ func _process_block_part(block: Block, part: BlockPart, resonance_depth: int = 0
 	# 避免已入队的 Action 引用已离开场景树的 Block 而报错/失效
 	if has_loose and block.Faction == Block.BlockFaction.Player:
 		GameLog.debug("  Loose part " + str(part.PartId) + " falls off the grid")
-		if ActionManager.Instance != null:
-			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _fall_loose_part(block, part)))
-		else:
-			_fall_loose_part(block, part)
+		_block_piles_here.enqueue_loose_part(block, part)
 	elif should_exhaust and block.Faction == Block.BlockFaction.Player:
 		GameLog.debug("  Block " + str(block.BlockName if not block.BlockName.is_empty() else "") + " exhausted, removed from battle")
-		if ActionManager.Instance != null:
-			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _exhaust_block(block)))
-		else:
-			_exhaust_block(block)
-
-func _exhaust_block(block: Block) -> void:
-	for p in block.get_parts():
-		var grid_point: Vector2 = GridState.find_nearest_grid_point(p.global_position)
-		var coords: Vector2i = GridState.get_grid_coords(grid_point)
-		if coords.x >= 0 and coords.y >= 0:
-			GridState.restore_grid_state(coords.x, coords.y)
-	_block_piles_here.remove_block_from_placed(block)
-	block.remove_from_group("placed_blocks")
-	# 清除时触发自然循环（NatureCycleBehavior 回收效果）
-	_trigger_nature_cycle(block)
-	if block.get_parent() != null and is_instance_valid(block.get_parent()):
-		block.get_parent().remove_child(block)
-	block.queue_free()
+		_block_piles_here.enqueue_exhaust_block(block)
 
 func _end_turn() -> void:
 	GameLog.info("Bot turn ended")
@@ -209,76 +189,6 @@ func _has_block_at(grid_pos: Vector2i) -> bool:
 				return true
 	return false
 
-# ---- 松动 (Loose) 机制 ----
-
-## 松动部件落场：仅该部件离场并释放其格子；
-## 同一 Block 的其余部件保留到回合结束（clear_player_round 统一处理）。
-## 最后一个部件离场时把 Block 送入弃牌堆，并触发废品回收。
-func _fall_loose_part(block: Block, part: BlockPart) -> void:
-	if _block_piles_here == null or not is_instance_valid(block) or part == null:
-		return
-	if part.IsSpent:
-		return
-	var discarded := _block_piles_here.fall_loose_part(block, part)
-	# 废品计数 +1：每个松动部件落场各计一次（四段 Block = +4，供 Scrap Shot / Rust Bomb 等增幅读取）
-	_increment_scrap_counter(block)
-	if discarded:
-		# 触发废品回收（ScrapPayoffBehavior）
-		_trigger_scrap_payoff(block)
-
-## 玩家 ScrapCounterStat +1（本回合松动触发计数）
-func _increment_scrap_counter(block: Block) -> void:
-	var tree := get_tree()
-	if tree == null:
-		return
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var player := node as Node2D
-			var rendering = player.get_node("RenderingComponent")
-			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
-			if stats_comp == null:
-				return
-			if not stats_comp.has_status("ScrapCounter"):
-				var scrap_def: Resource = load("res://resources/stat_defs/ScrapCounter.tres")
-				if scrap_def == null:
-					printerr("Bot: ScrapCounter.tres not found!")
-					return
-				var stat: Stat = Stat.new()
-				stat.Definition = scrap_def
-				stats_comp.add_status(stat)
-				stat.add_value(1)
-			else:
-				stats_comp.get_status("ScrapCounter").add_value(1)
-			GameLog.debug("Bot: ScrapCounter +1 (total: " + str(stats_comp.get_status("ScrapCounter").CurrentValue) + ")")
-			return
-
-## 将 Block 放入玩家弃牌堆（不销毁节点，保留重用）
-func _enter_discard_pile(block: Block, _tree: SceneTree) -> void:
-	_block_piles_here.send_block_to_discard(block)
-
-## 触发自然循环：Block 被清除（耗尽）时执行 NatureCycleBehavior 的回收效果
-func _trigger_nature_cycle(block: Block) -> void:
-	if block == null:
-		return
-	for part in block.get_parts():
-		for behavior in part.Behaviors:
-			if behavior is NatureCycleBehavior:
-				(behavior as NatureCycleBehavior).trigger_cycle(block)
-
-## 触发废品回收：查找 Block 的 ScrapPayoffBehavior 并执行
-func _trigger_scrap_payoff(block: Block) -> void:
-	for part in block.get_parts():
-		if part.Behaviors.size() == 0:
-			continue
-		for behavior in part.Behaviors:
-			if behavior is ScrapPayoffBehavior:
-				# ScrapPayoffBehavior.create_action 返回 null（标记类）
-				# 松动入弃牌堆时在此显式创建 Action 执行回收效果
-				var payoff_action: AbstractGameAction = (behavior as ScrapPayoffBehavior).create_payoff_action(block, part, _block_piles_here)
-				if payoff_action != null and ActionManager.Instance != null:
-					ActionManager.Instance.add_to_top(payoff_action)
-					GameLog.debug("Bot: ScrapPayoffBehavior triggered for " + str(block.BlockName if not block.BlockName.is_empty() else ""))
-
 # ---- 共鸣 (Resonance) 连锁机制 ----
 
 ## 检查部件是否带 ResonanceTriggerBehavior
@@ -291,7 +201,7 @@ func _has_resonance_behavior(part: BlockPart) -> bool:
 	return false
 
 ## 生成 ResonanceBot 处理共鸣链
-func _spawn_resonance_bot(source_block: Block, start_depth: int) -> void:
+func _spawn_resonance_bot(source_block: Block, start_depth: int, source_part: BlockPart = null) -> void:
 	# 单回合生成上限：防止病态共鸣网络无限生成
 	if _resonance_spawn_count >= MAX_RESONANCE_SPAWNS_PER_TURN:
 		GameLog.warn("Bot: resonance spawn cap reached, skipping nested resonance")
@@ -327,7 +237,7 @@ func _spawn_resonance_bot(source_block: Block, start_depth: int) -> void:
 
 	# 启动
 	if bot.has_method("start_resonance"):
-		bot.start_resonance(source_block, start_depth, _block_piles_here, _battle_time)
+		bot.start_resonance(source_block, start_depth, _block_piles_here, _battle_time, source_part)
 
 ## 共鸣链正常完成 → 恢复巡逻
 func _resume_after_resonance() -> void:

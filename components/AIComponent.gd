@@ -17,10 +17,6 @@ func _ready() -> void:
 func setup(block_piles_here) -> void:
 	_block_piles_here = block_piles_here
 
-func reset() -> void:
-	_cycle_index = 0
-	_repeat_count = 0
-
 func get_current_intent(definition) -> Variant:
 	if definition == null or definition.IntentCycle == null or definition.IntentCycle.size() == 0:
 		return null

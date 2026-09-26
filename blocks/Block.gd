@@ -23,13 +23,6 @@ var OriginalPos: Vector2
 func get_parts() -> Array[BlockPart]:
 	return _parts.duplicate()
 
-## 是否存在已离场（松动落场）的部件
-func has_spent_part() -> bool:
-	for part in _parts:
-		if part.IsSpent:
-			return true
-	return false
-
 ## 复位所有部件的离场状态（Block 回到手牌/重新抽到时调用）
 func reset_all_parts() -> void:
 	for part in _parts:

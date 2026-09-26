@@ -110,6 +110,100 @@ func _free_part_grid_cells(part: BlockPart) -> void:
 	if coords.x >= 0 and coords.y >= 0:
 		GridState.restore_grid_state(coords.x, coords.y)
 
+# ── Block 生命周期（Bot / ResonanceBot 共用，避免双份实现） ──
+
+## 入队“松动部件落场”：延迟到当前所有 Action 执行完毕后再处理
+func enqueue_loose_part(block: Block, part: BlockPart) -> void:
+	if ActionManager.Instance != null:
+		ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): loose_part(block, part)))
+	else:
+		loose_part(block, part)
+
+## 松动部件落场：释放该部件并计废品 +1；全部件落场时 Block 进弃牌堆并触发废品回收
+func loose_part(block: Block, part: BlockPart) -> void:
+	if block == null or part == null or part.IsSpent:
+		return
+	var discarded := fall_loose_part(block, part)
+	increment_scrap_counter()
+	if discarded:
+		trigger_scrap_payoff(block)
+
+## 入队“一次性耗尽”：延迟到当前所有 Action 执行完毕后再处理
+func enqueue_exhaust_block(block: Block) -> void:
+	if ActionManager.Instance != null:
+		ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): exhaust_block(block)))
+	else:
+		exhaust_block(block)
+
+## 一次性：释放全部格子、移出放置堆、触发自然循环并销毁 Block
+func exhaust_block(block: Block) -> void:
+	if block == null or not is_instance_valid(block):
+		return
+	for part in block.get_parts():
+		_free_part_grid_cells(part)
+	remove_block_from_placed(block)
+	block.remove_from_group("placed_blocks")
+	trigger_nature_cycle(block)
+	if block.get_parent() != null and is_instance_valid(block.get_parent()):
+		block.get_parent().remove_child(block)
+	block.queue_free()
+
+## 玩家某项 Stat +N（按 stat_defs/<name>.tres 动态加载；Echo/Overload/ScrapCounter 等）
+func add_player_stat(stat_name: String, layers: int) -> void:
+	if layers <= 0 or stat_name.is_empty():
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+	for node in tree.get_nodes_in_group("Players"):
+		if not (node is Node2D):
+			continue
+		var player := node as Node2D
+		var rendering = player.get_node_or_null("RenderingComponent")
+		var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
+		if stats_comp == null:
+			return
+		if stats_comp.has_status(stat_name):
+			stats_comp.get_status(stat_name).add_value(layers)
+		else:
+			var stat_def: StatDef = load("res://resources/stat_defs/" + stat_name + ".tres") as StatDef
+			if stat_def == null:
+				GameLog.err("BlockPilesHere: StatDef [" + stat_name + "] not found")
+				return
+			var stat := Stat.new()
+			stat.Definition = stat_def
+			stats_comp.add_status(stat)
+			stat.add_value(layers)
+		GameLog.debug("BlockPilesHere: " + stat_name + " +" + str(layers))
+		return
+
+## 废品计数 +1（ScrapCounterStat，供 Scrap Shot / Rust Bomb 等增幅读取）
+func increment_scrap_counter() -> void:
+	add_player_stat("ScrapCounter", 1)
+
+## 废品回收：松动的 Block 进入弃牌堆时触发 ScrapPayoffBehavior
+func trigger_scrap_payoff(block: Block) -> void:
+	if block == null or not is_instance_valid(block):
+		return
+	for part in block.get_parts():
+		if part.Behaviors.size() == 0:
+			continue
+		for behavior in part.Behaviors:
+			if behavior is ScrapPayoffBehavior:
+				var payoff_action: AbstractGameAction = (behavior as ScrapPayoffBehavior).create_payoff_action(block, part, self)
+				if payoff_action != null and ActionManager.Instance != null:
+					ActionManager.Instance.add_to_top(payoff_action)
+					GameLog.debug("BlockPilesHere: ScrapPayoffBehavior triggered for " + str(block.BlockName if not block.BlockName.is_empty() else ""))
+
+## 自然循环：Block 被清除（耗尽）时执行 NatureCycleBehavior 的回收效果
+func trigger_nature_cycle(block: Block) -> void:
+	if block == null or not is_instance_valid(block):
+		return
+	for part in block.get_parts():
+		for behavior in part.Behaviors:
+			if behavior is NatureCycleBehavior:
+				(behavior as NatureCycleBehavior).trigger_cycle(block)
+
 ## 从弃牌堆回收 1 个 Block 到手牌（ShowingPile）
 ## require_loose 为 true 时只回收带松动标记的 Block（铁锈游侠"废品回收"语义）
 ## require_exhaust 为 true 时只回收带一次性标记的 Block（余烬重燃语义）

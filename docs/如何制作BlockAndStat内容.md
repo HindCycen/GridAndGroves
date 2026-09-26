@@ -480,7 +480,6 @@ resources/
 │   ├── DamageBehavior.gd / DamageEnemyBehavior.gd / DamagePlayerBehavior.gd
 │   ├── GrantShieldBehavior.gd
 │   ├── GrantStatBehavior.gd / GrantPlayerStatBehavior.gd / ApplyRustBehavior.gd / ApplyVineBehavior.gd
-│   ├── GiveGrowingStatBehavior.gd
 │   ├── MoveRightBehavior.gd / DoNothing.gd / ExamplePartBehavior.gd
 │   ├── LooseBlockBehavior.gd / ScrapPayoffBehavior.gd / ChainReleaseBehavior.gd
 │   ├── ResonanceTriggerBehavior.gd / SpendEchoBehavior.gd / GlyphRootBehavior.gd
@@ -520,7 +519,6 @@ actions/                     # Action 系统
 
 vfx/                         # 视觉效果
 ├── DamageNumberVFX.gd       # 浮动伤害数字
-├── BlockNumberVFX.gd        # 浮动格挡数字
 └── ...
 
 room/
@@ -538,7 +536,7 @@ global/
 ├── GridState.gd             # 网格控制
 ├── RngManager.gd            # 随机数管理
 ├── BlockRegistry.gd         # 方块/敌人注册与创建
-├── PackManager.gd           # 卡包管理（尚未接入主流程）
+├── PackManager.gd           # 卡包管理（主菜单选包 / 卡池构建 / Continue 恢复）
 ├── BattleTime.gd            # 信号中枢（三段式 TicTac）
 └── SaveLoad.gd              # 存档系统
 

@@ -14,7 +14,6 @@ var _battle_time: BattleTime
 var _animated_sprite_2d: AnimatedSprite2D
 var _resonance_depth: int = 0
 var _triggered_parts: Array = []
-var _triggered_blocks: Array = []
 var _special_direction_found: bool = false
 var _summon_target: Vector2i
 var _summon_direction: Vector2i
@@ -24,14 +23,15 @@ var _is_running: bool = false
 func _ready() -> void:
 	_animated_sprite_2d = %AnimatedSprite2D as AnimatedSprite2D
 
-## 启动共鸣遍历
-func start_resonance(source_block: Block, start_depth: int, block_piles: BlockPilesHere, battle_time: BattleTime) -> void:
+## 启动共鸣遍历（source_part 为触发本次共鸣的部件，避免链内重复触发）
+func start_resonance(source_block: Block, start_depth: int, block_piles: BlockPilesHere, battle_time: BattleTime, source_part: BlockPart = null) -> void:
 	_block_piles_here = block_piles
 	_battle_time = battle_time
 	_resonance_depth = start_depth
 	_is_running = true
-	_triggered_blocks = [source_block]
 	_triggered_parts = []
+	if source_part != null:
+		_triggered_parts.append(source_part)
 	_special_direction_found = false
 
 	if _animated_sprite_2d != null:
@@ -94,7 +94,9 @@ func _find_resonance_parts_at_distance(source_cells: Array[Vector2i], distance: 
 			var dy_abs: int = distance - abs(dx)
 			if dy_abs < 0:
 				continue
-			var signs: Array[int] = [1] if dy_abs == 0 else [1, -1]
+			var signs: Array[int] = [1]
+			if dy_abs != 0:
+				signs.append(-1)
 			for s in signs:
 				var dy: int = dy_abs * s
 				var pos := Vector2i(sc.x + dx, sc.y + dy)
@@ -110,8 +112,6 @@ func _find_resonance_parts_at_distance(source_cells: Array[Vector2i], distance: 
 
 				for block in _block_piles_here.get_blocks_on_grid():
 					if not is_instance_valid(block):
-						continue
-					if _triggered_blocks.has(block):
 						continue
 					if block.Faction != Block.BlockFaction.Player:
 						continue
@@ -165,9 +165,8 @@ func _visit_part(block: Block, part: BlockPart, grid_pos: Vector2i, chain_depth:
 			return
 
 	# 增加回响
-	var tree := get_tree()
-	if tree != null:
-		_add_echo(tree, 1)
+	if _block_piles_here != null:
+		_block_piles_here.add_player_stat("Echo", 1)
 
 # ──────────── Block 处理（从原 Bot.gd 复用小部分逻辑） ────────────
 
@@ -199,15 +198,9 @@ func _process_block_part(block: Block, part: BlockPart, depth: int) -> void:
 				should_exhaust = true
 	if has_loose and block.Faction == Block.BlockFaction.Player:
 		# 松动是部件级：仅该部件落场；延迟到 Action 执行完再处理
-		if ActionManager.Instance != null:
-			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _fall_loose_part(block, part)))
-		else:
-			_fall_loose_part(block, part)
+		_block_piles_here.enqueue_loose_part(block, part)
 	elif should_exhaust and block.Faction == Block.BlockFaction.Player:
-		if ActionManager.Instance != null:
-			ActionManager.Instance.add_to_bottom(CallbackAction.new(func(): _exhaust_block(block)))
-		else:
-			_exhaust_block(block)
+		_block_piles_here.enqueue_exhaust_block(block)
 
 # ──────────── 辅助方法 ────────────
 
@@ -261,100 +254,6 @@ func _has_any_resonance(block: Block) -> bool:
 		if _has_resonance_behavior(p):
 			return true
 	return false
-
-func _exhaust_block(block: Block) -> void:
-	for p in block.get_parts():
-		var gp: Vector2 = GridState.find_nearest_grid_point(p.global_position)
-		var coord: Vector2i = GridState.get_grid_coords(gp)
-		if coord.x >= 0 and coord.y >= 0:
-			GridState.restore_grid_state(coord.x, coord.y)
-	_block_piles_here.remove_block_from_placed(block)
-	block.remove_from_group("placed_blocks")
-	# 清除时触发自然循环（NatureCycleBehavior 回收效果）
-	_trigger_nature_cycle(block)
-	if block.get_parent() != null and is_instance_valid(block.get_parent()):
-		block.get_parent().remove_child(block)
-	block.queue_free()
-
-## 松动部件落场：仅该部件离场；全部件离场时 Block 进弃牌堆（部件级松动，同主 Bot）
-func _fall_loose_part(block: Block, part: BlockPart) -> void:
-	if _block_piles_here == null or not is_instance_valid(block) or part == null:
-		return
-	if part.IsSpent:
-		return
-	var discarded := _block_piles_here.fall_loose_part(block, part)
-	# 废品计数 +1：每个松动部件落场各计一次（四段 Block = +4）
-	_increment_scrap_counter(block)
-	if discarded:
-		_trigger_scrap_payoff(block)
-
-## 玩家 ScrapCounterStat +1（本回合松动触发计数）
-func _increment_scrap_counter(block: Block) -> void:
-	var tree := get_tree()
-	if tree == null:
-		return
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var player := node as Node2D
-			var rendering = player.get_node("RenderingComponent")
-			var stats_comp: StatsComponent = rendering.StatsComponentRef if rendering != null else null
-			if stats_comp == null:
-				return
-			if not stats_comp.has_status("ScrapCounter"):
-				var scrap_def: Resource = load("res://resources/stat_defs/ScrapCounter.tres")
-				if scrap_def == null:
-					printerr("ResonanceBot: ScrapCounter.tres not found!")
-					return
-				var stat: Stat = Stat.new()
-				stat.Definition = scrap_def
-				stats_comp.add_status(stat)
-				stat.add_value(1)
-			else:
-				stats_comp.get_status("ScrapCounter").add_value(1)
-			GameLog.debug("ResonanceBot: ScrapCounter +1 (total: " + str(stats_comp.get_status("ScrapCounter").CurrentValue) + ")")
-			return
-
-## 触发废品回收：查找 Block 的 ScrapPayoffBehavior 并执行
-func _trigger_scrap_payoff(block: Block) -> void:
-	for part in block.get_parts():
-		if part.Behaviors.size() == 0:
-			continue
-		for behavior in part.Behaviors:
-			if behavior is ScrapPayoffBehavior:
-				var payoff_action: AbstractGameAction = (behavior as ScrapPayoffBehavior).create_payoff_action(block, part, _block_piles_here)
-				if payoff_action != null and ActionManager.Instance != null:
-					ActionManager.Instance.add_to_top(payoff_action)
-					GameLog.debug("ResonanceBot: ScrapPayoffBehavior triggered for " + str(block.BlockName if not block.BlockName.is_empty() else ""))
-
-## 触发自然循环：Block 被清除（耗尽）时执行 NatureCycleBehavior 的回收效果
-func _trigger_nature_cycle(block: Block) -> void:
-	if block == null:
-		return
-	for part in block.get_parts():
-		for behavior in part.Behaviors:
-			if behavior is NatureCycleBehavior:
-				(behavior as NatureCycleBehavior).trigger_cycle(block)
-
-func _add_echo(tree: SceneTree, layers: int) -> void:
-	for node in tree.get_nodes_in_group("Players"):
-		if node is Node2D:
-			var pl := node as Node2D
-			var ren = pl.get_node("RenderingComponent")
-			var sc: StatsComponent = ren.StatsComponentRef if ren != null else null
-			if sc == null:
-				continue
-			if not sc.has_status("Echo"):
-				var def: Resource = load("res://resources/stat_defs/Echo.tres")
-				if def == null:
-					continue
-				var s := Stat.new()
-				s.Definition = def
-				sc.add_status(s)
-				s.add_value(layers)
-			else:
-				sc.get_status("Echo").add_value(layers)
-			GameLog.debug("ResonanceBot: Echo +" + str(layers))
-			return
 
 func _cleanup() -> void:
 	_is_running = false

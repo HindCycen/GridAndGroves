@@ -161,7 +161,7 @@ TurnStarted → 玩家放方块 → End Turn
 - BlockDef 通过 `JsonBlockScanner.scan_and_register()` 从 `resources/block_defs.json` 注册
 - 敌人与楼层图表通过 `JsonEnemyScanner.scan_and_register()` 从 `resources/enemy_defs.json` 注册
 - `BlockRegistry._ready()` 自动调用 `auto_register_blocks()` / `auto_register_enemies()`
-- `registerers/` 下的 `AbstractBlockRegisterer` / `OriginalBlockRegisterer` 为历史遗留，`register()` 已无调用方
+- `registerers/` 仅包含 JSON 扫描器（`JsonBlockScanner` / `JsonEnemyScanner`）
 
 ```json
 {

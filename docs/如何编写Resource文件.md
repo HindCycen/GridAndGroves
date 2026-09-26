@@ -86,7 +86,6 @@ class_name MyNewDef extends Resource
 
 | 字段 | 类型 GDScript | 用途 |
 |---|---|---|
-| `StageEnemyChart` | `Resource` | 本层敌人配置表（**旧方案，已弃用**，见下） |
 | `StageEventRand` | `EventRand` | 本层随机事件池 |
 | `StartingDeck` | `Array[String]` | 初始牌组 Block 名称列表 |
 
@@ -95,26 +94,8 @@ resources/
   EgStageDef.tres ───── StageDef 示例
 ```
 
-> ⚠️ 敌人配置已改为 `resources/enemy_defs.json` 的 `stageCharts` 字段驱动
+> ⚠️ 敌人配置由 `resources/enemy_defs.json` 的 `stageCharts` 字段驱动
 > （`StageRoom._build_enemy_chart_for_room` 按房间序号从 JSON 选图表）。
-> `StageEnemyChart` 字段与 `EgStageEnemyChart.tres` 仅为旧方案残留，不再参与注册。
-
----
-
-### 3.3 敌人配置表 — StageEnemyChartDef
-
-**位置**: `resources/StageEnemyChartDef.gd`
-
-| 字段 | 类型 GDScript | 用途 |
-|---|---|---|
-| `WeakEnemyChart` | `Array` | 普通弱敌池 |
-| `StrongEnemyChart` | `Array` | 普通强敌池 |
-| `EliteChart` | `Array` | 精英敌池（预留） |
-| `BossChart` | `Array` | BOSS 敌池 |
-
-> ⚠️ **已弃用**：当前敌人图表由 `resources/enemy_defs.json` 的 `stageCharts` 提供，
-> 键名为 `weakCharts` / `strongCharts` / `eliteCharts` / `bossCharts`。
-> 该类保留仅为兼容旧数据。
 
 ---
 
@@ -588,7 +569,6 @@ resources/
 ├── enemy_defs.json          # ★ 所有敌人定义 + stageCharts（注册入口）
 ├── DataResource.gd          # 存档数据
 ├── StageDef.gd              # 关卡定义
-├── StageEnemyChartDef.gd    # 关卡敌人表（已弃用，见 §3.3）
 ├── EventRand.gd             # 随机事件池
 ├── EventDef.gd              # 事件定义
 ├── EventChoiceDef.gd        # 事件选项

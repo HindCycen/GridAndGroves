@@ -28,14 +28,6 @@ func find_nearest_grid_point(target_point: Vector2) -> Vector2:
 				nearest = cur
 	return nearest
 
-func unlock_row(row: int) -> void:
-	if row >= 0 and row < UnlockedRows.size():
-		UnlockedRows[row] = true
-
-func unlock_col(col: int) -> void:
-	if col >= 0 and col < UnlockedCols.size():
-		UnlockedCols[col] = true
-
 func is_row_unlocked(row: int) -> bool:
 	return row >= 0 and row < UnlockedRows.size() and UnlockedRows[row]
 

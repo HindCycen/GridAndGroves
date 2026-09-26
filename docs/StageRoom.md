@@ -89,16 +89,7 @@ Room (res://room/Room.gd)
 ### EventRand (res://resources/EventRand.gd)
 - PossibleEvents: EventDef 数组, 用于随机抽取
 
-### StageEnemyChartDef (res://resources/StageEnemyChartDef.gd)
-- WeakEnemyChart / StrongEnemyChart / EliteChart / BossChart
-
-> ⚠️ **已弃用**：当前敌人图表由 `resources/enemy_defs.json` 的 `stageCharts` 字段驱动
-> （键名 `weakCharts` / `strongCharts` / `eliteCharts` / `bossCharts`），
-> 由 `JsonEnemyScanner` 注册到 `BlockRegistry.StageChartConfigs`，
-> `StageRoom._build_enemy_chart_for_room` 读取。
-
 ### StageDef (res://resources/StageDef.gd)
-- StageEnemyChart: StageEnemyChartDef（**旧方案，已不再使用**）
 - StageEventRand: EventRand
 - StartingDeck: Array[String]（初始牌组 Block 名称）
 

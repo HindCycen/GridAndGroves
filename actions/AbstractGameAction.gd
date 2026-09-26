@@ -29,11 +29,3 @@ func tick_duration(delta: float) -> void:
 	if duration <= 0.0:
 		duration = 0.0
 		is_done = true
-
-func add_to_bot(action: AbstractGameAction) -> void:
-	if ActionManager.Instance != null:
-		ActionManager.Instance.add_to_bottom(action)
-
-func add_to_top(action: AbstractGameAction) -> void:
-	if ActionManager.Instance != null:
-		ActionManager.Instance.add_to_top(action)

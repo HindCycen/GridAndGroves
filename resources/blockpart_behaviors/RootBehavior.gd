@@ -17,11 +17,3 @@ func create_action(_block, _part):
 	# 扎根 Behavior 本身不返回 Action
 	# 实际效果由同部件的其他 Behavior 提供
 	return null
-
-## 检查是否可以再放置一个扎根 Block（上限 3 个）
-static func can_place_root(tree: SceneTree) -> bool:
-	return GlyphRootBehavior.can_place_glyph(tree, "root")
-
-## 统计当前活跃的扎根 Block 数量
-static func count_active_roots(tree: SceneTree) -> int:
-	return GlyphRootBehavior.count_active_glyphs(tree, "root")

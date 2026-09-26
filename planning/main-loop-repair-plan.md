@@ -42,6 +42,13 @@
 
 **验证**：135+ 脚本解析全检 0 失败；headless 冒烟 8 项全通过；实机流程验证（选包→地图→战斗→中途返回→重进→胜利→商店→Continue 恢复商店→Boss 商店换层/通关）无报错。
 
+**代码清理（同日）**
+
+- 删除历史遗留：`registerers/AbstractBlockRegisterer.gd` / `OriginalBlockRegisterer.gd`、`resources/StageEnemyChartDef.gd` + `EgStageEnemyChart.tres`（连带移除 `StageDef.StageEnemyChart` 字段）、`ExampleStatBehavior.gd`、`GiveGrowingStatBehavior.gd`（引用了不存在的 Block）、`BlockNumberVFX.gd`、`AIComponent.tscn`、`Stat.tscn`
+- 去重：Bot / ResonanceBot 的松动/耗尽/废品/自然循环逻辑统一下沉到 `BlockPilesHere`（`loose_part` / `exhaust_block` / `add_player_stat` 等）；Echo/Overload/ScrapCounter 加层统一走 `add_player_stat`
+- 删除无调用方的死函数（`AbstractGameAction.add_to_bot/add_to_top`、`PileComponent` 未用工具方法、`BlockRegistry.get_block`、`GridState.unlock_*`、`CardPool.get_random_block_names`、`RootBehavior.can_place_root/count_active_roots`、`StatBehavior.set_belonging_stat` 等）
+- 实机验证发现并修复两处共鸣运行时问题：① `Array[int] = [1] if ... else [1,-1]` 三目赋值在运行时报错（共鸣链此前实际不可用）；② 共鸣链整体跳过源 Block，导致多部件共鸣 Block 在同一次链中无法触发其余部件（现改为按部件触发，并把源部件标记为已触发防重复）
+
 ---
 
 ## 0. 进度快照（2026-09-12 核实）

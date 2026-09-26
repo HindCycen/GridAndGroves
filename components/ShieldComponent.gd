@@ -38,11 +38,3 @@ func reduce_shield(amount: int) -> void:
 		return
 	CurrentShield = maxi(0, CurrentShield - amount)
 	shield_changed.emit(CurrentShield, MaxShield)
-
-func set_max_shield(value: int) -> void:
-	if value <= 0:
-		printerr("Max shield must be greater than 0")
-		return
-	MaxShield = value
-	CurrentShield = mini(CurrentShield, MaxShield)
-	shield_changed.emit(CurrentShield, MaxShield)

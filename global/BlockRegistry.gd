@@ -28,16 +28,6 @@ func subscribe_block_def(block_data: Dictionary) -> bool:
 	BlockDefs[block_name] = block_data
 	return true
 
-func get_block(block_name: String, global_pos: Vector2, parent: Node) -> Block:
-	if not BlockDefs.has(block_name):
-		GameLog.err("BlockFactory: No block data with name " + block_name + " found")
-		return null
-	var block: Block = create_block(BlockDefs[block_name])
-	if block != null:
-		block.global_position = global_pos
-		parent.add_child(block)
-	return block
-
 func create_block(block_data: Dictionary) -> Block:
 	if block_data == null or block_data.is_empty():
 		GameLog.err("BlockFactory: Block data is null or empty")

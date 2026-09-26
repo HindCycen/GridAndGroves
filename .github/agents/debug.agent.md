@@ -44,7 +44,6 @@ You are a debugging specialist for the Grid and Groves Godot 4.7+ GDScript game 
 - Ensure `_ending_turn` flag is handled correctly
 
 ### Block Registration Issues
-- Check `OriginalBlockRegisterer.register()` for subscriber calls
 - Verify `JsonBlockScanner.scan_and_register()` loads from `resources/block_defs.json`
 - Ensure JSON block entries have correct schema
 

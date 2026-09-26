@@ -54,7 +54,6 @@ applyTo: "**/*.gd"
 - BlockDef 通过 `JsonBlockScanner.scan_and_register()` 从 `resources/block_defs.json` 注册
 - 敌人与楼层图表通过 `JsonEnemyScanner.scan_and_register()` 从 `resources/enemy_defs.json` 注册
 - `BlockRegistry._ready()` 自动调用 `auto_register_blocks()` / `auto_register_enemies()`
-- `registerers/` 下 `AbstractBlockRegisterer` / `OriginalBlockRegisterer` 为历史遗留，`register()` 已无调用方
 - 卡包（`PackManager.subscribe_block_pack()` / `subscribe_mini_pack()` / `build_card_pool()`）已接入游戏流程：主菜单选择 → 构建卡池 → 商店/初始牌组消费 → 游戏结束清理
 
 ## BlockDef JSON 注册格式

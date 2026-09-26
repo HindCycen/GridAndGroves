@@ -56,7 +56,3 @@ func get_all_statuses() -> Array[Stat]:
 
 func has_status(status_name: String) -> bool:
 	return _status_map.has(status_name)
-
-func clear_all_statuses() -> void:
-	for status_name in _status_map.keys().duplicate():
-		remove_status(status_name)
