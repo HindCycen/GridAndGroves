@@ -39,22 +39,21 @@ $GODOT = "C:\Unpacked\Godot\Godot_v4.7.2-stable_win64_console.exe"
 & $GODOT --headless --path . res://tests/smoke.tscn
 ```
 
-**`tests/` 目录目前不存在，需要建立。** 这是本项目最大的工程缺口：历史上每次冒烟都是临时写、跑完即删，导致「占格跨战斗泄漏」「商店重复刷牌」这类 bug 反复出现。
+**当前 15 项检查**（2026-09-29）。它守着的是「资源完整性 + 跨系统不变量」，不是战斗逻辑：
 
-建立后的约定：
-- 一个场景 `tests/smoke.tscn` + 一个驱动脚本 `tests/smoke.gd`
-- 每条检查独立命名，对应一个不变量，例如：
-  - `player_can_place_block_on_every_valid_cell` ← 拖拽那次翻车的守卫
-  - `grid_occupy_resets_between_battles`
-  - `shop_cannot_reenter_for_free_cards`
-  - `temp_stats_do_not_persist_across_battles`
-  - `event_damage_can_kill_player`
-  - `boss_cell_always_spawns_boss`
-  - `stage_count_increments_once_per_floor`
+- `autoloads_present` / `block_defs_parses` / `every_part_texture_exists` 等资源类
+- `every_floor_has_background` / `floors_use_distinct_backgrounds` ← 楼层背景查表（口径 10）
+- `every_placement_block_defined` ← 敌人意图引用了不存在的 Block
+
+约定（继续遵守）：
+- 每条检查独立命名，对应一个不变量
 - 输出 `PASS/FAIL` 每行一条，最后一行 `N passed, M failed`
-- **失败必须让退出码非零**，否则 CI/自动化读不到
+- **失败必须让退出码非零**，否则自动化读不到
+- **跑完不能删**。历史上冒烟脚本跑完即删，导致「占格跨战斗泄漏」「商店重复刷牌」这类 bug 反复出现
 
 新修一个 bug，就加一条同名守卫（见 `session-handoff`）。
+
+**还缺**：战斗逻辑本身（伤害结算、防刷、存档恢复）没有自动化覆盖，目前靠第 4 层实机走查兜底。
 
 ## 第 3 层 — 视觉复核（用户明确要求过）
 
@@ -62,6 +61,20 @@ $GODOT = "C:\Unpacked\Godot\Godot_v4.7.2-stable_win64_console.exe"
 
 - 用 `read_image` 读截图或 `--preview` 拼图
 - 逐项对照检查表，把**看到什么**写出来，而不是「看起来正常」
+
+### 战斗画面截图工具（可复用）
+
+headless **没有渲染设备**，要截图必须走真实窗口：
+
+```powershell
+& $GODOT --path . res://tests/capture_battle.tscn -- --stage=2 --out=C:/Workspace/GridAndGroves/demo_generated/capture_stage2.png
+```
+
+它会设定楼层 → 加载 `BattleRoom` → 等若干帧 → 把根视口存成 PNG。退出时那一串
+`RIDs were leaked` 是中途 `quit()` 的正常噪音，不是失败，看 `capture: ... (err=0)` 即可。
+
+> 场景编辑、布局、背景/UI 层级这类改动**一律用这个工具出图再读**。
+> `demo_generated/` 已被 `.gitignore` 忽略，截图不会污染仓库。
 
 拖拽/布局类改动的检查表：
 1. 每个高亮可放置格，都能放下符合要求的方块吗？

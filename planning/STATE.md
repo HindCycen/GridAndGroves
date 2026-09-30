@@ -58,18 +58,31 @@
 
 | # | 事项 | 证据 |
 |---|---|---|
-| 1 | **背景未接入 `BattleRoom`**：背景已备好（森林 6 档 16–21 时；遗迹 / 核心各 3 档），但 `BattleRoom.gd:298` 只引用了 `UnableGrid.png` | 接入方式已裁定：按**楼层 → 游戏内剧情时间**查表选取（口径 10）；**接入时机由用户决定** |
-| 2 | **事件池仅 3 个**：`EgHealEvent.tres` 存在但未进 `PossibleEvents` | `EgStageDef.tres:11` |
-| 3 | 美术精修未批量：仅 1 张精修样张 | `demo_generated/` |
-| 4 | 无战斗逻辑回归测试 | `tests/` 仅有资源完整性检查 |
-| 5 | Stat 三时期接线（`OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied`） | 计划文档 Phase 6.2 |
+| 1 | **事件池仅 3 个**：`EgHealEvent.tres` 存在但未进 `PossibleEvents` | `EgStageDef.tres:11` |
+| 2 | 美术精修未批量：仅 1 张精修样张 | `demo_generated/` |
+| 3 | 战斗逻辑无自动化覆盖（伤害结算 / 防刷 / 存档恢复） | `tests/smoke.tscn` 只守资源与跨系统不变量 |
+| 4 | Stat 三时期接线（`OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied`） | 计划文档 Phase 6.2 |
 
-> 已撤销的待办：~~地图商店格~~（口径 9：不做）、~~卡组 10 vs 15~~（口径 8：15 为准）。
+> 已撤销的待办：~~地图商店格~~（口径 9：不做）、~~卡组 10 vs 15~~（口径 8：15 为准）、
+> ~~背景接入 BattleRoom~~（2026-09-29 已完成，见下）。
+
+## 战斗背景（2026-09-29 已接入）
+
+按口径 10 做**纯查表**，无时钟推进、无交叉淡化。表在 `room/BattleRoom.gd` 的 `FLOOR_BACKGROUNDS`：
+
+| 楼层 | 背景 | 剧情时间 |
+|---|---|---|
+| 1 | `ForestClearing_1800.png` | 黄昏森林 18:00 |
+| 2 | `RustedRuins_2000.png` | 入夜遗迹 20:00 |
+| 3 | `BloomCore_2100.png` | 深夜核心 21:00 |
+
+图层：`FloorBackground(-2)` < `UpperLayer(-1)` < 网格无法放置贴片(0)。
+未配楼层退回 `FLOOR_BACKGROUND_FALLBACK`。守卫：`every_floor_has_background` / `floors_use_distinct_backgrounds`。
 
 ## 下次开工建议起点
 
-1. 跑 `tests/smoke.tscn` 确认基线绿
-2. ✅ 背景微调已完成（2026-09-29：云的柔和渐变 + 默认不再吸附调色板，可复现）
-3. **等用户拍板背景接入时机**；未获批准前不要自行接入
-4. 可做：事件池扩充（`EgHealEvent.tres` 已存在未接线）、把已修过的防刷/占格/存档问题补成回归守卫
+1. 跑 `tests/smoke.tscn` 确认基线绿（当前 15 项）
+2. 可做：事件池扩充（`EgHealEvent.tres` 已存在未接线）
+3. 可做：把已修过的防刷/占格/存档问题补成回归守卫（现在只守资源类不变量）
+
 

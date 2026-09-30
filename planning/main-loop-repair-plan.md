@@ -27,6 +27,41 @@
 
 ---
 
+## 0.001 2026-09-29 设计口径裁定 + 背景管线修复 + 背景接入
+
+**设计口径裁定（已记入 `design-rulings.md` 第 8/9/10 条）**
+
+| 口径 | 处置 |
+|------|------|
+| 卡组下限 **15** 为准（文档写 10 偏小） | 改文档不改代码：`balance.md` 的「10 张」→「15 张 / 上限 50」、`sts-design-reference.md` 的「10~50」→「15~50」 |
+| 地图**不设**独立商店格 | 撤销待办；`IsShopCell` 不实现 |
+| 背景**只由楼层决定**，楼层 = 游戏内剧情时间 | 不做时钟推进 / 交叉淡化；`--hour` 仅为生成期参数 |
+
+**背景管线修复（`tools/gen_pixel_backgrounds.py`）**
+
+| 问题 | 修复 |
+|------|------|
+| 云是 `base`/`shade` **两色硬拼**，椭圆边界即色界，4× 放大后成阶梯块 | 改为云体剪影 + 20 级相近色带 + Bayer 抖动，并按光源方向横向偏移 |
+| **入库背景无法用入库脚本复现**：提交的图是 `--no-palette` 生成的，而脚本默认吸附调色板 | 默认改为不吸附，`--palette` 保留为显式选项 |
+| gg256 提取自精灵图（紫色仅约 13 档），把天空渐变压成硬色带（243 → 41 色） | 同上；背景与精灵不再共用量化约束 |
+| `ForestClearing_2000` 只有 36 色的异常 | 即吸附塌缩所致，现 224 色 |
+
+**背景接入（`room/BattleRoom.gd`）**
+
+- 新增 `FLOOR_BACKGROUNDS` 查表 + `background_for_stage()` 纯函数 + `_apply_floor_background()`
+- 1 层 `ForestClearing_1800` / 2 层 `RustedRuins_2000` / 3 层 `BloomCore_2100`；未配楼层走 fallback
+- 图层：`FloorBackground(-2)` < `UpperLayer(-1)` < 网格无法放置贴片(0)
+- 在 `_ready()` 最前面挂载，任何提前 return 都不会让战斗丢背景
+
+**新增验证基建**
+
+- `tests/smoke.gd` 扩到 **15 项**，新增三个守卫：`every_floor_has_background` / `floors_use_distinct_backgrounds` / `floor_background_fallback_exists`
+- 新增 `tests/capture_battle.tscn`（视觉复核用截图工具，非 headless）
+
+**验证**：`--import` 无 ERROR；冒烟 **15 passed, 0 failed** 退出码 0；三楼层实机截图（`demo_generated/capture_stage{1,2,3}.png`）逐张识图确认背景铺满且在 UI 之下；背景生成连续两次 SHA256 逐字节一致。
+
+---
+
 ## 0.0 2026-09-24 修复记录（稳定性 / 防刷 / 部件级松动）
 
 **流程与经济漏洞**

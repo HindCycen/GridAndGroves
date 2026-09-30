@@ -15,11 +15,34 @@ var _round_number: int
 ## Boss 奖励 / 免费商店 / 换层判定全部以此为准，不再依赖可增减的 RoomCount
 @export var IsFinalBossCell: bool = false
 
+## 楼层 → 战斗背景查表。
+## 设计口径（planning/design-rulings.md 第 10 条）：背景**只由楼层决定**，
+## 楼层代表游戏内剧情时间，**不跟现实时刻挂钩，也不随对局时长流逝**——
+## 所以这里是纯查表，没有时钟推进、没有交叉淡化。
+## 键为 StageCount（1 起算，见 SaveLoad.FINAL_STAGE）。增删楼层只改这张表。
+const FLOOR_BACKGROUNDS := {
+	1: "res://room/battle_background/ForestClearing_1800.png",  # 第 1 层 · 黄昏森林 18:00
+	2: "res://room/battle_background/RustedRuins_2000.png",     # 第 2 层 · 入夜遗迹 20:00
+	3: "res://room/battle_background/BloomCore_2100.png",       # 第 3 层 · 深夜核心 21:00
+}
+## 表里没有的楼层（例如日后扩充层数却忘了配图）退回这张，保证战斗永远有背景
+const FLOOR_BACKGROUND_FALLBACK := "res://room/battle_background/ForestClearing_1800.png"
+
+
+## 纯函数：楼层 → 背景资源路径。抽出来是为了让冒烟套件能直接断言。
+static func background_for_stage(stage: int) -> String:
+	if FLOOR_BACKGROUNDS.has(stage):
+		return FLOOR_BACKGROUNDS[stage]
+	return FLOOR_BACKGROUND_FALLBACK
+
+
 func _ready() -> void:
 	super()
 	_save_load = get_tree().root.get_node("SaveLoad")
 	if _save_load != null and _save_load.Data != null:
 		_save_load.Data.RoomCount += 1
+	# 楼层背景尽早挂上：它与战斗逻辑无关，任何提前 return 都不该让战斗丢掉背景
+	_apply_floor_background()
 	_block_piles_here = get_node("BlockPilesHere")
 	_bot = get_node("Bot")
 	_battle_time = get_tree().root.get_node("BattleTime")
@@ -293,6 +316,35 @@ func _show_pile_viewer(title: String, pile: PileComponent) -> void:
 	var viewer := viewer_scene.instantiate() as PileViewer
 	viewer.open(title, pile)
 	add_child(viewer)
+
+## 按当前楼层铺一张战斗背景，压在 BackgroundAnimator 的最底层。
+## 层级：FloorBackground(-2) < UpperLayer(-1) < 网格无法放置贴片(0)
+func _apply_floor_background() -> void:
+	var stage := 1
+	if _save_load != null and _save_load.Data != null:
+		stage = maxi(_save_load.Data.StageCount, 1)
+	var path := background_for_stage(stage)
+	if not ResourceLoader.exists(path):
+		GameLog.err("BattleRoom: 楼层 %d 背景缺失 %s，本场无背景" % [stage, path])
+		return
+	var tex := load(path) as Texture2D
+	if tex == null:
+		GameLog.err("BattleRoom: 楼层 %d 背景加载失败 %s" % [stage, path])
+		return
+	var bg_node := get_node_or_null("BackgroundAnimator") as Node2D
+	if bg_node == null:
+		GameLog.err("BattleRoom: 缺少 BackgroundAnimator 节点，无法铺背景")
+		return
+	var bg := Sprite2D.new()
+	bg.name = "FloorBackground"
+	bg.texture = tex
+	bg.z_index = -2
+	# 背景为 1920x1080，房间局部原点即屏幕左上角（UpperLayer 用 offset 480,540 铺左半屏可佐证）
+	bg.position = Vector2(960, 540)
+	bg_node.add_child(bg)
+	bg_node.move_child(bg, 0)
+	GameLog.debug("BattleRoom: 楼层 %d 背景 %s" % [stage, path.get_file()])
+
 
 func _render_unable_grid_cells() -> void:
 	var texture := load("res://room/battle_background/UnableGrid.png") as Texture2D

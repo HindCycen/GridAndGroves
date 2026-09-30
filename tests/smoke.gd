@@ -30,6 +30,7 @@ func _ready() -> void:
 	_check_autoloads()
 	_check_block_defs()
 	_check_enemy_defs()
+	_check_floor_backgrounds()
 
 	_report()
 
@@ -126,6 +127,44 @@ func _check_enemy_defs() -> void:
 		"%d 个意图缺 intentName：%s" % [bad_intent.size(), _head(bad_intent)] if not bad_intent.is_empty() else "")
 	_assert("every_placement_block_defined", bad_block.is_empty(),
 		"%d 个未定义 Block 引用：%s" % [bad_block.size(), _head(bad_block)] if not bad_block.is_empty() else "")
+
+
+func _check_floor_backgrounds() -> void:
+	## 守卫：每个楼层都必须查得到一条存在且互不相同的战斗背景
+	## （口径 10：背景只由楼层决定）。层数扩了却忘配图会在这里变红。
+	var save_load := get_node_or_null("/root/SaveLoad")
+	var final_stage := 3
+	if save_load != null:
+		final_stage = int(save_load.FINAL_STAGE)
+
+	var missing: PackedStringArray = []
+	var used := {}
+	for stage in range(1, final_stage + 1):
+		var path: String = BattleRoom.background_for_stage(stage)
+		if path.strip_edges() == "":
+			missing.append("楼层 %d 查表为空" % stage)
+		elif not FileAccess.file_exists(path):
+			missing.append("楼层 %d -> %s" % [stage, path])
+		else:
+			used[path] = int(used.get(path, 0)) + 1
+
+	var detail := "%d 个楼层各有可用背景" % final_stage
+	if not missing.is_empty():
+		detail = "缺/坏 %d 项：%s" % [missing.size(), _head(missing)]
+	_assert("every_floor_has_background", missing.is_empty(), detail)
+
+	var reused: PackedStringArray = []
+	for p in used.keys():
+		if int(used[p]) > 1:
+			reused.append("%s x%d" % [String(p).get_file(), int(used[p])])
+	var detail2 := ""
+	if not reused.is_empty():
+		detail2 = "复用：%s" % ", ".join(reused)
+	_assert("floors_use_distinct_backgrounds", reused.is_empty(), detail2)
+
+	_assert("floor_background_fallback_exists",
+		FileAccess.file_exists(BattleRoom.FLOOR_BACKGROUND_FALLBACK),
+		BattleRoom.FLOOR_BACKGROUND_FALLBACK)
 
 
 # ---------------------------------------------------------------- 工具
