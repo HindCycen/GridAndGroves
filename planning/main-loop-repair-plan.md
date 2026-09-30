@@ -4,6 +4,26 @@
 > 状态：**Phase 0/1 已完成；Phase 2/3 大部分已落地（2026-08-18 起）；Phase 5 意图 UI 已完成。
 > 2026-09-12 完成 P0 闭环修补（敌人扩充/精英/楼层缩放/通关结局/StageCount 修复/EnemyAttackBlock 修复）。
 > 2026-09-24 完成一轮稳定性/防刷修复与"松动"部件级重做（见下节）。**
+>
+> ⚠️ **本文是历史修复日志，不是当前状态。当前状态看 [`STATE.md`](STATE.md)，设计口径看 [`design-rulings.md`](design-rulings.md)。**
+
+---
+
+## 0.00 2026-09-29 工程基建（协作协议固化）
+
+**背景**：项目由 AI 长期自主推进，用户只在短时段介入裁决。此前每次开工都要从零考古全库（单次审计耗 12 分钟 / 109 条消息），且验证脚本"跑完即删"导致同类 bug 反复出现。
+
+| 问题 | 处置 |
+|------|------|
+| 上下文重建成本高、文档自相矛盾 | 新增 `planning/STATE.md` 作为「现在在哪」的唯一事实来源（≤120 行，收尾时从代码事实重新生成） |
+| 设计口径只存在于对话里，会被下一轮实现反着做 | 新增 `planning/design-rulings.md`，登记 7 条已拍板口径 + 3 条待确认 |
+| 无自动化测试，`res://tests/` 不存在，验证一次性 | 新增 `tests/smoke.gd` + `tests/smoke.tscn`，12 项检查（Autoload / Block / 敌人 / 悬空资源引用），实测 **12 passed, 0 failed**，退出码 0 |
+| 重复操作靠临场发挥 | 新增 `.dsh/skills/` 五个协议：`project-audit` / `session-handoff` / `commit-triage` / `godot-verify` / `art-pipeline` |
+| 项目指引只讲技术栈，不讲协作方式 | `AGENTS.md` 增补「协作协议」一节；另建 `~/.dsh/AGENTS.md` 用户全局约定 |
+
+**验证**：`Godot_v4.7.2-stable_win64_console.exe --headless --path . res://tests/smoke.tscn` → `12 passed, 0 failed`，退出码 0。
+
+**核实到的当前缺口**：背景 18 张已生成但未接入 `BattleRoom`（仅引用 `UnableGrid.png`）；`IsShopCell` 全库不存在（地图商店格未实现）；事件池 3 个（`EgHealEvent.tres` 未进 `PossibleEvents`）。
 
 ---
 
@@ -76,11 +96,12 @@
 **遗留真实待办（截至 2026-09-12）**：
 
 1. Phase 6.2 三个 Stat 时期接线（`OnBeforeBlockApply` / `OnAfterBlockApply` / `OnStatusApplied`）
-2. 事件池扩充（当前 3 个；宝箱事件尚未配置 AddGold 数值）
-3. 地图商店格（Phase 4.2）与商店格图片（Phase 4.3）——当前以"每战必进商店"替代
-4. 卡组规模约束：实现为商店侧 15~50（balance.md 标注 10~50，需产品决策统一口径）
+2. 事件池扩充（当前 3 个；`EgHealEvent.tres` 存在但未进 `PossibleEvents`）
+3. ~~地图商店格（Phase 4.2）与商店格图片（Phase 4.3）~~ → **2026-09-29 裁定：地图上不设独立商店格，不再实现**
+4. ~~卡组规模约束：实现为商店侧 15~50（balance.md 标注 10~50，需产品决策统一口径）~~ → **2026-09-29 裁定：以代码 `DECK_MIN=15` 为准，文档已改**
 5. Phase 1 记录的 13 处设计省略（见 Phase 1 小节）
 6. 换层不切换 StageDef：所有楼层共用 `EgStageDef`（当前以敌人缩放体现难度，切换 StageDef 留待内容需要时再做）
+7. 战斗背景接入 `BattleRoom`：18 张时间点背景已生成，按**楼层 → 游戏内剧情时间**查表选取（见 `design-rulings.md` 第 10 条）
 
 ### 2026-09-12 修补记录（P0 闭环 + 美术管线）
 
@@ -170,11 +191,11 @@ MainMenu (Continue / New Game)
 | 1 | 卡包/角色选择界面 | ✅ 已实现（`MainMenu.gd`，主包 3 选 1 + 随机 4 小包预览） | — |
 | 2 | 卡池（主包 + 4 小包）构建 | ✅ 已实现（`PackManager.build_card_pool` / `restore_card_pool_from_save`） | — |
 | 3 | 战后奖励 | ✅ 金币奖励已实现；卡牌获取并入战后商店（设计变更，取代"三选一"弹窗） | — |
-| 4 | 游戏内经济（金币/商店/买卖/重掷） | ✅ 已实现（`ShopRoom.gd`）+ 金币顶栏；⏳ 地图商店格未实现 | 低 |
+| 4 | 游戏内经济（金币/商店/买卖/重掷） | ✅ 已实现（`ShopRoom.gd`）+ 金币顶栏；地图商店格**经裁定不做** | — |
 | 5 | Boss 战与关卡递进 | ✅ Boss 判定（roomCount ≥ 20）；✅ Stage 3 Boss 后通关结算 `Victory.tscn`；⏳ 换层不切换 StageDef（以缩放替代） | 低 |
 | 6 | 敌人内容与意图可见性 | ✅ 6 个敌人（3 普通 + 1 精英 + 2 Boss）+ 意图图标 UI；⏳ 敌人数量仍可继续扩充 | 低 |
 | 7 | 难度曲线 | ✅ 血量/攻击随楼层 +12%/层；尚无 Ascension 类系统 | 低 |
-| 8 | 卡组规模约束 | ⚠️ 商店侧 15~50（balance.md 写 10~50，口径待统一） | 低 |
+| 8 | 卡组规模约束 | ✅ 商店侧 15~50（2026-09-29 裁定以代码为准，文档已统一） | — |
 | 9 | 事件多样性 | ⚠️ 仅 3 个事件；`AddGold/RemoveGold` 已实现但宝箱事件未配置数值 | 中 |
 | 10 | 结算画面 | ✅ GameOver / Victory 均含 Stage/Room/Gold/击杀统计 | 低 |
 
