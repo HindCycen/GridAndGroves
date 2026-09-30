@@ -283,21 +283,52 @@ CLOUD_KEYS = [
 
 
 def draw_clouds(img, hour, lp):
+    """云：受光顶面 → 背光底面，用**多级相近色带 + Bayer 抖动**过渡。
+
+    旧实现是 base / shade 两色硬拼（椭圆边界即色界），在 4× NEAREST 放大后
+    会变成难看的阶梯块。这里改为先取云体剪影，再按云内竖直参数走色带，
+    只在相邻色级之间抖动——与 draw_sky / dither_blob 同一套做法。
+    """
     base = _interp_keys(CLOUD_KEYS, hour)
-    shade = mix(base, hx("#1a1622"), 0.28)
-    d = ImageDraw.Draw(img)
+    sun_side, day = light_dir(hour)
+    lit = mix(base, hx("#fff6ea"), 0.10 + 0.22 * day)
+    deep = mix(base, hx("#241d30"), 0.16 + 0.22 * (1.0 - day))
+    ramp = build_ramp([(0.0, lit), (0.48, base), (1.0, deep)], 20)
+
+    px = img.load()
     clouds = [(66, 40, 20), (152, 26, 14), (298, 50, 24), (398, 32, 16), (232, 72, 12)]
     for (cx, cy, w) in clouds:
-        for dx, dy, r in (
+        top_blobs = (
             (0, 0, w),
             (-w * 0.72, 3, w * 0.66),
             (w * 0.72, 3, w * 0.62),
             (-w * 0.32, -4, w * 0.56),
             (w * 0.34, -4, w * 0.5),
-        ):
-            d.ellipse([cx + dx - r, cy + dy - r * 0.55, cx + dx + r, cy + dy + r * 0.55], fill=base)
-        for dx, dy, r in ((0, 4, w * 0.8), (-w * 0.46, 5, w * 0.5), (w * 0.46, 5, w * 0.45)):
-            d.ellipse([cx + dx - r, cy + dy - r * 0.3, cx + dx + r, cy + dy + r * 0.3], fill=shade)
+        )
+        bot_blobs = ((0, 4, w * 0.8), (-w * 0.46, 5, w * 0.5), (w * 0.46, 5, w * 0.45))
+
+        mask = Image.new("L", (LW, LH), 0)
+        md = ImageDraw.Draw(mask)
+        for dx, dy, r in top_blobs:
+            md.ellipse([cx + dx - r, cy + dy - r * 0.55, cx + dx + r, cy + dy + r * 0.55], fill=255)
+        for dx, dy, r in bot_blobs:
+            md.ellipse([cx + dx - r, cy + dy - r * 0.3, cx + dx + r, cy + dy + r * 0.3], fill=255)
+
+        mp = mask.load()
+        top = cy - w * 0.62
+        span = max(1.0, w * 1.24)
+        x0 = max(0, int(cx - w * 1.6))
+        x1 = min(LW, int(cx + w * 1.6) + 1)
+        y0 = max(0, int(top))
+        y1 = min(LH, int(cy + w * 0.62) + 1)
+        for y in range(y0, y1):
+            t0 = (y - top) / span
+            for x in range(x0, x1):
+                if mp[x, y] == 0:
+                    continue
+                # 受光侧略提亮、背光侧略压暗，避免云体看起来是纯竖直渐变
+                t = t0 - 0.14 * sun_side * (x - cx) / max(1.0, w)
+                px[x, y] = at_ramp(ramp, t, x, y)
 
 
 def draw_ground(img, hour, lp, c_far, c_near, c_patch):
@@ -643,6 +674,14 @@ PALETTE_JSON = os.path.join(BASE, "resources", "palette", "gg256.json")
 
 
 def snap_to_palette(img):
+    """吸附到 gg256 调色板。
+
+    ⚠️ 背景**默认不走这一步**（见 main 的 --palette 说明）：gg256 是从
+    精灵图/部件图提取的，缺少密集的天空渐变档位（256 色里紫色仅约 13 档），
+    会把大面积柔和渐变压成硬色带（实测 243 色 → 41 色，天空出现明显色阶）。
+    背景是柔和渐变、精灵是硬边小图，两者不应共用同一量化约束。
+    需要与精灵严格同色时再用 --palette 显式开启。
+    """
     with open(PALETTE_JSON, encoding="utf-8") as f:
         hexes = json.load(f)
     flat = []
@@ -678,7 +717,7 @@ def hour_tag(hour):
     return "%02d%02d" % (h % 24, m)
 
 
-def render(theme, hour, preview=False, use_palette=True):
+def render(theme, hour, preview=False, use_palette=False):
     name, _ = SCENES[theme]
     low = render_lowres(theme, hour)
     if use_palette:
@@ -738,7 +777,10 @@ def main():
     ap.add_argument("--hours", default="19")
     ap.add_argument("--preview", action="store_true")
     ap.add_argument("--strip", action="store_true")
-    ap.add_argument("--no-palette", action="store_true", help="不吸附到 gg256 调色板")
+    ap.add_argument("--palette", action="store_true",
+                    help="吸附到 gg256 调色板（默认关闭：会把天空渐变压成硬色带，见 snap_to_palette）")
+    ap.add_argument("--no-palette", action="store_true",
+                    help=argparse.SUPPRESS)  # 兼容旧命令；现已是默认行为
     args = ap.parse_args()
     themes = [t.strip() for t in args.themes.split(",") if t.strip()]
     hours = [float(h) for h in args.hours.split(",") if h.strip()]
@@ -746,7 +788,7 @@ def main():
         if args.strip:
             build_strip(t, hours)
         for h in hours:
-            render(t, h, preview=args.preview, use_palette=not args.no_palette)
+            render(t, h, preview=args.preview, use_palette=args.palette)
 
 
 if __name__ == "__main__":
